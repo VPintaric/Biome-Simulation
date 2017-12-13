@@ -10,7 +10,7 @@ Model::Model(const std::vector<GLfloat> &vs) : vertices(vs) {
     glGenBuffers(1, &verticesVboId);
     glBindBuffer(GL_ARRAY_BUFFER, verticesVboId);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), &vertices[0], GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
 }
 

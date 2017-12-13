@@ -1,23 +1,18 @@
 #version 130
 
-uniform int left, width, top, height;
-uniform mat3 transformMatrix;
+uniform mat4 projection;
+uniform mat4 view;
+uniform mat4 model;
 
-in vec2 in_pos;
+in vec3 in_pos;
 in vec3 in_color;
 
 out vec3 color;
 
 void main(){
-    vec3 pos = vec3(in_pos.xy, 1.0);
-    pos = transformMatrix * pos;
-    pos = pos / pos.z;
+    vec4 pos = vec4(in_pos.xyz, 1.0);
+    pos = projection * view * model * pos;
 
-    pos.x = ((pos.x - float(left)) / float(width));
-    pos.y = ((pos.y - float(top)) / float(height));
-    pos = pos * 2.0;
-    pos = pos - 1.0;
-
-    gl_Position = vec4(pos.x, pos.y, 0.0, 1.0);
+    gl_Position = pos;
     color = in_color;
 }

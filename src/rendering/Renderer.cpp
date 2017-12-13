@@ -1,5 +1,12 @@
+#define GLM_FORCE_RADIANS
+
+#include <GL/glew.h>
+#include <GL/glm/gtc/matrix_transform.hpp>
+#include <GL/glm/gtc/type_ptr.hpp>
+
 #include "../state/Log.h"
 #include "Renderer.h"
+#include "../helpers/GLHelpers.h"
 
 Renderer& Renderer::getInstance(){
     static Renderer instance;
@@ -8,6 +15,7 @@ Renderer& Renderer::getInstance(){
 
 Renderer::Renderer() {
     Log().Get(logDEBUG) << "Creating an instance of renderer";
+    projection = view = model = glm::mat4(1.f);
 }
 
 Renderer::~Renderer() {
@@ -48,4 +56,168 @@ void Renderer::removeModel(std::string name) {
     }
     
     models.erase(iter);
+}
+
+void Renderer::addShaderProgram(std::string name, std::shared_ptr<ProgramLoader> shader) {
+    Log().Get(logDEBUG) << "Adding shader program to renderer: \"" << name << "\"";
+    
+    std::map<std::string, std::shared_ptr<ProgramLoader> >::iterator iter = shaderPrograms.find(name);
+    
+    if(iter != shaderPrograms.end()){
+        Log().Get(logWARNING) << "Shader program with name \"" << name << "\" already exists";
+        return;
+    }
+    
+    shaderPrograms.insert(std::pair<std::string, std::shared_ptr<ProgramLoader> >(name, shader));
+}
+
+std::shared_ptr<ProgramLoader> Renderer::getShaderProgram(std::string name) {
+    std::map<std::string, std::shared_ptr<ProgramLoader> >::iterator iter = shaderPrograms.find(name);
+    
+    if(iter == shaderPrograms.end()){
+        Log().Get(logWARNING) << "Shader program with name \"" << name << "\" does not exist, returning null";
+        return nullptr;
+    }
+    
+    return iter->second;
+}
+
+void Renderer::removeShaderProgram(std::string name) {
+    Log().Get(logDEBUG) << "Removing shader program with name \"" << name << "\"";
+    
+    std::map<std::string, std::shared_ptr<ProgramLoader> >::iterator iter = shaderPrograms.find(name);
+    
+    if(iter == shaderPrograms.end()){
+        Log().Get(logWARNING) << "Shader program with name \"" << name << "\" does not exist";
+        return;
+    }
+    
+    shaderPrograms.erase(iter);
+}
+
+void Renderer::activateShaderProgram(std::string name) {
+    Log().Get(logDEBUG) << "Activating shader program \"" << name << "\"";
+    
+    std::shared_ptr<ProgramLoader> shader = getShaderProgram(name);
+    
+    if(shader == nullptr){
+        Log().Get(logWARNING) << "Can't activate shader program \"" << name << "\"";
+        return;
+    }
+    
+    GLuint shaderId = shader->getId();
+    glUseProgram(shaderId);
+    activeShader = shader;
+    updateAllShaderMatrices();
+}
+
+void Renderer::pushMatrix(Matrix t) {
+    switch(t){
+        case Matrix::VIEW:
+            viewStack.push_back(view);
+            break;
+        case Matrix::PROJECTION:
+            projectionStack.push_back(projection);
+            break;
+        case Matrix::MODEL:
+            modelStack.push_back(model);
+            break;
+    }
+}
+
+void Renderer::popMatrix(Matrix t) {
+    switch(t){
+        case Matrix::VIEW:
+            if(viewStack.empty()){
+                Log().Get(logWARNING) << "View matrix stack is empty, can't pop";
+                break;
+            }
+            view = viewStack.back();
+            viewStack.pop_back();
+            break;
+        case Matrix::PROJECTION:
+            if(projectionStack.empty()){
+                Log().Get(logWARNING) << "Projection matrix stack is empty, can't pop";
+                break;
+            }
+            projection = projectionStack.back();
+            projectionStack.pop_back();
+            break;
+        case Matrix::MODEL:
+            if(modelStack.empty()){
+                Log().Get(logWARNING) << "Model matrix stack is empty, can't pop";
+                break;
+            }
+            model = modelStack.back();
+            modelStack.pop_back();
+            break;
+    }
+}
+
+void Renderer::transform(float translX, float translY, float translZ, float rotAngle, float scaleX, float scaleY) {
+    model = 
+        glm::scale(
+            glm::rotate(
+                glm::translate(model, glm::vec3(-translX, -translY, translZ)), 
+                glm::radians(rotAngle), glm::vec3(0.f, 0.f, 1.f)),
+            glm::vec3(scaleX, scaleY, 1.f));
+    
+    updateShaderMatrix(Matrix::MODEL);
+}
+
+void Renderer::translate(float x, float y, float z) {
+    model = glm::translate(model, glm::vec3(-x, -y, z));
+    updateShaderMatrix(Matrix::MODEL);
+}
+
+void Renderer::rotate(float angle) {
+    model = glm::rotate(model, glm::radians(angle), glm::vec3(0.f, 0.f, 1.f));
+    updateShaderMatrix(Matrix::MODEL);
+}
+
+void Renderer::scale(float x, float y) {
+    model = glm::scale(model, glm::vec3(x, y, 1.f));
+    updateShaderMatrix(Matrix::MODEL);
+}
+
+void Renderer::identity() {
+    model = glm::mat4(1.f);
+    updateShaderMatrix(Matrix::MODEL);
+}
+
+
+void Renderer::setOrthoProjection(float left, float right, float bottom, float top) {
+    projection = glm::ortho(left, right, bottom, top, MIN_Z, MAX_Z);
+    updateShaderMatrix(Matrix::PROJECTION);
+}
+
+void Renderer::setCameraPosition(float x, float y) {
+    glm::vec3 pos = glm::vec3(x, y, -1.f);
+    glm::vec3 poi = pos + cameraOrient;
+    view = glm::lookAt(pos, poi, cameraUp);
+    updateShaderMatrix(Matrix::VIEW);
+}
+
+void Renderer::updateShaderMatrix(Matrix t) {
+    GLuint shaderId = activeShader->getId();
+    
+    switch(t){
+        case Matrix::PROJECTION:
+            glUniformMatrix4fv(glGetUniformLocation(shaderId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+            break;
+        case Matrix::VIEW:
+            glUniformMatrix4fv(glGetUniformLocation(shaderId, "view"), 1, GL_FALSE, glm::value_ptr(view));
+            break;
+        case Matrix::MODEL:
+            glUniformMatrix4fv(glGetUniformLocation(shaderId, "model"), 1, GL_FALSE, glm::value_ptr(model));
+            break;
+    }
+}
+
+void Renderer::updateAllShaderMatrices() {
+    GLuint shaderId = activeShader->getId();
+    
+    glUniformMatrix4fv(glGetUniformLocation(shaderId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(glGetUniformLocation(shaderId, "view"), 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(glGetUniformLocation(shaderId, "model"), 1, GL_FALSE, glm::value_ptr(model));
 }

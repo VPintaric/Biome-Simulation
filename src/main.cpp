@@ -1,3 +1,5 @@
+#define GLM_FORCE_RADIANS
+
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
@@ -6,6 +8,9 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <GL/glm/glm.hpp>
+#include <GL/glm/gtc/type_ptr.hpp>
+#include <GL/glm/gtc/matrix_transform.hpp>
 
 #include "state/State.h"
 #include "state/Log.h"
@@ -16,7 +21,7 @@
 #include "constants/SimulationConstants.h"
 #include "rendering/ColorModel.h"
 
-std::unique_ptr<ProgramLoader> shaderProgram;
+std::string MINION2_NAME = "Minion 2";
 
 void createBasicMinionModel(){
     Log().Get(logDEBUG) << "Creating basic minion model (triangle)";
@@ -24,9 +29,9 @@ void createBasicMinionModel(){
     std::vector<GLfloat> vertices;
     std::vector<GLfloat> colors;
     
-    vertices.push_back((GLfloat) -1.0); vertices.push_back((GLfloat) 1.0);
-    vertices.push_back((GLfloat) 1.0);  vertices.push_back((GLfloat) 1.0);
-    vertices.push_back((GLfloat) 0.0);  vertices.push_back((GLfloat) -1.0);
+    vertices.push_back((GLfloat) -1.0); vertices.push_back((GLfloat) 1.0);  vertices.push_back((GLfloat) 0.0);
+    vertices.push_back((GLfloat) 1.0);  vertices.push_back((GLfloat) 1.0);  vertices.push_back((GLfloat) 0.0);
+    vertices.push_back((GLfloat) 0.0);  vertices.push_back((GLfloat) -1.0); vertices.push_back((GLfloat) 0.0);
 
     colors.push_back((GLfloat) 0.0); colors.push_back((GLfloat) 0.2); colors.push_back((GLfloat) 0.0);
     colors.push_back((GLfloat) 0.0); colors.push_back((GLfloat) 0.2); colors.push_back((GLfloat) 0.0);
@@ -34,6 +39,24 @@ void createBasicMinionModel(){
     
     std::shared_ptr<Model> m = std::make_shared<ColorModel>(vertices, colors);
     Renderer::getInstance().addNewModel(SimConst::MINION_MODEL_NAME, m);
+}
+
+void createBasicMinionModelV2(){
+    Log().Get(logDEBUG) << "Creating basic minion model (triangle)";
+    
+    std::vector<GLfloat> vertices;
+    std::vector<GLfloat> colors;
+    
+    vertices.push_back((GLfloat) -1.0); vertices.push_back((GLfloat) 1.0);  vertices.push_back((GLfloat) 0.0);
+    vertices.push_back((GLfloat) 1.0);  vertices.push_back((GLfloat) 1.0);  vertices.push_back((GLfloat) 0.0);
+    vertices.push_back((GLfloat) 0.0);  vertices.push_back((GLfloat) -1.0); vertices.push_back((GLfloat) 0.0);
+
+    colors.push_back((GLfloat) 1.0); colors.push_back((GLfloat) 0.2); colors.push_back((GLfloat) 0.0);
+    colors.push_back((GLfloat) 1.0); colors.push_back((GLfloat) 0.2); colors.push_back((GLfloat) 0.0);
+    colors.push_back((GLfloat) 1.0); colors.push_back((GLfloat) 0.2); colors.push_back((GLfloat) 0.0);
+    
+    std::shared_ptr<Model> m = std::make_shared<ColorModel>(vertices, colors);
+    Renderer::getInstance().addNewModel(MINION2_NAME, m);
 }
 
 void init(){
@@ -78,22 +101,21 @@ void init(){
         Log().Get(logERROR) << "Failed to initialize GLEW library!";
         exit(1);
     }
+    
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
 
-    shaderProgram = std::make_unique<ProgramLoader>("resources/shaders/vertex_shaders/vertex_shader.glsl", "resources/shaders/fragment_shaders/fragment_shader.glsl");
-    glUseProgram(shaderProgram->getId()); // using single shading program for now...
+    std::shared_ptr<ProgramLoader> shaderProgram = std::make_shared<ProgramLoader>("resources/shaders/vertex_shaders/vertex_shader.glsl", "resources/shaders/fragment_shaders/fragment_shader.glsl");
+    Renderer &renderer = Renderer::getInstance();
+    renderer.addShaderProgram(WindowConst::DEFAULT_SHADER_NAME, shaderProgram);
+    renderer.activateShaderProgram(WindowConst::DEFAULT_SHADER_NAME);
 
     createBasicMinionModel();
+    createBasicMinionModelV2();
     
-    // Following code is temporary
-
-    GLfloat transMatrix[] = {10., 0., 0., 0., 10., 0., 0., 0., 1.};
-
-    GLuint programId = shaderProgram->getId();
-    glUniform1i(glGetUniformLocation(programId, "left"), -100);
-    glUniform1i(glGetUniformLocation(programId, "width"), 200);
-    glUniform1i(glGetUniformLocation(programId, "top"), -100);
-    glUniform1i(glGetUniformLocation(programId, "height"), 200);
-    glUniformMatrix3fv(glGetUniformLocation(programId, "transformMatrix"), 1, GL_FALSE, transMatrix);
+    renderer.setOrthoProjection(-WindowConst::WINDOW_WIDTH / 2.f, WindowConst::WINDOW_WIDTH / 2.f,
+                                        -WindowConst::WINDOW_HEIGHT / 2.f, WindowConst::WINDOW_HEIGHT / 2.f);
+    renderer.setCameraPosition(0, 0);
 }
 
 int main(int argc, char** argv) {
@@ -119,10 +141,16 @@ int main(int argc, char** argv) {
             }
         }
 
-        glClear(GL_COLOR_BUFFER_BIT);
-        Renderer::getInstance().getModel(SimConst::MINION_MODEL_NAME)->draw();
+        Renderer &renderer = Renderer::getInstance();
+        
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        renderer.identity();
+        renderer.scale(30, 30);
+        renderer.getModel(SimConst::MINION_MODEL_NAME)->draw();
+        
         SDL_GL_SwapWindow(Display::getInstance().window);
-
+        
         if(State::getInstance().getShouldEndProgram()){
             break;
         }
