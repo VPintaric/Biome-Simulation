@@ -11,6 +11,7 @@
 #include <GL/glm/glm.hpp>
 #include <GL/glm/gtc/type_ptr.hpp>
 #include <GL/glm/gtc/matrix_transform.hpp>
+#include <GL/glm/gtx/rotate_vector.hpp>
 
 #include "state/State.h"
 #include "state/Log.h"
@@ -20,8 +21,9 @@
 #include "rendering/Renderer.h"
 #include "constants/SimulationConstants.h"
 #include "rendering/ColorModel.h"
+#include "objects/Minion.h"
 
-std::string MINION2_NAME = "Minion 2";
+std::unique_ptr<Minion> minion;
 
 void createBasicMinionModel(){
     Log().Get(logDEBUG) << "Creating basic minion model (triangle)";
@@ -39,24 +41,6 @@ void createBasicMinionModel(){
     
     std::shared_ptr<Model> m = std::make_shared<ColorModel>(vertices, colors);
     Renderer::getInstance().addNewModel(SimConst::MINION_MODEL_NAME, m);
-}
-
-void createBasicMinionModelV2(){
-    Log().Get(logDEBUG) << "Creating basic minion model (triangle)";
-    
-    std::vector<GLfloat> vertices;
-    std::vector<GLfloat> colors;
-    
-    vertices.push_back((GLfloat) -1.0); vertices.push_back((GLfloat) 1.0);  vertices.push_back((GLfloat) 0.0);
-    vertices.push_back((GLfloat) 1.0);  vertices.push_back((GLfloat) 1.0);  vertices.push_back((GLfloat) 0.0);
-    vertices.push_back((GLfloat) 0.0);  vertices.push_back((GLfloat) -1.0); vertices.push_back((GLfloat) 0.0);
-
-    colors.push_back((GLfloat) 1.0); colors.push_back((GLfloat) 0.2); colors.push_back((GLfloat) 0.0);
-    colors.push_back((GLfloat) 1.0); colors.push_back((GLfloat) 0.2); colors.push_back((GLfloat) 0.0);
-    colors.push_back((GLfloat) 1.0); colors.push_back((GLfloat) 0.2); colors.push_back((GLfloat) 0.0);
-    
-    std::shared_ptr<Model> m = std::make_shared<ColorModel>(vertices, colors);
-    Renderer::getInstance().addNewModel(MINION2_NAME, m);
 }
 
 void init(){
@@ -111,11 +95,16 @@ void init(){
     renderer.activateShaderProgram(WindowConst::DEFAULT_SHADER_NAME);
 
     createBasicMinionModel();
-    createBasicMinionModelV2();
     
     renderer.setOrthoProjection(-WindowConst::WINDOW_WIDTH / 2.f, WindowConst::WINDOW_WIDTH / 2.f,
                                         -WindowConst::WINDOW_HEIGHT / 2.f, WindowConst::WINDOW_HEIGHT / 2.f);
     renderer.setCameraPosition(0, 0);
+    renderer.identity();
+    
+    minion = std::make_unique<Minion>(renderer.getModel(SimConst::MINION_MODEL_NAME));
+    minion->setPos(glm::vec2(10.f, 10.f));
+    minion->setAngle(0.f);
+    minion->setScale(10.f);
 }
 
 int main(int argc, char** argv) {
@@ -141,13 +130,9 @@ int main(int argc, char** argv) {
             }
         }
 
-        Renderer &renderer = Renderer::getInstance();
-        
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-        renderer.identity();
-        renderer.scale(30, 30);
-        renderer.getModel(SimConst::MINION_MODEL_NAME)->draw();
+        minion->setAngle(minion->getAngle() + 1.f);
+        minion->draw();
         
         SDL_GL_SwapWindow(Display::getInstance().window);
         
