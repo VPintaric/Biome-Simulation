@@ -1,4 +1,5 @@
 #include <vector>
+#include <GL/glew.h>
 
 #include "../state/Log.h"
 #include "ProgramLoader.h"
