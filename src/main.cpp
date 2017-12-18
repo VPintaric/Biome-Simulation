@@ -96,12 +96,12 @@ void init(){
 
     createBasicMinionModel();
     
-    renderer.setOrthoProjection(-WindowConst::WINDOW_WIDTH / 2.f, WindowConst::WINDOW_WIDTH / 2.f,
-                                        -WindowConst::WINDOW_HEIGHT / 2.f, WindowConst::WINDOW_HEIGHT / 2.f);
+    renderer.setOrthoProjection(-WindowConst::WINDOW_WIDTH / 2., WindowConst::WINDOW_WIDTH / 2.,
+                                        -WindowConst::WINDOW_HEIGHT / 2., WindowConst::WINDOW_HEIGHT / 2.);
     renderer.setCameraPosition(0, 0);
     renderer.identity();
     
-    State::getInstance().spawnMinions(100);
+    State::getInstance().spawnMinions(10);
 }
 
 int main(int argc, char** argv) {
@@ -129,8 +129,8 @@ int main(int argc, char** argv) {
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-        state.drawMinions();
+        state.update();
+        state.draw();
         
         SDL_GL_SwapWindow(Display::getInstance().window);
         

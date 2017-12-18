@@ -11,8 +11,8 @@
 
 class Renderer {
 public:
-    const float MAX_Z = 100.f;
-    const float MIN_Z = -100.f;
+    const float MAX_Z = 100.;
+    const float MIN_Z = -100.;
     
     enum class Matrix {
         PROJECTION, VIEW, MODEL
@@ -27,6 +27,7 @@ public:
     
     void addShaderProgram(std::string name, std::shared_ptr<ProgramLoader> shader);
     std::shared_ptr<ProgramLoader> getShaderProgram(std::string name);
+    std::shared_ptr<ProgramLoader> getActiveShaderProgram();
     void removeShaderProgram(std::string name);
     void activateShaderProgram(std::string name);
     
@@ -34,7 +35,7 @@ public:
     void popMatrix(Matrix t);
     
     void transform(float translX, float translY, float translZ, float rotAngle, float scaleX, float scaleY);
-    void translate(float x, float y, float z = 0.f);
+    void translate(float x, float y, float z = 0.);
     void rotate(float angle);
     void scale(float x, float y);
     void identity();

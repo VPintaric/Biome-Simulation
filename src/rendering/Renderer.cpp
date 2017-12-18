@@ -6,7 +6,6 @@
 
 #include "../state/Log.h"
 #include "Renderer.h"
-#include "../helpers/GLHelpers.h"
 
 Renderer& Renderer::getInstance(){
     static Renderer instance;
@@ -15,7 +14,7 @@ Renderer& Renderer::getInstance(){
 
 Renderer::Renderer() {
     Log().Get(logDEBUG) << "Creating an instance of renderer";
-    projection = view = model = glm::mat4(1.f);
+    projection = view = model = glm::mat4(1.);
 }
 
 Renderer::~Renderer() {
@@ -81,6 +80,11 @@ std::shared_ptr<ProgramLoader> Renderer::getShaderProgram(std::string name) {
     
     return iter->second;
 }
+
+std::shared_ptr<ProgramLoader> Renderer::getActiveShaderProgram() {
+    return activeShader;
+}
+
 
 void Renderer::removeShaderProgram(std::string name) {
     Log().Get(logDEBUG) << "Removing shader program with name \"" << name << "\"";
@@ -159,8 +163,8 @@ void Renderer::transform(float translX, float translY, float translZ, float rotA
         glm::scale(
             glm::rotate(
                 glm::translate(model, glm::vec3(-translX, -translY, translZ)), 
-                glm::radians(rotAngle), glm::vec3(0.f, 0.f, 1.f)),
-            glm::vec3(scaleX, scaleY, 1.f));
+                glm::radians(rotAngle), glm::vec3(0., 0., 1.)),
+            glm::vec3(scaleX, scaleY, 1.));
     
     updateShaderMatrix(Matrix::MODEL);
 }
@@ -171,17 +175,17 @@ void Renderer::translate(float x, float y, float z) {
 }
 
 void Renderer::rotate(float angle) {
-    model = glm::rotate(model, glm::radians(angle), glm::vec3(0.f, 0.f, 1.f));
+    model = glm::rotate(model, glm::radians(angle), glm::vec3(0., 0., 1.));
     updateShaderMatrix(Matrix::MODEL);
 }
 
 void Renderer::scale(float x, float y) {
-    model = glm::scale(model, glm::vec3(x, y, 1.f));
+    model = glm::scale(model, glm::vec3(x, y, 1.));
     updateShaderMatrix(Matrix::MODEL);
 }
 
 void Renderer::identity() {
-    model = glm::mat4(1.f);
+    model = glm::mat4(1.);
     updateShaderMatrix(Matrix::MODEL);
 }
 
@@ -192,7 +196,7 @@ void Renderer::setOrthoProjection(float left, float right, float bottom, float t
 }
 
 void Renderer::setCameraPosition(float x, float y) {
-    glm::vec3 pos = glm::vec3(x, y, -1.f);
+    glm::vec3 pos = glm::vec3(x, y, -1.);
     glm::vec3 poi = pos + cameraOrient;
     view = glm::lookAt(pos, poi, cameraUp);
     updateShaderMatrix(Matrix::VIEW);

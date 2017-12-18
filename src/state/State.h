@@ -2,6 +2,7 @@
 #define STATE_H
 
 #include <vector>
+#include <chrono>
 #include "../objects/Minion.h"
 
 class State {
@@ -10,12 +11,14 @@ public:
     virtual ~State();
 
     void spawnMinions(int n);
-    void drawMinions();
-    void updateMinions(float deltaT);
+    void draw();
+    void update();
     
     void endProgram();
     bool getShouldEndProgram() const;
 private:
+    std::chrono::high_resolution_clock::time_point lastUpdateTimePoint;
+    
     std::vector< std::shared_ptr<Minion> > minions;
     int nMinions;
     

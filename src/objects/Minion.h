@@ -9,11 +9,11 @@
 class Minion {
 public:
     Minion(std::shared_ptr<Model> m,
-            glm::vec2 p = glm::vec2(0.f, 0.f), 
-            float angle = 0.f,
-            glm::vec2 v = glm::vec2(0.f, 0.f),
-            glm::vec4 c = glm::vec4(1.f, 1.f, 1.f, 1.f),
-            float s = 1.f, float mass = 1.f);
+            glm::vec2 p = glm::vec2(0., 0.), 
+            float angle = 0.,
+            glm::vec2 v = glm::vec2(0., 0.),
+            glm::vec4 c = glm::vec4(1., 1., 1., 1.),
+            float s = 1., float mass = 1.);
     virtual ~Minion();
     
     void setPos(glm::vec2 p);
