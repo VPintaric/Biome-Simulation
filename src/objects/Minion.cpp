@@ -68,12 +68,24 @@ glm::vec2 Minion::getPos() const {
     return pos;
 }
 
+float Minion::getMaxLife() const {
+    return maxLife;
+}
+
+float Minion::getLife() const {
+    return life;
+}
+
+float Minion::getDecay() const {
+    return decay;
+}
+
 void Minion::setColor(glm::vec4 c) {
     color = c;
 }
 
 void Minion::setMass(float m) {
-    mass = m;
+    mass = Math::clamp(m, SimConst::MINION_MIN_MASS, SimConst::MINION_MAX_MASS);
 }
 
 void Minion::setModel(std::shared_ptr<Model> m) {
@@ -89,7 +101,19 @@ void Minion::setPos(glm::vec2 p) {
 }
 
 void Minion::setScale(float s) {
-    scale = s;
+    scale = Math::clamp(s, SimConst::MINION_MIN_SCALE, SimConst::MINION_MAX_SCALE);
+}
+
+void Minion::setMaxLife(float l) {
+    maxLife = l;
+}
+
+void Minion::setLife(float l) {
+    life = l;
+}
+
+void Minion::setDecay(float d) {
+    decay = d;
 }
 
 void Minion::setVelocity(glm::vec2 v) {

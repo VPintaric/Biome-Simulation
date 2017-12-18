@@ -101,10 +101,7 @@ void init(){
     renderer.setCameraPosition(0, 0);
     renderer.identity();
     
-    minion = std::make_unique<Minion>(renderer.getModel(SimConst::MINION_MODEL_NAME));
-    minion->setPos(glm::vec2(10.f, 10.f));
-    minion->setAngle(0.f);
-    minion->setScale(10.f);
+    State::getInstance().spawnMinions(100);
 }
 
 int main(int argc, char** argv) {
@@ -114,6 +111,7 @@ int main(int argc, char** argv) {
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Main loop
+    State &state = State::getInstance();
     while(true){
         SDL_Event event;
         while(SDL_PollEvent(&event)){
@@ -122,8 +120,8 @@ int main(int argc, char** argv) {
                     Log().Get(logINFO) << "Window resized to " << event.window.data1 << "x" << event.window.data2;
                 } else if(event.window.event == SDL_WINDOWEVENT_CLOSE){
                     Log().Get(logINFO) << "Window closed";
-                    State::getInstance().endProgram();
-                    if(State::getInstance().getShouldEndProgram()){
+                    state.endProgram();
+                    if(state.getShouldEndProgram()){
                         break;
                     }
                 }
@@ -131,12 +129,12 @@ int main(int argc, char** argv) {
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        minion->setAngle(minion->getAngle() + 1.f);
-        minion->draw();
+        
+        state.drawMinions();
         
         SDL_GL_SwapWindow(Display::getInstance().window);
         
-        if(State::getInstance().getShouldEndProgram()){
+        if(state.getShouldEndProgram()){
             break;
         }
     }

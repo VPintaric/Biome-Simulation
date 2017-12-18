@@ -23,6 +23,9 @@ public:
     void setScale(float s);
     void setMass(float m);
     void setModel(std::shared_ptr<Model> m);
+    void setMaxLife(float l);
+    void setLife(float l);
+    void setDecay(float d);
     
     glm::vec2 getPos() const;
     float getAngle() const;
@@ -31,6 +34,9 @@ public:
     float getScale() const;
     float getMass() const;
     std::shared_ptr<Model> getModel() const;
+    float getMaxLife() const;
+    float getLife() const;
+    float getDecay() const;
     
     void draw() const;
     void update(float deltaT);
@@ -42,6 +48,8 @@ private:
     float angle;
     glm::vec4 color;
     float scale, mass;
+    
+    float maxLife, life, decay;
 };
 
 #endif /* MINION_H */
