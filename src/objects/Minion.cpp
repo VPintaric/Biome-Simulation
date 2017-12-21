@@ -5,6 +5,7 @@
 #include "../helpers/MathHelpers.h"
 #include "../constants/SimulationConstants.h"
 #include "../rendering/Renderer.h"
+#include "../state/Log.h"
 
 #include <algorithm>
 #include <cmath>
@@ -16,13 +17,16 @@
 Minion::Minion(std::shared_ptr<Model> m,
         glm::vec2 p,
         float angle,
+        float angleAcc,
         glm::vec2 v,
+        float acc,
         glm::vec4 c,
         float s,
         float mass) :
-        model(m), pos(p), angle(angle), velocity(v), color(c), scale(s), mass(mass)
+        model(m), pos(p), angle(angle), velocity(v), color(c), scale(s), mass(mass),
+        acceleration(acc), angleAcc(angleAcc)
 {
-
+    collisionBounds = std::make_shared<CollisionCircle>(1.155f * s, pos);
 }
 
 Minion::~Minion() {
@@ -42,7 +46,11 @@ void Minion::draw() const {
 }
 
 void Minion::update(float deltaT) {
-    pos += velocity * deltaT;
+    setAngle(angle + deltaT * angleAcc);
+    
+    glm::vec2 orient = glm::rotate(glm::vec2(0.f, 1.f), glm::radians(angle));
+    setVelocity(velocity + deltaT * acceleration * orient);
+    setPos(pos + deltaT * velocity);
 }
 
 glm::vec4 Minion::getColor() const {
@@ -61,12 +69,20 @@ float Minion::getAngle() const {
     return angle;
 }
 
+float Minion::getAngleAcc() const {
+    return angleAcc;
+}
+
 float Minion::getScale() const {
     return scale;
 }
 
 glm::vec2 Minion::getVelocity() const {
     return velocity;
+}
+
+float Minion::getAcceleration() const {
+    return acceleration;
 }
 
 glm::vec2 Minion::getPos() const {
@@ -85,6 +101,10 @@ float Minion::getDecay() const {
     return decay;
 }
 
+std::shared_ptr<CollisionCircle> Minion::getCollBounds() const {
+    return collisionBounds;
+}
+
 void Minion::setColor(glm::vec4 c) {
     color = c;
 }
@@ -101,12 +121,18 @@ void Minion::setAngle(float a) {
     angle = a;
 }
 
+void Minion::setAngleAcc(float aAcc) {
+    angleAcc = Math::clamp(aAcc, SimConst::MINION_MIN_ANGLE_ACC, SimConst::MINION_MAX_ANGLE_ACC);
+}
+
 void Minion::setPos(glm::vec2 p) {
     pos = p;
+    collisionBounds->setPos(p);
 }
 
 void Minion::setScale(float s) {
     scale = Math::clamp(s, SimConst::MINION_MIN_SCALE, SimConst::MINION_MAX_SCALE);
+    collisionBounds->setRadius(1.155f * scale);
 }
 
 void Minion::setMaxLife(float l) {
@@ -128,4 +154,9 @@ void Minion::setVelocity(glm::vec2 v) {
     } else {
         velocity = v;
     }
+}
+
+void Minion::setAcceleration(float a) {
+//    acceleration = Math::clamp(a, SimConst::MINION_MIN_ACC, SimConst::MINION_MAX_ACC);
+    acceleration = a;
 }

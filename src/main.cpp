@@ -101,7 +101,7 @@ void init(){
     renderer.setCameraPosition(0, 0);
     renderer.identity();
     
-    State::getInstance().spawnMinions(10);
+    State::getInstance().spawnMinions(15);
 }
 
 int main(int argc, char** argv) {
