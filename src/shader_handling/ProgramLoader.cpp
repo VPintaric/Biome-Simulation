@@ -1,13 +1,13 @@
 #include <vector>
 #include <GL/glew.h>
+#include <memory>
 
 #include "../state/Log.h"
 #include "ProgramLoader.h"
-#include "ShaderLoader.h"
 
 ProgramLoader::ProgramLoader(std::string vertexShaderSourceFile, std::string fragmentShaderSourceFile) {
-    std::unique_ptr<ShaderLoader> vertexShader = std::make_unique<ShaderLoader>(GL_VERTEX_SHADER, vertexShaderSourceFile);
-    std::unique_ptr<ShaderLoader> fragmentShader = std::make_unique<ShaderLoader>(GL_FRAGMENT_SHADER, fragmentShaderSourceFile);
+    std::unique_ptr<ShaderLoader> vertexShader = std::unique_ptr<ShaderLoader>(new ShaderLoader(GL_VERTEX_SHADER, vertexShaderSourceFile));
+    std::unique_ptr<ShaderLoader> fragmentShader = std::unique_ptr<ShaderLoader>(new ShaderLoader(GL_FRAGMENT_SHADER, fragmentShaderSourceFile));
     
     if(!vertexShader->isUseable() || !fragmentShader->isUseable()){
         Log().Get(logWARNING) << "At least one of the given shader programs didn't compile successfully...";

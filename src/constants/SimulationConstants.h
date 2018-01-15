@@ -5,6 +5,8 @@
 
 namespace SimConst {
     const std::string MINION_MODEL_NAME = "minion_model";
+
+    const float UPDATE_DELTA = 1e-3;
     
     const float MINION_MAX_VELOCITY = 20.f;
     const float MINION_MIN_SCALE = 3.f;

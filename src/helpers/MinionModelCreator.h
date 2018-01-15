@@ -1,0 +1,10 @@
+#ifndef BIOME_SIMULATION_MINIONMODELCREATOR_H
+#define BIOME_SIMULATION_MINIONMODELCREATOR_H
+
+
+namespace MinionModelCreator {
+    void createMinionModel();
+};
+
+
+#endif //BIOME_SIMULATION_MINIONMODELCREATOR_H

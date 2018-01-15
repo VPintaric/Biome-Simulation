@@ -2,91 +2,51 @@
 
 #include <GL/glew.h>
 #include "Minion.h"
-#include "../helpers/MathHelpers.h"
-#include "../constants/SimulationConstants.h"
 #include "../rendering/Renderer.h"
 #include "../state/Log.h"
 
 #include <algorithm>
-#include <cmath>
 #include <GL/glm/gtc/quaternion.hpp>
 #include <GL/glm/gtx/quaternion.hpp>
 #include <GL/glm/gtx/vector_angle.hpp>
 #include <GL/glm/gtc/type_ptr.hpp>
 
-Minion::Minion(std::shared_ptr<Model> m,
-        glm::vec2 p,
-        float angle,
-        float angleAcc,
-        glm::vec2 v,
-        float acc,
-        glm::vec4 c,
-        float s,
-        float mass) :
-        model(m), pos(p), angle(angle), velocity(v), color(c), scale(s), mass(mass),
-        acceleration(acc), angleAcc(angleAcc)
+Minion::Minion(std::shared_ptr<Model> m) :
+        model(m)
 {
-    collisionBounds = std::make_shared<CollisionCircle>(1.155f * s, pos);
+
 }
 
 Minion::~Minion() {
 }
 
 void Minion::draw() const {
+    glm::vec2 pos = getPos();
+    float angle = getAngle();
+    float scale = getRadius();
+
     Renderer &r = Renderer::getInstance();
     
     GLuint shaderId = r.getActiveShaderProgram()->getId();
     glUniform4fv(glGetUniformLocation(shaderId, "color_mod"), 1, glm::value_ptr(color));
     
     r.pushMatrix(Renderer::Matrix::MODEL);
-    r.transform(pos.x, pos.y, 0., 
+    r.transform(pos.x, pos.y, 0.f,
             angle, scale, scale);
     model->draw();
     r.popMatrix(Renderer::Matrix::MODEL);
 }
 
 void Minion::update(float deltaT) {
-    setAngle(angle + deltaT * angleAcc);
-    
-    glm::vec2 orient = glm::rotate(glm::vec2(0.f, 1.f), glm::radians(angle));
-    setVelocity(velocity + deltaT * acceleration * orient);
-    setPos(pos + deltaT * velocity);
+    CircleObject::update(deltaT);
 }
 
 glm::vec4 Minion::getColor() const {
     return color;
 }
 
-float Minion::getMass() const {
-    return mass;
-}
-
 std::shared_ptr<Model> Minion::getModel() const {
     return model;
-}
-
-float Minion::getAngle() const {
-    return angle;
-}
-
-float Minion::getAngleAcc() const {
-    return angleAcc;
-}
-
-float Minion::getScale() const {
-    return scale;
-}
-
-glm::vec2 Minion::getVelocity() const {
-    return velocity;
-}
-
-float Minion::getAcceleration() const {
-    return acceleration;
-}
-
-glm::vec2 Minion::getPos() const {
-    return pos;
 }
 
 float Minion::getMaxLife() const {
@@ -101,38 +61,12 @@ float Minion::getDecay() const {
     return decay;
 }
 
-std::shared_ptr<CollisionCircle> Minion::getCollBounds() const {
-    return collisionBounds;
-}
-
 void Minion::setColor(glm::vec4 c) {
     color = c;
 }
 
-void Minion::setMass(float m) {
-    mass = Math::clamp(m, SimConst::MINION_MIN_MASS, SimConst::MINION_MAX_MASS);
-}
-
 void Minion::setModel(std::shared_ptr<Model> m) {
     model = m;
-}
-
-void Minion::setAngle(float a) {
-    angle = a;
-}
-
-void Minion::setAngleAcc(float aAcc) {
-    angleAcc = Math::clamp(aAcc, SimConst::MINION_MIN_ANGLE_ACC, SimConst::MINION_MAX_ANGLE_ACC);
-}
-
-void Minion::setPos(glm::vec2 p) {
-    pos = p;
-    collisionBounds->setPos(p);
-}
-
-void Minion::setScale(float s) {
-    scale = Math::clamp(s, SimConst::MINION_MIN_SCALE, SimConst::MINION_MAX_SCALE);
-    collisionBounds->setRadius(1.155f * scale);
 }
 
 void Minion::setMaxLife(float l) {
@@ -145,18 +79,4 @@ void Minion::setLife(float l) {
 
 void Minion::setDecay(float d) {
     decay = d;
-}
-
-void Minion::setVelocity(glm::vec2 v) {
-    float vLen = glm::length2(v);
-    if(vLen > std::pow(SimConst::MINION_MAX_VELOCITY, 2)){
-        velocity = SimConst::MINION_MAX_VELOCITY * glm::normalize(v);
-    } else {
-        velocity = v;
-    }
-}
-
-void Minion::setAcceleration(float a) {
-//    acceleration = Math::clamp(a, SimConst::MINION_MIN_ACC, SimConst::MINION_MAX_ACC);
-    acceleration = a;
 }

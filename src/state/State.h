@@ -13,14 +13,13 @@ public:
 
     void spawnMinions(int n);
     void draw();
-    void update();
+    void update(float dt);
     
     void endProgram();
     bool getShouldEndProgram() const;
 private:
     std::default_random_engine rng;
-    std::chrono::high_resolution_clock::time_point lastUpdateTimePoint;
-    
+
     std::vector< std::shared_ptr<Minion> > minions;
     int nMinions;
     

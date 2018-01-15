@@ -1,17 +1,13 @@
-#define GLM_FORCE_RADIANS
+#define GLM_FORCE_RADIANS // needed by GLM!
 
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
-#include <GL/glu.h>
 #include <iostream>
 #include <memory>
-#include <string>
 #include <vector>
 #include <GL/glm/glm.hpp>
 #include <GL/glm/gtc/type_ptr.hpp>
-#include <GL/glm/gtc/matrix_transform.hpp>
-#include <GL/glm/gtx/rotate_vector.hpp>
+#include <chrono>
 
 #include "state/State.h"
 #include "state/Log.h"
@@ -21,27 +17,7 @@
 #include "rendering/Renderer.h"
 #include "constants/SimulationConstants.h"
 #include "rendering/ColorModel.h"
-#include "objects/Minion.h"
-
-std::unique_ptr<Minion> minion;
-
-void createBasicMinionModel(){
-    Log().Get(logDEBUG) << "Creating basic minion model (triangle)";
-    
-    std::vector<GLfloat> vertices;
-    std::vector<GLfloat> colors;
-    
-    vertices.push_back((GLfloat) -1.0); vertices.push_back((GLfloat) 1.0);  vertices.push_back((GLfloat) 0.0);
-    vertices.push_back((GLfloat) 1.0);  vertices.push_back((GLfloat) 1.0);  vertices.push_back((GLfloat) 0.0);
-    vertices.push_back((GLfloat) 0.0);  vertices.push_back((GLfloat) -1.0); vertices.push_back((GLfloat) 0.0);
-
-    colors.push_back((GLfloat) 0.0); colors.push_back((GLfloat) 0.2); colors.push_back((GLfloat) 0.0);
-    colors.push_back((GLfloat) 0.0); colors.push_back((GLfloat) 0.2); colors.push_back((GLfloat) 0.0);
-    colors.push_back((GLfloat) 0.75); colors.push_back((GLfloat) 0.2); colors.push_back((GLfloat) 0.0);
-    
-    std::shared_ptr<Model> m = std::make_shared<ColorModel>(vertices, colors);
-    Renderer::getInstance().addNewModel(SimConst::MINION_MODEL_NAME, m);
-}
+#include "helpers/MinionModelCreator.h"
 
 void init(){
     Log::ReportingLevel() = logDEBUG;
@@ -94,17 +70,22 @@ void init(){
     renderer.addShaderProgram(WindowConst::DEFAULT_SHADER_NAME, shaderProgram);
     renderer.activateShaderProgram(WindowConst::DEFAULT_SHADER_NAME);
 
-    createBasicMinionModel();
+    MinionModelCreator::createMinionModel();
     
     renderer.setOrthoProjection(-WindowConst::WINDOW_WIDTH / 2., WindowConst::WINDOW_WIDTH / 2.,
                                         -WindowConst::WINDOW_HEIGHT / 2., WindowConst::WINDOW_HEIGHT / 2.);
     renderer.setCameraPosition(0, 0);
     renderer.identity();
     
-    State::getInstance().spawnMinions(15);
+    State::getInstance().spawnMinions(50);
 }
 
 int main(int argc, char** argv) {
+    using namespace std::chrono;
+
+    auto t1 = high_resolution_clock::now();
+    auto t2 = t1;
+
     init();
 
     glClearColor(0, 0, 0, 1);
@@ -128,8 +109,14 @@ int main(int argc, char** argv) {
             }
         }
 
+        t2 = high_resolution_clock::now();
+        duration<float> deltaT = t2 - t1;
+        t1 = high_resolution_clock::now();
+        int nUpdates = ((int) (deltaT.count() / SimConst::UPDATE_DELTA) + 1);
+        for(int i = 0;  i < nUpdates; i++){
+            state.update(SimConst::UPDATE_DELTA);
+        }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        state.update();
         state.draw();
         
         SDL_GL_SwapWindow(Display::getInstance().window);
