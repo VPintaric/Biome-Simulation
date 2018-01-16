@@ -35,17 +35,16 @@ bool State::getShouldEndProgram() const {
 }
 
 void State::spawnMinions(int n) {
-    std::uniform_real_distribution<float> posDistr((float) -WindowConst::WINDOW_HEIGHT / 2., (float) WindowConst::WINDOW_HEIGHT / 2.);
+    std::uniform_real_distribution<float> posDistr((float) -WindowConst::WINDOW_HEIGHT / 2.f, (float) WindowConst::WINDOW_HEIGHT / 2.f);
     std::uniform_real_distribution<float> colDistr(0.2f, 1.f);
     std::uniform_real_distribution<float> angleDistr(0.f, glm::pi<float>());
     std::normal_distribution<float> radiusDistr(20.f, 10.f);
     std::normal_distribution<float> massDistr(3.f, 1.f);
-    nMinions = n;
 
     Renderer &r = Renderer::getInstance();
 
 //    std::shared_ptr<Minion> minion = std::make_shared<Minion>();
-//    minion->setPos(glm::vec2(200.f, 0.f));
+//    minion->setPos(glm::vec2(-200.f, 0.f));
 //    minion->setColor(glm::vec4(colDistr(rng), colDistr(rng), colDistr(rng), 1.f));
 //    minion->setRadius(20.f);
 //    minion->setRMass(0.1f);
@@ -65,6 +64,7 @@ void State::spawnMinions(int n) {
 //    minion->setAngleAcc(0.f);
 //    minion->setAngle(0.f);
 //    minions.push_back(minion);
+
     for(int i = 0; i < n; i++){
         std::shared_ptr<Minion> minion = std::make_shared<Minion>();
         minion->setRadius(10.f);
@@ -80,10 +80,18 @@ void State::spawnMinions(int n) {
     }
 }
 
+void State::initBoundary(float r) {
+    boundary = std::make_shared<Boundary>();
+    boundary->setR2(r);
+    boundary->setPos(glm::vec2(0.f, 0.f));
+    boundary->setColor(glm::vec3(1.f, 0.f, 0.f));
+}
+
 void State::draw() {
     for(const std::shared_ptr<Minion> &m : minions){
         m->draw();
     }
+    boundary->draw();
 }
 
 void State::update(float dt) {
@@ -91,7 +99,7 @@ void State::update(float dt) {
     CollisionResponse cr = CollisionResponse::getInstance();
 
     std::normal_distribution<float> distrAngleAcc(0.f, 1.f);
-    std::normal_distribution<float> distrAcc(0.f, 20.f);
+    std::normal_distribution<float> distrAcc(0.f, 40.f);
     for (auto iter = minions.begin(); iter != minions.end(); iter++) {
         auto m = *iter;
 
@@ -102,12 +110,18 @@ void State::update(float dt) {
                 cr.doCollisionResponse(*m, *m2, ci);
             }
         }
+        auto ci = cd.checkCircleHollowCollision(*m, *boundary);
+        if(ci->isCollision){
+            cr.doCollisionResponse(*m, *boundary, ci);
+        }
 
         m->setAcceleration(glm::vec2(distrAcc(rng), distrAcc(rng)));
         m->setAngleAcc(distrAngleAcc(rng));
         
         m->update(dt);
     }
+
+    boundary->update(dt);
 
     Camera &c = Camera::getInstance();
     c.update(dt);

@@ -3,10 +3,8 @@
 #include <GL/glew.h>
 #include "Minion.h"
 #include "../rendering/Renderer.h"
-#include "../state/Log.h"
 #include "../constants/SimulationConstants.h"
 
-#include <algorithm>
 #include <GL/glm/gtc/quaternion.hpp>
 #include <GL/glm/gtx/quaternion.hpp>
 #include <GL/glm/gtx/vector_angle.hpp>

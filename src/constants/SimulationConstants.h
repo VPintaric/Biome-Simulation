@@ -6,6 +6,7 @@
 namespace SimConst {
     const std::string MINION_BODY_MODEL_NAME = "minion_body_model";
     const std::string MINION_CIRCLE_MODEL_NAME = "minion_circle_model";
+    const std::string HOLLOW_CIRCLE_MODEL_NAME = "hollow_circle_model";
 
     const float UPDATE_DELTA = 1e-3;
     

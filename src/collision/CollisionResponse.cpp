@@ -15,9 +15,9 @@ CollisionResponse& CollisionResponse::getInstance() {
     return instance;
 }
 
-void CollisionResponse::doCollisionResponse(CircleObject &a, CircleObject &b, std::shared_ptr<CollisionInfo> ci) {
+void CollisionResponse::doCollisionResponse(Object &a, Object &b, std::shared_ptr<CollisionInfo> ci) {
     const float REST_FACTOR = 0.1f;
-    const float FRICTION_FACTOR = 0.3f;
+    const float FRICTION_FACTOR = 1.f;
 
     if(!ci->isCollision){
         return;

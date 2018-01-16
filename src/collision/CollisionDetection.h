@@ -5,6 +5,7 @@
 #include <memory>
 #include "CollisionInfo.h"
 #include "../objects/CircleObject.h"
+#include "../objects/HollowCircleObject.h"
 
 class CollisionDetection {
 public:
@@ -12,6 +13,7 @@ public:
     ~CollisionDetection();
 
     std::shared_ptr<CollisionInfo> checkCircleCircleCollision(CircleObject &a, CircleObject &b);
+    std::shared_ptr<CollisionInfo> checkCircleHollowCollision(CircleObject &a, HollowCircleObject &b);
 
 private:
     CollisionDetection();

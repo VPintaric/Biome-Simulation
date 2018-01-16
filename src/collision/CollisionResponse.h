@@ -11,7 +11,7 @@ public:
     ~CollisionResponse();
     static CollisionResponse& getInstance();
 
-    void doCollisionResponse(CircleObject &a, CircleObject &b, std::shared_ptr<CollisionInfo> ci);
+    void doCollisionResponse(Object &a, Object &b, std::shared_ptr<CollisionInfo> ci);
 
 private:
     CollisionResponse();

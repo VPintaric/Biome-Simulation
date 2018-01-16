@@ -17,7 +17,7 @@
 #include "shader_handling/ProgramLoader.h"
 #include "rendering/Renderer.h"
 #include "constants/SimulationConstants.h"
-#include "helpers/MinionModelCreator.h"
+#include "helpers/ModelCreator.h"
 #include "rendering/Camera.h"
 
 void init(){
@@ -66,19 +66,24 @@ void init(){
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    std::shared_ptr<ProgramLoader> shaderProgram = std::make_shared<ProgramLoader>("resources/shaders/vertex_shaders/vertex_shader.glsl", "resources/shaders/fragment_shaders/fragment_shader.glsl");
+    std::shared_ptr<ProgramLoader> shaderProgram =
+            std::make_shared<ProgramLoader>("resources/shaders/vertex_shaders/vertex_shader.glsl",
+                                            "resources/shaders/fragment_shaders/fragment_shader.glsl");
+
     Renderer &renderer = Renderer::getInstance();
     renderer.addShaderProgram(WindowConst::DEFAULT_SHADER_NAME, shaderProgram);
     renderer.activateShaderProgram(WindowConst::DEFAULT_SHADER_NAME);
 
-    MinionModelCreator::createMinionModel();
+    ModelCreator::createModels();
 
     renderer.setPerspectiveProjection(glm::pi<float>() / 3.f,
                                       (float)WindowConst::WINDOW_WIDTH / WindowConst::WINDOW_HEIGHT, 0.01f);
     Camera::getInstance().setPos(WindowConst::INIT_CAMERA_POS);
     renderer.identity();
 
-    State::getInstance().spawnMinions(50);
+    State &s = State::getInstance();
+    s.spawnMinions(50);
+    s.initBoundary(450.f);
 }
 
 void windowResize(int w, int h){
