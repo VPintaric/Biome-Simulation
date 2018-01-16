@@ -36,17 +36,31 @@ bool State::getShouldEndProgram() const {
 void State::spawnMinions(int n) {
     std::uniform_real_distribution<float> posDistr((float) -WindowConst::WINDOW_HEIGHT / 2., (float) WindowConst::WINDOW_HEIGHT / 2.);
     std::uniform_real_distribution<float> colDistr(0.2f, 1.f);
-    std::uniform_real_distribution<float> angleDistr(0.f, 360.f);
+    std::uniform_real_distribution<float> angleDistr(0.f, glm::pi<float>());
+    std::normal_distribution<float> radiusDistr(20.f, 10.f);
+    std::normal_distribution<float> massDistr(3.f, 1.f);
     nMinions = n;
 
     Renderer &r = Renderer::getInstance();
 
 //    std::shared_ptr<Minion> minion = std::make_shared<Minion>();
-//    minion->setPos(glm::vec2(0.f, 0.f));
+//    minion->setPos(glm::vec2(200.f, 0.f));
 //    minion->setColor(glm::vec4(colDistr(rng), colDistr(rng), colDistr(rng), 1.f));
-//    minion->setRadius(100.f);
-//    minion->setRMass(1.f);
-//    minion->setVelocity(glm::vec2(10.f, 10.f));
+//    minion->setRadius(20.f);
+//    minion->setRMass(0.1f);
+//    minion->setVelocity(glm::vec2(-50.f, 10.f));
+//    minion->setAngleVel(1.f);
+//    minion->setAngleAcc(0.f);
+//    minion->setAngle(0.f);
+//    minions.push_back(minion);
+//
+//    minion = std::make_shared<Minion>();
+//    minion->setPos(glm::vec2(-200.f, 0.f));
+//    minion->setColor(glm::vec4(colDistr(rng), colDistr(rng), colDistr(rng), 1.f));
+//    minion->setRadius(20.f);
+//    minion->setRMass(0.1f);
+//    minion->setVelocity(glm::vec2(50.f, 10.f));
+//    minion->setAngleVel(1.f);
 //    minion->setAngleAcc(0.f);
 //    minion->setAngle(0.f);
 //    minions.push_back(minion);
@@ -56,6 +70,10 @@ void State::spawnMinions(int n) {
         minion->setPos(glm::vec2(posDistr(rng), posDistr(rng)));
         minion->setColor(glm::vec4(colDistr(rng), colDistr(rng), colDistr(rng), 1.f));
         minion->setAngle(angleDistr(rng));
+        minion->setRadius(radiusDistr(rng));
+        minion->setRMass(massDistr(rng));
+        minion->setAngleVel(0.f);
+        minion->setAngleAcc(0.f);
         minion->setRMass(1.f);
         minions.push_back(minion);
     }
@@ -71,7 +89,7 @@ void State::update(float dt) {
     CollisionDetection cd = CollisionDetection::getInstance();
     CollisionResponse cr = CollisionResponse::getInstance();
 
-    std::normal_distribution<float> distrAngleAcc(0.f, 200.f);
+    std::normal_distribution<float> distrAngleAcc(0.f, 1.f);
     std::normal_distribution<float> distrAcc(0.f, 20.f);
     for (auto iter = minions.begin(); iter != minions.end(); iter++) {
         auto m = *iter;

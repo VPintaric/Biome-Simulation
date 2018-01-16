@@ -1,6 +1,7 @@
 #define GLM_FORCE_RADIANS // needed by GLM!
 
 #include <GL/glew.h>
+
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <memory>
@@ -8,8 +9,8 @@
 #include <GL/glm/glm.hpp>
 #include <GL/glm/gtc/type_ptr.hpp>
 #include <chrono>
-
 #include "state/State.h"
+
 #include "state/Log.h"
 #include "constants/WindowConstants.h"
 #include "state/Display.h"
@@ -18,7 +19,6 @@
 #include "constants/SimulationConstants.h"
 #include "rendering/ColorModel.h"
 #include "helpers/MinionModelCreator.h"
-
 void init(){
     Log::ReportingLevel() = logDEBUG;
 
@@ -61,7 +61,7 @@ void init(){
         Log().Get(logERROR) << "Failed to initialize GLEW library!";
         exit(1);
     }
-    
+
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
@@ -71,13 +71,43 @@ void init(){
     renderer.activateShaderProgram(WindowConst::DEFAULT_SHADER_NAME);
 
     MinionModelCreator::createMinionModel();
-    
-    renderer.setOrthoProjection(-WindowConst::WINDOW_WIDTH / 2., WindowConst::WINDOW_WIDTH / 2.,
-                                        -WindowConst::WINDOW_HEIGHT / 2., WindowConst::WINDOW_HEIGHT / 2.);
+
+    renderer.setOrthoProjection(-WindowConst::WINDOW_WIDTH / 2.f, WindowConst::WINDOW_WIDTH / 2.f,
+                                        -WindowConst::WINDOW_HEIGHT / 2.f, WindowConst::WINDOW_HEIGHT / 2.f);
     renderer.setCameraPosition(0, 0);
     renderer.identity();
-    
+
     State::getInstance().spawnMinions(50);
+}
+
+void windowResize(int w, int h){
+    Renderer &r = Renderer::getInstance();
+
+    // doesn't work for some reason...
+    r.setOrthoProjection(-w / 2.f, w / 2.f, -h / 2.f, h / 2.f);
+}
+
+void processInput(State &state) {
+    SDL_Event event{};
+
+    while(SDL_PollEvent(&event)){
+        if(event.type == SDL_WINDOWEVENT) {
+            if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+                Log().Get(logINFO) << "Window resized to " << event.window.data1 << "x" << event.window.data2;
+                windowResize(event.window.data1, event.window.data2);
+            } else if (event.window.event == SDL_WINDOWEVENT_CLOSE) {
+                Log().Get(logINFO) << "Window closed";
+                state.endProgram();
+                if (state.getShouldEndProgram()) {
+                    break;
+                }
+            }
+        } else if(event.type == SDL_KEYDOWN) {
+            if(event.key.keysym.sym == SDLK_w){
+                // TODO
+            }
+        }
+    }
 }
 
 int main(int argc, char** argv) {
@@ -94,33 +124,20 @@ int main(int argc, char** argv) {
     // Main loop
     State &state = State::getInstance();
     while(true){
-        SDL_Event event{};
-        while(SDL_PollEvent(&event)){
-            if(event.type == SDL_WINDOWEVENT){
-                if(event.window.event == SDL_WINDOWEVENT_RESIZED){
-                    Log().Get(logINFO) << "Window resized to " << event.window.data1 << "x" << event.window.data2;
-                } else if(event.window.event == SDL_WINDOWEVENT_CLOSE){
-                    Log().Get(logINFO) << "Window closed";
-                    state.endProgram();
-                    if(state.getShouldEndProgram()){
-                        break;
-                    }
-                }
-            }
-        }
 
         t2 = high_resolution_clock::now();
         duration<float> deltaT = t2 - t1;
         t1 = high_resolution_clock::now();
         int nUpdates = ((int) (deltaT.count() / SimConst::UPDATE_DELTA) + 1);
         for(int i = 0;  i < nUpdates; i++){
+            processInput(state);
             state.update(SimConst::UPDATE_DELTA);
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         state.draw();
-        
+
         SDL_GL_SwapWindow(Display::getInstance().window);
-        
+
         if(state.getShouldEndProgram()){
             break;
         }

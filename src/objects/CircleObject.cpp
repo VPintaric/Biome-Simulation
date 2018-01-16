@@ -4,9 +4,10 @@
 #include "CircleObject.h"
 
 void CircleObject::update(float deltaT) {
-    setAngle(angle + deltaT * angleAcc);
+    setAngleVel(angleVel + deltaT * angleAcc);
+    setAngle(angle + deltaT * angleVel);
 
-    glm::vec2 orient = glm::rotate(glm::vec2(0.f, 1.f), glm::radians(angle));
+    glm::vec2 orient = glm::rotate(glm::vec2(0.f, 1.f), angle);
     setVelocity(velocity + deltaT * acceleration);
     setPos(pos + deltaT * velocity);
 }
@@ -57,6 +58,7 @@ float CircleObject::getRMass() const {
 
 void CircleObject::setRMass(float mass) {
     CircleObject::rMass = mass;
+    CircleObject::rInertia = (2 * rMass) / (radius * radius);
 }
 
 glm::vec2 CircleObject::getAcceleration() const {
@@ -65,4 +67,16 @@ glm::vec2 CircleObject::getAcceleration() const {
 
 void CircleObject::setAcceleration(const glm::vec2 &acceleration) {
     CircleObject::acceleration = acceleration;
+}
+
+float CircleObject::getAngleVel() const {
+    return angleVel;
+}
+
+void CircleObject::setAngleVel(float angleVel) {
+    CircleObject::angleVel = angleVel;
+}
+
+float CircleObject::getRInertia() const {
+    return rInertia;
 }

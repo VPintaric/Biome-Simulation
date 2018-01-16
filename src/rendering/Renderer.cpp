@@ -163,7 +163,7 @@ void Renderer::transform(float translX, float translY, float translZ, float rotA
         glm::scale(
             glm::rotate(
                 glm::translate(model, glm::vec3(-translX, -translY, translZ)), 
-                glm::radians(rotAngle), glm::vec3(0., 0., 1.)),
+                rotAngle, glm::vec3(0., 0., 1.)),
             glm::vec3(scaleX, scaleY, 1.));
     
     updateShaderMatrix(Matrix::MODEL);
@@ -175,7 +175,7 @@ void Renderer::translate(float x, float y, float z) {
 }
 
 void Renderer::rotate(float angle) {
-    model = glm::rotate(model, glm::radians(angle), glm::vec3(0., 0., 1.));
+    model = glm::rotate(model, angle, glm::vec3(0., 0., 1.));
     updateShaderMatrix(Matrix::MODEL);
 }
 

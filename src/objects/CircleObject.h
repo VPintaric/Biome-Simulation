@@ -36,9 +36,15 @@ public:
 
     void setAcceleration(const glm::vec2 &acceleration);
 
+    float getAngleVel() const;
+
+    void setAngleVel(float angleVel);
+
+    float getRInertia() const;
+
 private:
     glm::vec2 pos, velocity, acceleration;
-    float radius, angle, angleAcc, rMass;
+    float radius, angle, angleVel, angleAcc, rMass, rInertia;
 };
 
 
