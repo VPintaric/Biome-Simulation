@@ -45,6 +45,7 @@ public:
     
 private:
     Renderer();
+
     void updateShaderMatrix(Matrix t);
     void updateAllShaderMatrices();
     

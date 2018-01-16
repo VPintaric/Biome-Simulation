@@ -94,7 +94,7 @@ int main(int argc, char** argv) {
     // Main loop
     State &state = State::getInstance();
     while(true){
-        SDL_Event event;
+        SDL_Event event{};
         while(SDL_PollEvent(&event)){
             if(event.type == SDL_WINDOWEVENT){
                 if(event.window.event == SDL_WINDOWEVENT_RESIZED){

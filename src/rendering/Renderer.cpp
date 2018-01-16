@@ -14,7 +14,7 @@ Renderer& Renderer::getInstance(){
 
 Renderer::Renderer() {
     Log().Get(logDEBUG) << "Creating an instance of renderer";
-    projection = view = model = glm::mat4(1.);
+    projection = view = model = glm::mat4(1.f);
 }
 
 Renderer::~Renderer() {
@@ -23,18 +23,18 @@ Renderer::~Renderer() {
 
 void Renderer::addNewModel(std::string name, std::shared_ptr<Model> model) {
     Log().Get(logDEBUG) << "Adding new model with name: \"" << name << "\" to models container";
-    
-    std::map<std::string, std::shared_ptr<Model> >::iterator iter = models.find(name);
+
+    auto iter = models.find(name);
     if(iter != models.end()){
         Log().Get(logWARNING) << "Model with name \"" << name << "\" already exists";
         return;
     }
     
-    models.insert(std::pair<std::string, std::shared_ptr<Model> >(name, model));
+    models.insert(std::make_pair(name, model));
 }
 
 std::shared_ptr<Model> Renderer::getModel(std::string name) {
-    std::map<std::string, std::shared_ptr<Model> >::iterator iter = models.find(name);
+    auto iter = models.find(name);
     
     if(iter == models.end()){
         Log().Get(logWARNING) << "Model with name \"" << name << "\" does not exist, returning null";
@@ -46,8 +46,8 @@ std::shared_ptr<Model> Renderer::getModel(std::string name) {
 
 void Renderer::removeModel(std::string name) {
     Log().Get(logDEBUG) << "Removing model with name \"" << name << "\"";
-    
-    std::map<std::string, std::shared_ptr<Model> >::iterator iter = models.find(name);
+
+    auto iter = models.find(name);
     
     if(iter == models.end()){
         Log().Get(logWARNING) << "Model with name \"" << name << "\" does not exist";
@@ -59,8 +59,8 @@ void Renderer::removeModel(std::string name) {
 
 void Renderer::addShaderProgram(std::string name, std::shared_ptr<ProgramLoader> shader) {
     Log().Get(logDEBUG) << "Adding shader program to renderer: \"" << name << "\"";
-    
-    std::map<std::string, std::shared_ptr<ProgramLoader> >::iterator iter = shaderPrograms.find(name);
+
+    auto iter = shaderPrograms.find(name);
     
     if(iter != shaderPrograms.end()){
         Log().Get(logWARNING) << "Shader program with name \"" << name << "\" already exists";
@@ -71,7 +71,7 @@ void Renderer::addShaderProgram(std::string name, std::shared_ptr<ProgramLoader>
 }
 
 std::shared_ptr<ProgramLoader> Renderer::getShaderProgram(std::string name) {
-    std::map<std::string, std::shared_ptr<ProgramLoader> >::iterator iter = shaderPrograms.find(name);
+    auto iter = shaderPrograms.find(name);
     
     if(iter == shaderPrograms.end()){
         Log().Get(logWARNING) << "Shader program with name \"" << name << "\" does not exist, returning null";
@@ -88,8 +88,8 @@ std::shared_ptr<ProgramLoader> Renderer::getActiveShaderProgram() {
 
 void Renderer::removeShaderProgram(std::string name) {
     Log().Get(logDEBUG) << "Removing shader program with name \"" << name << "\"";
-    
-    std::map<std::string, std::shared_ptr<ProgramLoader> >::iterator iter = shaderPrograms.find(name);
+
+    auto iter = shaderPrograms.find(name);
     
     if(iter == shaderPrograms.end()){
         Log().Get(logWARNING) << "Shader program with name \"" << name << "\" does not exist";
@@ -185,7 +185,7 @@ void Renderer::scale(float x, float y) {
 }
 
 void Renderer::identity() {
-    model = glm::mat4(1.);
+    model = glm::mat4(1.f);
     updateShaderMatrix(Matrix::MODEL);
 }
 

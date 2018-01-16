@@ -41,8 +41,17 @@ void State::spawnMinions(int n) {
 
     Renderer &r = Renderer::getInstance();
 
+//    std::shared_ptr<Minion> minion = std::make_shared<Minion>();
+//    minion->setPos(glm::vec2(0.f, 0.f));
+//    minion->setColor(glm::vec4(colDistr(rng), colDistr(rng), colDistr(rng), 1.f));
+//    minion->setRadius(100.f);
+//    minion->setRMass(1.f);
+//    minion->setVelocity(glm::vec2(10.f, 10.f));
+//    minion->setAngleAcc(0.f);
+//    minion->setAngle(0.f);
+//    minions.push_back(minion);
     for(int i = 0; i < n; i++){
-        std::shared_ptr<Minion> minion = std::make_shared<Minion>(r.getModel(SimConst::MINION_MODEL_NAME));
+        std::shared_ptr<Minion> minion = std::make_shared<Minion>();
         minion->setRadius(10.f);
         minion->setPos(glm::vec2(posDistr(rng), posDistr(rng)));
         minion->setColor(glm::vec4(colDistr(rng), colDistr(rng), colDistr(rng), 1.f));
@@ -63,7 +72,7 @@ void State::update(float dt) {
     CollisionResponse cr = CollisionResponse::getInstance();
 
     std::normal_distribution<float> distrAngleAcc(0.f, 200.f);
-    std::normal_distribution<float> distrAcc(0.f, 10.f);
+    std::normal_distribution<float> distrAcc(0.f, 20.f);
     for (auto iter = minions.begin(); iter != minions.end(); iter++) {
         auto m = *iter;
 
@@ -71,7 +80,6 @@ void State::update(float dt) {
             auto m2 = *iter2;
             auto ci = cd.checkCircleCircleCollision(*m, *m2);
             if(ci->isCollision){
-                Log().Get(logINFO) << "Got collision!";
                 cr.doCollisionResponse(*m, *m2, ci);
             }
         }

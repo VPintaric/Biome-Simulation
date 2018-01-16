@@ -9,26 +9,24 @@
 
 class Minion : public CircleObject{
 public:
-    Minion(std::shared_ptr<Model> m);
+    Minion();
     virtual ~Minion();
     
     void setColor(glm::vec4 c);
-    void setModel(std::shared_ptr<Model> m);
     void setMaxLife(float l);
     void setLife(float l);
     void setDecay(float d);
     
     glm::vec4 getColor() const;
-    std::shared_ptr<Model> getModel() const;
     float getMaxLife() const;
     float getLife() const;
     float getDecay() const;
 
     void draw() const;
-    void update(float deltaT);
+    void update(float deltaT) override;
     
 private:
-    std::shared_ptr<Model> model;
+    std::shared_ptr<Model> bodyModel, circleModel;
 
     glm::vec4 color;
     float maxLife, life, decay;
