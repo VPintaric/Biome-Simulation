@@ -9,6 +9,7 @@
 #include "../collision/CollisionInfo.h"
 #include "../collision/CollisionDetection.h"
 #include "../collision/CollisionResponse.h"
+#include "../rendering/Camera.h"
 
 State& State::getInstance() {
     static State instance;
@@ -107,4 +108,7 @@ void State::update(float dt) {
         
         m->update(dt);
     }
+
+    Camera &c = Camera::getInstance();
+    c.update(dt);
 }

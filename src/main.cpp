@@ -17,8 +17,9 @@
 #include "shader_handling/ProgramLoader.h"
 #include "rendering/Renderer.h"
 #include "constants/SimulationConstants.h"
-#include "rendering/ColorModel.h"
 #include "helpers/MinionModelCreator.h"
+#include "rendering/Camera.h"
+
 void init(){
     Log::ReportingLevel() = logDEBUG;
 
@@ -72,9 +73,9 @@ void init(){
 
     MinionModelCreator::createMinionModel();
 
-    renderer.setOrthoProjection(-WindowConst::WINDOW_WIDTH / 2.f, WindowConst::WINDOW_WIDTH / 2.f,
-                                        -WindowConst::WINDOW_HEIGHT / 2.f, WindowConst::WINDOW_HEIGHT / 2.f);
-    renderer.setCameraPosition(0, 0);
+    renderer.setPerspectiveProjection(glm::pi<float>() / 3.f,
+                                      (float)WindowConst::WINDOW_WIDTH / WindowConst::WINDOW_HEIGHT, 0.01f);
+    Camera::getInstance().setPos(WindowConst::INIT_CAMERA_POS);
     renderer.identity();
 
     State::getInstance().spawnMinions(50);
@@ -83,13 +84,14 @@ void init(){
 void windowResize(int w, int h){
     Renderer &r = Renderer::getInstance();
 
-    // doesn't work for some reason...
-    r.setOrthoProjection(-w / 2.f, w / 2.f, -h / 2.f, h / 2.f);
+    // doesn't work correctly for some reason...
+    r.setPerspectiveProjection(glm::pi<float>() / 3.f, (float) w / h, 0.01f);
 }
 
 void processInput(State &state) {
     SDL_Event event{};
 
+    Camera &c = Camera::getInstance();
     while(SDL_PollEvent(&event)){
         if(event.type == SDL_WINDOWEVENT) {
             if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
@@ -102,9 +104,51 @@ void processInput(State &state) {
                     break;
                 }
             }
-        } else if(event.type == SDL_KEYDOWN) {
-            if(event.key.keysym.sym == SDLK_w){
-                // TODO
+        } else if(event.type == SDL_KEYDOWN && event.key.repeat == 0) {
+            switch(event.key.keysym.sym){
+                case SDLK_w:
+                    c.startMoveInDirection(Camera::UP);
+                    break;
+                case SDLK_s:
+                    c.startMoveInDirection(Camera::DOWN);
+                    break;
+                case SDLK_a:
+                    c.startMoveInDirection(Camera::LEFT);
+                    break;
+                case SDLK_d:
+                    c.startMoveInDirection(Camera::RIGHT);
+                    break;
+                case SDLK_q:
+                    c.startMoveInDirection(Camera::OUT);
+                    break;
+                case SDLK_e:
+                    c.startMoveInDirection(Camera::IN);
+                    break;
+                default:
+                    break;
+            }
+        } else if(event.type == SDL_KEYUP){
+            switch(event.key.keysym.sym){
+                case SDLK_w:
+                    c.stopMoveInDirection(Camera::UP);
+                    break;
+                case SDLK_s:
+                    c.stopMoveInDirection(Camera::DOWN);
+                    break;
+                case SDLK_a:
+                    c.stopMoveInDirection(Camera::LEFT);
+                    break;
+                case SDLK_d:
+                    c.stopMoveInDirection(Camera::RIGHT);
+                    break;
+                case SDLK_q:
+                    c.stopMoveInDirection(Camera::OUT);
+                    break;
+                case SDLK_e:
+                    c.stopMoveInDirection(Camera::IN);
+                    break;
+                default:
+                    break;
             }
         }
     }

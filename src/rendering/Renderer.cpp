@@ -195,8 +195,13 @@ void Renderer::setOrthoProjection(float left, float right, float bottom, float t
     updateShaderMatrix(Matrix::PROJECTION);
 }
 
-void Renderer::setCameraPosition(float x, float y) {
-    glm::vec3 pos = glm::vec3(x, y, -1.);
+void Renderer::setPerspectiveProjection(float fovy, float aspect, float near) {
+    projection = glm::infinitePerspective(fovy, aspect, near);
+    updateShaderMatrix(Matrix::PROJECTION);
+}
+
+void Renderer::setCameraPosition(float x, float y, float z) {
+    glm::vec3 pos = glm::vec3(x, y, z);
     glm::vec3 poi = pos + cameraOrient;
     view = glm::lookAt(pos, poi, cameraUp);
     updateShaderMatrix(Matrix::VIEW);

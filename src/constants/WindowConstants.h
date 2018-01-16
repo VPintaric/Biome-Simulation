@@ -10,6 +10,8 @@ namespace WindowConst{
     const int WINDOW_HEIGHT = 512;
     
     const std::string DEFAULT_SHADER_NAME = "default_shader";
+
+    const glm::vec3 INIT_CAMERA_POS(0.f, 0.f, -500.f);
 }
 
 #endif /* WINDOWCONSTANTS_H */

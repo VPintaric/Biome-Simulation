@@ -12,8 +12,8 @@
 
 class Renderer {
 public:
-    const float MAX_Z = 100.;
-    const float MIN_Z = -100.;
+    const float MAX_Z = 100.f;
+    const float MIN_Z = -100.f;
     
     enum class Matrix {
         PROJECTION, VIEW, MODEL
@@ -36,12 +36,13 @@ public:
     void popMatrix(Matrix t);
     
     void transform(float translX, float translY, float translZ, float rotAngle, float scaleX, float scaleY);
-    void translate(float x, float y, float z = 0.);
+    void translate(float x, float y, float z = 0.f);
     void rotate(float angle);
     void scale(float x, float y);
     void identity();
     void setOrthoProjection(float left, float right, float bottom, float top);
-    void setCameraPosition(float x, float y);
+    void setPerspectiveProjection(float fovy, float aspect, float near);
+    void setCameraPosition(float x, float y, float z = -1.f);
     
 private:
     Renderer();
