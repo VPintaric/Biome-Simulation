@@ -19,6 +19,7 @@ State& State::getInstance() {
 State::State() {
     Log().Get(logDEBUG) << "Creating new state instance";
     shouldEndProgramFlag = false;
+    rng.seed(static_cast<unsigned long>(std::chrono::system_clock::now().time_since_epoch().count()));
     Log().Get(logDEBUG) << "Created new state instance";
 }
 
@@ -38,14 +39,14 @@ void State::spawnMinions(int n) {
     std::uniform_real_distribution<float> posDistr((float) -WindowConst::WINDOW_HEIGHT / 2.f, (float) WindowConst::WINDOW_HEIGHT / 2.f);
     std::uniform_real_distribution<float> colDistr(0.2f, 1.f);
     std::uniform_real_distribution<float> angleDistr(0.f, glm::pi<float>());
-    std::normal_distribution<float> radiusDistr(20.f, 10.f);
-    std::normal_distribution<float> massDistr(3.f, 1.f);
+    std::normal_distribution<float> radiusDistr(20.f, 5.f);
+    std::normal_distribution<float> massDistr(1.f, 0.5f);
 
     Renderer &r = Renderer::getInstance();
 
 //    std::shared_ptr<Minion> minion = std::make_shared<Minion>();
 //    minion->setPos(glm::vec2(-200.f, 0.f));
-//    minion->setColor(glm::vec4(colDistr(rng), colDistr(rng), colDistr(rng), 1.f));
+//    minion->setSkinColor(glm::vec4(colDistr(rng), colDistr(rng), colDistr(rng), 1.f));
 //    minion->setRadius(20.f);
 //    minion->setRMass(0.1f);
 //    minion->setVelocity(glm::vec2(-50.f, 10.f));
@@ -56,7 +57,7 @@ void State::spawnMinions(int n) {
 //
 //    minion = std::make_shared<Minion>();
 //    minion->setPos(glm::vec2(-200.f, 0.f));
-//    minion->setColor(glm::vec4(colDistr(rng), colDistr(rng), colDistr(rng), 1.f));
+//    minion->setSkinColor(glm::vec4(colDistr(rng), colDistr(rng), colDistr(rng), 1.f));
 //    minion->setRadius(20.f);
 //    minion->setRMass(0.1f);
 //    minion->setVelocity(glm::vec2(50.f, 10.f));
@@ -69,13 +70,16 @@ void State::spawnMinions(int n) {
         std::shared_ptr<Minion> minion = std::make_shared<Minion>();
         minion->setRadius(10.f);
         minion->setPos(glm::vec2(posDistr(rng), posDistr(rng)));
-        minion->setColor(glm::vec4(colDistr(rng), colDistr(rng), colDistr(rng), 1.f));
+        minion->setSkinColor(glm::vec4(colDistr(rng), colDistr(rng), colDistr(rng), 1.f));
         minion->setAngle(angleDistr(rng));
         minion->setRadius(radiusDistr(rng));
-        minion->setRMass(massDistr(rng));
+        minion->setRMass(10.f / (minion->getRadius() + massDistr(rng)));
         minion->setAngleVel(0.f);
         minion->setAngleAcc(0.f);
-        minion->setRMass(1.f);
+        minion->setDecay(5.f);
+        minion->setMaxLife(100.f);
+        minion->setLife(100.f);
+
         minions.push_back(minion);
     }
 }
@@ -98,8 +102,6 @@ void State::update(float dt) {
     CollisionDetection cd = CollisionDetection::getInstance();
     CollisionResponse cr = CollisionResponse::getInstance();
 
-    std::normal_distribution<float> distrAngleAcc(0.f, 1.f);
-    std::normal_distribution<float> distrAcc(0.f, 40.f);
     for (auto iter = minions.begin(); iter != minions.end(); iter++) {
         auto m = *iter;
 
@@ -115,9 +117,6 @@ void State::update(float dt) {
             cr.doCollisionResponse(*m, *boundary, ci);
         }
 
-        m->setAcceleration(glm::vec2(distrAcc(rng), distrAcc(rng)));
-        m->setAngleAcc(distrAngleAcc(rng));
-        
         m->update(dt);
     }
 
@@ -125,4 +124,8 @@ void State::update(float dt) {
 
     Camera &c = Camera::getInstance();
     c.update(dt);
+}
+
+std::reference_wrapper< std::default_random_engine > State::getRng(){
+    return std::ref(rng);
 }

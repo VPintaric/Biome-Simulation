@@ -12,24 +12,31 @@ public:
     Minion();
     virtual ~Minion();
     
-    void setColor(glm::vec4 c);
+    void setSkinColor(glm::vec4 c);
     void setMaxLife(float l);
     void setLife(float l);
     void setDecay(float d);
     
-    glm::vec4 getColor() const;
+    glm::vec4 getSkinColor() const;
+    glm::vec4 getBodyColor() const;
     float getMaxLife() const;
     float getLife() const;
     float getDecay() const;
 
     void draw() const;
     void update(float deltaT) override;
-    
+
+    bool isIsDead() const;
+
+    void setIsDead(bool isDead);
+
 private:
     std::shared_ptr<Model> bodyModel, circleModel;
 
-    glm::vec4 color;
+    glm::vec4 skinColor;
     float maxLife, life, decay;
+
+    bool isDead;
 };
 
 #endif /* MINION_H */

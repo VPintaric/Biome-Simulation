@@ -21,6 +21,8 @@ public:
     void endProgram();
     bool getShouldEndProgram() const;
 
+    std::reference_wrapper< std::default_random_engine > getRng();
+
 private:
     std::default_random_engine rng;
 
