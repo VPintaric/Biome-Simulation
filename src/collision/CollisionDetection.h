@@ -12,8 +12,8 @@ public:
     static CollisionDetection& getInstance();
     ~CollisionDetection();
 
-    std::shared_ptr<CollisionInfo> checkCircleCircleCollision(CircleObject &a, CircleObject &b);
-    std::shared_ptr<CollisionInfo> checkCircleHollowCollision(CircleObject &a, HollowCircleObject &b);
+    std::shared_ptr<CollisionInfo> checkCircleCircleCollision(CircleObject &a, CircleObject &b, bool forceGetInfo=false);
+    std::shared_ptr<CollisionInfo> checkCircleHollowCollision(CircleObject &a, HollowCircleObject &b, bool forceGetInfo=false);
 
 private:
     CollisionDetection();

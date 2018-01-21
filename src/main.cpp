@@ -82,7 +82,7 @@ void init(){
     renderer.identity();
 
     State &s = State::getInstance();
-    s.spawnMinions(25);
+    s.spawnMinions(10);
     s.initBoundary(450.f);
 }
 
