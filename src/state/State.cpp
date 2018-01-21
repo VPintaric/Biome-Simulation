@@ -96,7 +96,7 @@ void State::initBoundary(float r) {
     boundary = std::make_shared<Boundary>();
     boundary->setR2(r);
     boundary->setPos(glm::vec2(0.f, 0.f));
-    boundary->setColor(glm::vec3(1.f, 0.f, 0.f));
+    boundary->setColor(glm::vec4(1.f, 0.f, 0.f, 1.f));
 }
 
 void State::draw() {
@@ -107,6 +107,9 @@ void State::draw() {
 }
 
 void State::update(float dt) {
+    const float COLLISION_PUNISH = 1.f;
+    const float BOUNDARY_COLLISION_PUNISH = 1.f;
+
     CollisionDetection cd = CollisionDetection::getInstance();
     CollisionResponse cr = CollisionResponse::getInstance();
 
@@ -119,7 +122,21 @@ void State::update(float dt) {
 
             float distance = 0.f;
             if(ci->isCollision){
+                auto m1Obj = m->getObject();
+                auto m2Obj = m2->getObject();
+
                 cr.doCollisionResponse(*m->getObject(), *m2->getObject(), ci);
+
+                if(!m1Obj->isDead() && !m2Obj->isDead()){
+                    m1Obj->setLife(m1Obj->getLife() - COLLISION_PUNISH);
+                    m2Obj->setLife(m2Obj->getLife() - COLLISION_PUNISH);
+                } else if(m1Obj->isDead() && !m2Obj->isDead()){
+                    m1Obj->setLife(m1Obj->getLife() - COLLISION_PUNISH);
+                    m2Obj->setLife(m2Obj->getLife() + COLLISION_PUNISH);
+                } else if(!m1Obj->isDead() && m2Obj->isDead()){
+                    m1Obj->setLife(m1Obj->getLife() + COLLISION_PUNISH);
+                    m2Obj->setLife(m2Obj->getLife() - COLLISION_PUNISH);
+                }
             } else {
                 distance = glm::length(ci->mtd);
             }
@@ -147,9 +164,14 @@ void State::update(float dt) {
         auto ci = cd.checkCircleHollowCollision(*m->getObject(), *boundary);
         if(ci->isCollision){
             cr.doCollisionResponse(*m->getObject(), *boundary, ci);
+
+            m->getObject()->setLife(m->getObject()->getLife() - BOUNDARY_COLLISION_PUNISH);
         }
 
         m->update(dt);
+        if(m->getObject()->isDecayed()){
+            *iter = MinionGenerator::getInstance().generateMinion();
+        }
     }
 
     boundary->update(dt);

@@ -63,8 +63,11 @@ void init(){
         exit(1);
     }
 
+
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     std::shared_ptr<ProgramLoader> shaderProgram =
             std::make_shared<ProgramLoader>("resources/shaders/vertex_shaders/vertex_shader.glsl",
@@ -80,6 +83,7 @@ void init(){
                                       (float)WindowConst::WINDOW_WIDTH / WindowConst::WINDOW_HEIGHT, 0.01f);
     Camera::getInstance().setPos(WindowConst::INIT_CAMERA_POS);
     renderer.identity();
+
 
     State &s = State::getInstance();
     s.spawnMinions(10);
