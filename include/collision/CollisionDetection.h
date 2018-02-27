@@ -4,8 +4,8 @@
 
 #include <memory>
 #include "CollisionInfo.h"
-#include "../objects/CircleObject.h"
-#include "../objects/HollowCircleObject.h"
+#include "objects/CircleObject.h"
+#include "objects/HollowCircleObject.h"
 
 class CollisionDetection {
 public:

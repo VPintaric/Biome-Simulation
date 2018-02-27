@@ -2,9 +2,9 @@
 #define BIOME_SIMULATION_MINION_H
 
 #include <memory>
-#include "object/MinionObject.h"
-#include "senses/MinionSenses.h"
-#include "controllers/MinionController.h"
+#include "minion/object/MinionObject.h"
+#include "minion/senses/MinionSenses.h"
+#include "minion/controllers/MinionController.h"
 
 class Minion {
 public:

@@ -1,7 +1,7 @@
 #include <GL/glew.h>
-#include "../state/Log.h"
+#include "state/Log.h"
 
-#include "ColorModel.h"
+#include "rendering/ColorModel.h"
 
 ColorModel::ColorModel(const std::vector<GLfloat>& vs, const std::vector<GLfloat>& cs)
     : Model(vs), colors(cs) {

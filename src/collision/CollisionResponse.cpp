@@ -1,6 +1,6 @@
-#include "CollisionResponse.h"
-#include "../helpers/MathHelpers.h"
-#include "../state/Log.h"
+#include "collision/CollisionResponse.h"
+#include "helpers/MathHelpers.h"
+#include "state/Log.h"
 
 CollisionResponse::CollisionResponse() {
 

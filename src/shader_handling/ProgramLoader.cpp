@@ -2,8 +2,8 @@
 #include <GL/glew.h>
 #include <memory>
 
-#include "../state/Log.h"
-#include "ProgramLoader.h"
+#include "state/Log.h"
+#include "shader_handling/ProgramLoader.h"
 
 ProgramLoader::ProgramLoader(std::string vertexShaderSourceFile, std::string fragmentShaderSourceFile) {
     std::unique_ptr<ShaderLoader> vertexShader = std::unique_ptr<ShaderLoader>(new ShaderLoader(GL_VERTEX_SHADER, vertexShaderSourceFile));

@@ -1,7 +1,7 @@
 #include <GL/glew.h>
-#include "../state/Log.h"
+#include "state/Log.h"
 
-#include "Model.h"
+#include "rendering/Model.h"
 
 Model::Model(const std::vector<GLfloat> &vs) : vertices(vs) {
     glGenVertexArrays(1, &vaoId);

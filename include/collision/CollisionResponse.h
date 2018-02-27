@@ -3,7 +3,7 @@
 
 
 #include <memory>
-#include "../objects/CircleObject.h"
+#include "objects/CircleObject.h"
 #include "CollisionInfo.h"
 
 class CollisionResponse {

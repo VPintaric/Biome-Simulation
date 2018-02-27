@@ -1,4 +1,4 @@
-#include "MinionSenses.h"
+#include "minion/senses/MinionSenses.h"
 
 MinionSenses::MinionSenses() = default;
 MinionSenses::~MinionSenses() = default;

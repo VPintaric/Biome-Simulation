@@ -1,11 +1,11 @@
 #include "glm/gtc/constants.hpp"
-#include "MinionGenerator.h"
-#include "../controllers/RandomController.h"
-#include "../controllers/CowardController.h"
-#include "../controllers/BraveController.h"
-#include "../../rendering/Renderer.h"
-#include "../../state/State.h"
-#include "../controllers/NullController.h"
+#include "minion/factories/MinionGenerator.h"
+#include "minion/controllers/RandomController.h"
+#include "minion/controllers/CowardController.h"
+#include "minion/controllers/BraveController.h"
+#include "rendering/Renderer.h"
+#include "state/State.h"
+#include "minion/controllers/NullController.h"
 
 MinionGenerator::MinionGenerator() :
         posDistr((float) -WindowConst::WINDOW_HEIGHT / 2.f, (float) WindowConst::WINDOW_HEIGHT / 2.f),

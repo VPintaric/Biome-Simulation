@@ -7,7 +7,7 @@
 #include <vector>
 #include "glm/glm.hpp"
 #include "Model.h"
-#include "../shader_handling/ProgramLoader.h"
+#include "shader_handling/ProgramLoader.h"
 
 
 class Renderer {

@@ -1,12 +1,12 @@
 #include <GL/glew.h>
 #include <vector>
 #include <memory>
-#include "../state/Log.h"
-#include "../rendering/Model.h"
-#include "../rendering/ColorModel.h"
-#include "../rendering/Renderer.h"
-#include "../constants/SimulationConstants.h"
-#include "ModelCreator.h"
+#include "state/Log.h"
+#include "rendering/Model.h"
+#include "rendering/ColorModel.h"
+#include "rendering/Renderer.h"
+#include "constants/SimulationConstants.h"
+#include "helpers/ModelCreator.h"
 
 void ModelCreator::createModels() {
     Log().Get(logDEBUG) << "Creating models...";

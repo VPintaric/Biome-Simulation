@@ -4,16 +4,16 @@
 #include <chrono>
 #include "glm/gtc/constants.hpp"
 #include "glm/gtx/vector_angle.hpp"
-#include "State.h"
-#include "Log.h"
-#include "../rendering/Renderer.h"
-#include "../collision/CollisionInfo.h"
-#include "../collision/CollisionDetection.h"
-#include "../collision/CollisionResponse.h"
-#include "../rendering/Camera.h"
-#include "../minion/factories/MinionGenerator.h"
-#include "../minion/controllers/BraveController.h"
-#include "../minion/controllers/NullController.h"
+#include "state/State.h"
+#include "state/Log.h"
+#include "rendering/Renderer.h"
+#include "../../include/collision/CollisionInfo.h"
+#include "../../include/collision/CollisionDetection.h"
+#include "../../include/collision/CollisionResponse.h"
+#include "rendering/Camera.h"
+#include "minion/factories/MinionGenerator.h"
+#include "minion/controllers/BraveController.h"
+#include "minion/controllers/NullController.h"
 
 State& State::getInstance() {
     static State instance;

@@ -17,7 +17,7 @@
 #include "shader_handling/ProgramLoader.h"
 #include "rendering/Renderer.h"
 #include "constants/SimulationConstants.h"
-#include "helpers/ModelCreator.h"
+#include "../include/helpers/ModelCreator.h"
 #include "rendering/Camera.h"
 
 void init(){

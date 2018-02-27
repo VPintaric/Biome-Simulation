@@ -1,5 +1,5 @@
-#include "RandomController.h"
-#include "../../state/State.h"
+#include "minion/controllers/RandomController.h"
+#include "state/State.h"
 
 RandomController::RandomController() = default;
 RandomController::~RandomController() = default;

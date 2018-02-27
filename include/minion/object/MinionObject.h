@@ -3,8 +3,8 @@
 
 #include "glm/glm.hpp"
 #include <memory>
-#include "../../rendering/Model.h"
-#include "../../objects/CircleObject.h"
+#include "rendering/Model.h"
+#include "objects/CircleObject.h"
 
 
 class MinionObject : public CircleObject{

@@ -2,8 +2,8 @@
 #include <vector>
 #include <GL/glew.h>
 
-#include "../state/Log.h"
-#include "ShaderLoader.h"
+#include "state/Log.h"
+#include "shader_handling/ShaderLoader.h"
 
 ShaderLoader::ShaderLoader(GLuint shaderType, std::string fileName) {
     this->fileName = fileName;

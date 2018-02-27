@@ -4,9 +4,9 @@
 #include <vector>
 #include <chrono>
 #include <random>
-#include "../minion/object/MinionObject.h"
-#include "../objects/Boundary.h"
-#include "../minion/Minion.h"
+#include "minion/object/MinionObject.h"
+#include "objects/Boundary.h"
+#include "minion/Minion.h"
 
 class State {
 public:

@@ -1,4 +1,4 @@
-#include "NullController.h"
+#include "minion/controllers/NullController.h"
 
 NullController::NullController() = default;
 NullController::~NullController() = default;

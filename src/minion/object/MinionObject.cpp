@@ -1,10 +1,10 @@
 #define GLM_FORCE_RADIANS
 
 #include <GL/glew.h>
-#include "MinionObject.h"
-#include "../../rendering/Renderer.h"
-#include "../../constants/SimulationConstants.h"
-#include "../../helpers/MathHelpers.h"
+#include "minion/object/MinionObject.h"
+#include "rendering/Renderer.h"
+#include "constants/SimulationConstants.h"
+#include "helpers/MathHelpers.h"
 
 #include "glm/gtc/quaternion.hpp"
 #include "glm/gtx/quaternion.hpp"

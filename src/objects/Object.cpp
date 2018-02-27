@@ -2,7 +2,7 @@
 
 #include "glm/gtx/rotate_vector.hpp"
 #include "glm/gtx/norm.hpp"
-#include "Object.h"
+#include "objects/Object.h"
 
 void Object::update(float deltaT) {
     const float FRICTION_COEFF_TRANSL = 1e-7f;

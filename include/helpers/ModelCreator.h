@@ -12,13 +12,13 @@ namespace ModelCreator {
     const std::vector<GLfloat> TRIANGLE_COLORS(TRIANGLE_VERTICES.size(), 1.f);
 
     const std::vector<GLfloat> TEETH_CIRCLE_VERTICES = {
-#include "../constants/teeth_circle_vertices.txt"
+#include "constants/teeth_circle_vertices.txt"
     };
 
     const std::vector<GLfloat> TEETH_CIRCLE_COLORS(TEETH_CIRCLE_VERTICES.size(), 1.f);
 
     const std::vector<GLfloat> HOLLOW_CIRCLE_VERTICES = {
-#include "../constants/hollow_circle_vertices.txt"
+#include "constants/hollow_circle_vertices.txt"
     };
 
     const std::vector<GLfloat> HOLLOW_CIRCLE_COLORS(HOLLOW_CIRCLE_VERTICES.size(), 1.f);

@@ -1,8 +1,8 @@
 #ifndef BIOME_SIMULATION_MINIONCONTROLLER_H
 #define BIOME_SIMULATION_MINIONCONTROLLER_H
 
-#include "../object/MinionObject.h"
-#include "../senses/MinionSenses.h"
+#include "minion/object/MinionObject.h"
+#include "minion/senses/MinionSenses.h"
 
 class MinionController {
 public:

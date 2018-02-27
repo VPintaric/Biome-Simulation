@@ -1,5 +1,5 @@
-#include "Camera.h"
-#include "Renderer.h"
+#include "rendering/Camera.h"
+#include "rendering/Renderer.h"
 
 #include "glm/gtx/vector_query.hpp"
 

@@ -3,7 +3,7 @@
 
 #include <memory>
 #include "HollowCircleObject.h"
-#include "../rendering/Model.h"
+#include "rendering/Model.h"
 
 class Boundary : public HollowCircleObject {
 public:

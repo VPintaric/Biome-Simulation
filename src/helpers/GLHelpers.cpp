@@ -1,8 +1,8 @@
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
-#include "../state/Log.h"
+#include "state/Log.h"
 
-#include "GLHelpers.h"
+#include "helpers/GLHelpers.h"
 
 bool GLHelpers::checkGLError(){
     GLenum err = glGetError();

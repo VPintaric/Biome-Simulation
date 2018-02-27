@@ -3,8 +3,8 @@
 
 
 #include <random>
-#include "../Minion.h"
-#include "../../constants/WindowConstants.h"
+#include "minion/Minion.h"
+#include "constants/WindowConstants.h"
 
 class MinionGenerator {
 public:

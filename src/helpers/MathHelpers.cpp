@@ -1,4 +1,4 @@
-#include "MathHelpers.h"
+#include "helpers/MathHelpers.h"
 
 namespace Math{
     float clamp(const float &x, const float &lo, const float &hi) {

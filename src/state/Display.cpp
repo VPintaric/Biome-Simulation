@@ -1,5 +1,5 @@
-#include "Display.h"
-#include "Log.h"
+#include "state/Display.h"
+#include "state/Log.h"
 
 #include <string>
 

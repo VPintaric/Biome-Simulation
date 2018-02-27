@@ -2,9 +2,9 @@
 
 #include <GL/glew.h>
 #include "glm/gtc/type_ptr.hpp"
-#include "Boundary.h"
-#include "../rendering/Renderer.h"
-#include "../constants/SimulationConstants.h"
+#include "objects/Boundary.h"
+#include "rendering/Renderer.h"
+#include "constants/SimulationConstants.h"
 
 
 Boundary::Boundary(){

@@ -1,4 +1,4 @@
-#include "HollowCircleObject.h"
+#include "objects/HollowCircleObject.h"
 
 Object::Type HollowCircleObject::getType() const {
     return Type::HOLLOW_CIRCLE;
