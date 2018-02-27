@@ -1,7 +1,7 @@
 #include "Camera.h"
 #include "Renderer.h"
 
-#include <GL/glm/gtx/vector_query.hpp>
+#include "glm/gtx/vector_query.hpp"
 
 Camera& Camera::getInstance() {
     static Camera instance;

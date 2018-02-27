@@ -1,4 +1,4 @@
-#include <GL/glm/gtc/constants.hpp>
+#include "glm/gtc/constants.hpp"
 #include "BraveController.h"
 #include "../../helpers/MathHelpers.h"
 #include "../../state/Log.h"

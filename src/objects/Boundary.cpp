@@ -1,7 +1,7 @@
 #define GLM_FORCE_RADIANS
 
 #include <GL/glew.h>
-#include <GL/glm/gtc/type_ptr.hpp>
+#include "glm/gtc/type_ptr.hpp"
 #include "Boundary.h"
 #include "../rendering/Renderer.h"
 #include "../constants/SimulationConstants.h"

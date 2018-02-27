@@ -2,8 +2,8 @@
 
 #include <random>
 #include <chrono>
-#include <GL/glm/gtc/constants.hpp>
-#include <GL/glm/gtx/vector_angle.hpp>
+#include "glm/gtc/constants.hpp"
+#include "glm/gtx/vector_angle.hpp"
 #include "State.h"
 #include "Log.h"
 #include "../rendering/Renderer.h"

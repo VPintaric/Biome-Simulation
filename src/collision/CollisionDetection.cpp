@@ -1,5 +1,5 @@
 #include "CollisionDetection.h"
-#include <GL/glm/gtx/norm.hpp>
+#include "glm/gtx/norm.hpp"
 #include "../state/Log.h"
 
 CollisionDetection::CollisionDetection() = default;

@@ -3,7 +3,7 @@
 
 #define GLM_FORCE_RADIANS
 
-#include <GL/glm/glm.hpp>
+#include "glm/glm.hpp"
 #include "Object.h"
 
 class CircleObject : public Object{

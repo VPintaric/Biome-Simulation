@@ -68,7 +68,19 @@ add_executable(Biome_Simulation
         src/minion/senses/MinionSenses.h
         src/minion/controllers/MinionController.cpp
         src/minion/controllers/MinionController.h
-        src/helpers/MathHelpers.cpp src/minion/controllers/RandomController.cpp src/minion/controllers/RandomController.h src/minion/controllers/CowardController.cpp src/minion/controllers/CowardController.h src/minion/controllers/BraveController.cpp src/minion/controllers/BraveController.h src/minion/factories/MinionGenerator.cpp src/minion/factories/MinionGenerator.h src/minion/controllers/NullController.cpp src/minion/controllers/NullController.h src/minion/controllers/NeuralNetController.cpp src/minion/controllers/NeuralNetController.h)
+        src/helpers/MathHelpers.cpp
+        src/minion/controllers/RandomController.cpp
+        src/minion/controllers/RandomController.h
+        src/minion/controllers/CowardController.cpp
+        src/minion/controllers/CowardController.h
+        src/minion/controllers/BraveController.cpp
+        src/minion/controllers/BraveController.h
+        src/minion/factories/MinionGenerator.cpp
+        src/minion/factories/MinionGenerator.h
+        src/minion/controllers/NullController.cpp
+        src/minion/controllers/NullController.h
+        src/minion/controllers/NeuralNetController.cpp
+        src/minion/controllers/NeuralNetController.h)
 
 message(ERROR " ${SDL2_INCLUDE_DIRS}")
 message(ERROR " ${GLEW_INCLUDE_DIRS}")

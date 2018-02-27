@@ -6,10 +6,10 @@
 #include "../../constants/SimulationConstants.h"
 #include "../../helpers/MathHelpers.h"
 
-#include <GL/glm/gtc/quaternion.hpp>
-#include <GL/glm/gtx/quaternion.hpp>
-#include <GL/glm/gtx/vector_angle.hpp>
-#include <GL/glm/gtc/type_ptr.hpp>
+#include "glm/gtc/quaternion.hpp"
+#include "glm/gtx/quaternion.hpp"
+#include "glm/gtx/vector_angle.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 MinionObject::MinionObject() {
     Renderer &r = Renderer::getInstance();

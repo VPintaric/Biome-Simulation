@@ -2,7 +2,7 @@
 #define BIOME_SIMULATION_CAMERA_H
 
 
-#include <GL/glm/glm.hpp>
+#include "glm/glm.hpp"
 
 class Camera {
 public:

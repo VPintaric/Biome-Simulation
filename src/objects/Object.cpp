@@ -1,7 +1,7 @@
 #define GLM_FORCE_RADIANS
 
-#include <GL/glm/gtx/rotate_vector.hpp>
-#include <GL/glm/gtx/norm.hpp>
+#include "glm/gtx/rotate_vector.hpp"
+#include "glm/gtx/norm.hpp"
 #include "Object.h"
 
 void Object::update(float deltaT) {

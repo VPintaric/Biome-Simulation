@@ -283,6 +283,9 @@
 #		define GLM_COMPILER (GLM_COMPILER_GCC71)
 #	elif (__GNUC__ == 7) && (__GNUC_MINOR__ == 2)
 #		define GLM_COMPILER (GLM_COMPILER_GCC72)
+// Following two lines are a dirty custom hack due to the glm not correctly detecting gcc version 7.3
+#elif (__GNUC__ == 7) && (__GNUC_MINOR__ == 3)
+#       define GLM_COMPILER (GLM_COMPILER_GCC72)
 #	elif (__GNUC__ >= 8)
 #		define GLM_COMPILER (GLM_COMPILER_GCC80)
 #	else

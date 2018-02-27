@@ -1,4 +1,4 @@
-#include <GL/glm/gtc/constants.hpp>
+#include "glm/gtc/constants.hpp"
 #include "MinionGenerator.h"
 #include "../controllers/RandomController.h"
 #include "../controllers/CowardController.h"

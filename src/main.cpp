@@ -6,8 +6,8 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include <GL/glm/glm.hpp>
-#include <GL/glm/gtc/type_ptr.hpp>
+#include "glm/glm.hpp"
+#include "glm/gtc/type_ptr.hpp"
 #include <chrono>
 #include "state/State.h"
 

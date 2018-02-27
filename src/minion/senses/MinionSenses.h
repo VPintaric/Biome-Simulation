@@ -2,7 +2,7 @@
 #define BIOME_SIMULATION_MINIONSENSES_H
 
 
-#include <GL/glm/glm.hpp>
+#include "glm/glm.hpp"
 #include <vector>
 #include <memory>
 

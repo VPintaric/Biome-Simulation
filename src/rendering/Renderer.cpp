@@ -1,8 +1,8 @@
 #define GLM_FORCE_RADIANS
 
 #include <GL/glew.h>
-#include <GL/glm/gtc/matrix_transform.hpp>
-#include <GL/glm/gtc/type_ptr.hpp>
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 #include "../state/Log.h"
 #include "Renderer.h"

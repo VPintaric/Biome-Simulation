@@ -5,7 +5,7 @@
 #include <string>
 #include <memory>
 #include <vector>
-#include <GL/glm/glm.hpp>
+#include "glm/glm.hpp"
 #include "Model.h"
 #include "../shader_handling/ProgramLoader.h"
 

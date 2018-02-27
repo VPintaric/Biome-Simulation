@@ -2,7 +2,7 @@
 #ifndef MATH_HELPERS_H
 #define MATH_HELPERS_H
 
-#include <GL/glm/glm.hpp>
+#include "glm/glm.hpp"
 
 namespace Math{
     float clamp(const float& x, const float& lo, const float& hi);

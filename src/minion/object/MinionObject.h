@@ -1,7 +1,7 @@
 #ifndef MINION_OBJECT_H
 #define MINION_OBJECT_H
 
-#include <GL/glm/glm.hpp>
+#include "glm/glm.hpp"
 #include <memory>
 #include "../../rendering/Model.h"
 #include "../../objects/CircleObject.h"

@@ -1,5 +1,5 @@
 #define GLM_FORCE_RADIANS
-#include <GL/glm/glm.hpp>
+#include "glm/glm.hpp"
 
 #ifndef BIOME_SIMULATION_OBJECT_H
 #define BIOME_SIMULATION_OBJECT_H
