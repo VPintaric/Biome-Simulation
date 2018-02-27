@@ -18,8 +18,7 @@ if(NOT ${OpenGL_FOUND})
     message(ERROR " OpenGL not found")
 endif()
 
-include_directories(${SDL2_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${OpenGL_INCLUDE_DIRS})
-
+include_directories(${SDL2_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${OpenGL_INCLUDE_DIRS} external)
 
 add_executable(Biome_Simulation
         src/constants/SimulationConstants.h
@@ -27,8 +26,8 @@ add_executable(Biome_Simulation
         src/helpers/GLHelpers.cpp
         src/helpers/GLHelpers.h
         src/helpers/MathHelpers.h
-        src/minion/MinionObject.cpp
-        src/minion/MinionObject.h
+        src/minion/object/MinionObject.cpp
+        src/minion/object/MinionObject.h
         src/rendering/ColorModel.cpp
         src/rendering/ColorModel.h
         src/rendering/Model.cpp
@@ -65,11 +64,11 @@ add_executable(Biome_Simulation
         src/minion/Minion.cpp
         src/minion/Minion.cpp
         src/minion/Minion.h
-        src/minion/MinionSenses.cpp
-        src/minion/MinionSenses.h
-        src/minion/MinionController.cpp
-        src/minion/MinionController.h
-        src/helpers/MathHelpers.cpp src/minion/controllers/RandomController.cpp src/minion/controllers/RandomController.h src/minion/controllers/CowardController.cpp src/minion/controllers/CowardController.h src/minion/controllers/BraveController.cpp src/minion/controllers/BraveController.h src/minion/MinionGenerator.cpp src/minion/MinionGenerator.h src/minion/controllers/NullController.cpp src/minion/controllers/NullController.h)
+        src/minion/senses/MinionSenses.cpp
+        src/minion/senses/MinionSenses.h
+        src/minion/controllers/MinionController.cpp
+        src/minion/controllers/MinionController.h
+        src/helpers/MathHelpers.cpp src/minion/controllers/RandomController.cpp src/minion/controllers/RandomController.h src/minion/controllers/CowardController.cpp src/minion/controllers/CowardController.h src/minion/controllers/BraveController.cpp src/minion/controllers/BraveController.h src/minion/factories/MinionGenerator.cpp src/minion/factories/MinionGenerator.h src/minion/controllers/NullController.cpp src/minion/controllers/NullController.h src/minion/controllers/NeuralNetController.cpp src/minion/controllers/NeuralNetController.h)
 
 message(ERROR " ${SDL2_INCLUDE_DIRS}")
 message(ERROR " ${GLEW_INCLUDE_DIRS}")

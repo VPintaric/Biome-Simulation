@@ -11,7 +11,7 @@
 #include "../collision/CollisionDetection.h"
 #include "../collision/CollisionResponse.h"
 #include "../rendering/Camera.h"
-#include "../minion/MinionGenerator.h"
+#include "../minion/factories/MinionGenerator.h"
 #include "../minion/controllers/BraveController.h"
 #include "../minion/controllers/NullController.h"
 

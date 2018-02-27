@@ -4,7 +4,7 @@
 #include <vector>
 #include <chrono>
 #include <random>
-#include "../minion/MinionObject.h"
+#include "../minion/object/MinionObject.h"
 #include "../objects/Boundary.h"
 #include "../minion/Minion.h"
 
