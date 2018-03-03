@@ -11,9 +11,7 @@
 #include "../../include/collision/CollisionDetection.h"
 #include "../../include/collision/CollisionResponse.h"
 #include "rendering/Camera.h"
-#include "minion/factories/MinionGenerator.h"
-#include "minion/controllers/BraveController.h"
-#include "minion/controllers/NullController.h"
+#include "minion/factories/ExplicitBehaviourMinionGenerator.h"
 
 State& State::getInstance() {
     static State instance;
@@ -25,6 +23,10 @@ State::State() {
     shouldEndProgramFlag = false;
     rng.seed(static_cast<unsigned long>(std::chrono::system_clock::now().time_since_epoch().count()));
     Log().Get(logDEBUG) << "Created new state instance";
+}
+
+void State::setMinionGenerator(std::shared_ptr<MinionGenerator> gen) {
+    minionGenerator = gen;
 }
 
 State::~State() {
@@ -40,54 +42,13 @@ bool State::getShouldEndProgram() const {
 }
 
 void State::spawnMinions(int n) {
+    if(minionGenerator == nullptr){
+        Log().Get(logWARNING) << "State has no reference to a minion generator object, unable to spawn minions";
+        return;
+    }
 
-//    auto minion = std::make_shared<Minion>();
-//
-//    auto object = std::make_shared<MinionObject>();
-//    object->setPos(glm::vec2(-40.f, 0.f));
-//    object->setSkinColor(glm::vec4(1.f, 1.f, 1.f, 1.f));
-//    object->setAngle(3.f * glm::quarter_pi<float>());
-//    object->setRadius(15.f);
-//    object->setRMass(20.f / (object->getRadius()));
-//    object->setAngleVel(0.f);
-//    object->setAngleAcc(0.f);
-//    object->setVelocity(glm::vec2(0.f, 0.f));
-//    object->setAcceleration(glm::vec2(0.f, 0.f));
-//    object->setDecay(2.5f);
-//    object->setMaxLife(100.f);
-//    object->setLife(100.f);
-//
-//    minion->setObject(object);
-//    minion->setSenses(std::make_shared<MinionSenses>());
-//    minion->setController(std::make_shared<BraveController>());
-//
-//    minions.push_back(minion);
-//
-//    minion = std::make_shared<Minion>();
-//
-//    object = std::make_shared<MinionObject>();
-//    object->setPos(glm::vec2(40.f, 0.f));
-//    object->setSkinColor(glm::vec4(0.1f, 0.1f, 0.5f, 1.f));
-//    object->setAngle(glm::half_pi<float>());
-//    object->setRadius(15.f);
-//    object->setRMass(20.f / (object->getRadius()));
-//    object->setAngleVel(0.f);
-//    object->setAngleAcc(0.f);
-//    object->setVelocity(glm::vec2(0.f, 0.f));
-//    object->setAcceleration(glm::vec2(0.f, 0.f));
-//    object->setDecay(2.5f);
-//    object->setMaxLife(100.f);
-//    object->setLife(100.f);
-//
-//    minion->setObject(object);
-//    minion->setSenses(std::make_shared<MinionSenses>());
-//    minion->setController(std::make_shared<NullController>());
-//
-//    minions.push_back(minion);
-
-    MinionGenerator& mg = MinionGenerator::getInstance();
     for(int i = 0; i < n; i++){
-        auto minion = mg.generateMinion();
+        auto minion = minionGenerator->generateMinion();
         minions.push_back(minion);
     }
 }
@@ -170,7 +131,8 @@ void State::update(float dt) {
 
         m->update(dt);
         if(m->getObject()->isDecayed()){
-            *iter = MinionGenerator::getInstance().generateMinion();
+            *iter = minionGenerator->generateMinion();
+            // TODO replace minion and initialize its kinematic properties to zero
         }
     }
 

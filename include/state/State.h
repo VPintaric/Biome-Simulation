@@ -4,6 +4,7 @@
 #include <vector>
 #include <chrono>
 #include <random>
+#include <minion/factories/MinionGenerator.h>
 #include "minion/object/MinionObject.h"
 #include "objects/Boundary.h"
 #include "minion/Minion.h"
@@ -22,11 +23,14 @@ public:
     void endProgram();
     bool getShouldEndProgram() const;
 
+    void setMinionGenerator(std::shared_ptr<MinionGenerator> gen);
+
     std::reference_wrapper< std::default_random_engine > getRng();
 
 private:
     std::default_random_engine rng;
 
+    std::shared_ptr<MinionGenerator> minionGenerator;
     std::vector< std::shared_ptr<Minion> > minions;
     std::shared_ptr<Boundary> boundary;
 

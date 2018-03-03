@@ -10,6 +10,10 @@ namespace Math{
 
     glm::vec2 perp(glm::vec2 &v);
     float cross(glm::vec2 &v1, glm::vec2 &v2);
+
+    float sigmoid(float x);
+    float relu(float x);
+    float fastSigmoid(float x);
 }
 
 #endif // MATH_HELPERS_H

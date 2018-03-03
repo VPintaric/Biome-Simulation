@@ -16,4 +16,16 @@ namespace Math{
     glm::vec2 perp(glm::vec2 &v) {
         return glm::vec2(-v.y, v.x);
     }
+
+    float sigmoid(float x){
+        return (1.f / (1.f + expf(-x)));
+    }
+
+    float relu(float x){
+        return x < 0.f ? 0.f : x;
+    }
+
+    float fastSigmoid(float x){
+        return x / (1.f + abs(x));
+    }
 }

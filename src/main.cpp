@@ -9,6 +9,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include <chrono>
+#include <minion/factories/ExplicitBehaviourMinionGenerator.h>
 #include "state/State.h"
 
 #include "state/Log.h"
@@ -86,6 +87,7 @@ void init(){
 
 
     State &s = State::getInstance();
+    s.setMinionGenerator(std::make_shared<ExplicitBehaviourMinionGenerator>());
     s.spawnMinions(10);
     s.initBoundary(450.f);
 }
