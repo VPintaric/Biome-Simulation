@@ -3,7 +3,7 @@
 #include "state/Log.h"
 
 CollisionResponse::CollisionResponse() {
-
+    Log().Get(logDEBUG) << "Created new collision response instance";
 }
 
 CollisionResponse::~CollisionResponse() {

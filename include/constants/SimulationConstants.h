@@ -9,6 +9,7 @@ namespace SimConst {
     const std::string HOLLOW_CIRCLE_MODEL_NAME = "hollow_circle_model";
 
     const float UPDATE_DELTA = 1e-3;
+    const int UPDATE_ITERATIONS_EACH_FRAME = 10;
     
     const float MINION_MAX_VELOCITY = 20.f;
     const float MINION_MIN_SCALE = 3.f;

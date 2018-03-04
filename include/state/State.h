@@ -5,6 +5,7 @@
 #include <chrono>
 #include <random>
 #include <minion/factories/MinionGenerator.h>
+#include <collision/CollisionInfo.h>
 #include "minion/object/MinionObject.h"
 #include "objects/Boundary.h"
 #include "minion/Minion.h"
@@ -19,6 +20,7 @@ public:
 
     void draw();
     void update(float dt);
+    void controlMinions(float dt);
     
     void endProgram();
     bool getShouldEndProgram() const;
@@ -26,6 +28,8 @@ public:
     void setMinionGenerator(std::shared_ptr<MinionGenerator> gen);
 
     std::reference_wrapper< std::default_random_engine > getRng();
+
+    const std::vector< std::shared_ptr<Minion> > &getMinions() const;
 
 private:
     std::default_random_engine rng;

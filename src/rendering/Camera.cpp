@@ -44,7 +44,7 @@ void Camera::update(float deltaT) {
     // scale the speed of camera movement depending on the current zoom
     // i.e. slow the camera down when you are zoomed in and speed it up when zoomed out so the user
     // can move it with more precision
-    const float LINEAR_SCALE_ZOOM_FACTOR = 1e-3f;
+    const float LINEAR_SCALE_ZOOM_FACTOR = 2e-3f;
     setPos(pos + LINEAR_SCALE_ZOOM_FACTOR * std::fabs(pos.z) * speed * moveDirection);
 }
 

@@ -183,11 +183,12 @@ int main(int argc, char** argv) {
         t2 = high_resolution_clock::now();
         duration<float> deltaT = t2 - t1;
         t1 = high_resolution_clock::now();
-        int nUpdates = ((int) (deltaT.count() / SimConst::UPDATE_DELTA) + 1);
-        for(int i = 0;  i < nUpdates; i++){
-            processInput(state);
+        for(int i = 0;  i < SimConst::UPDATE_ITERATIONS_EACH_FRAME; i++){
             state.update(SimConst::UPDATE_DELTA);
         }
+        processInput(state);
+        state.controlMinions(SimConst::UPDATE_ITERATIONS_EACH_FRAME * SimConst::UPDATE_DELTA);
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         state.draw();
 

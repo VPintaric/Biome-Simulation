@@ -5,8 +5,9 @@
 #include "glm/glm.hpp"
 #include <vector>
 #include <memory>
+#include <minion/object/MinionObject.h>
 
-class MinionSenses {
+class MinionSenses : public CircleObject {
 public:
     class SenseData{
     public:
@@ -23,9 +24,10 @@ public:
     MinionSenses();
     virtual ~MinionSenses();
 
-    virtual void addSenseData(const std::shared_ptr<SenseData>& si);
+    virtual void gatherData(std::shared_ptr<MinionObject> minion);
     virtual std::shared_ptr<SenseData> popSenseData();
     virtual void clearData();
+    virtual void draw();
 
 private:
     std::vector< std::shared_ptr<SenseData> > senseDatas;

@@ -24,6 +24,7 @@ public:
     void setController(const std::shared_ptr<MinionController> &controller);
 
     void update(float deltaT);
+    void control(float deltaT);
     void draw();
 
 private:

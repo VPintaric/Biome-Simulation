@@ -2,7 +2,9 @@
 #include "glm/gtx/norm.hpp"
 #include "state/Log.h"
 
-CollisionDetection::CollisionDetection() = default;
+CollisionDetection::CollisionDetection() {
+    Log().Get(logDEBUG) << "Created new collision detection instance";
+};
 
 CollisionDetection& CollisionDetection::getInstance() {
     static CollisionDetection instance;

@@ -7,11 +7,9 @@
 #include "state/State.h"
 #include "state/Log.h"
 #include "rendering/Renderer.h"
-#include "../../include/collision/CollisionInfo.h"
 #include "../../include/collision/CollisionDetection.h"
 #include "../../include/collision/CollisionResponse.h"
 #include "rendering/Camera.h"
-#include "minion/factories/ExplicitBehaviourMinionGenerator.h"
 
 State& State::getInstance() {
     static State instance;
@@ -26,7 +24,7 @@ State::State() {
 }
 
 void State::setMinionGenerator(std::shared_ptr<MinionGenerator> gen) {
-    minionGenerator = gen;
+    minionGenerator = std::move(gen);
 }
 
 State::~State() {
@@ -67,6 +65,18 @@ void State::draw() {
     boundary->draw();
 }
 
+const std::vector< std::shared_ptr<Minion> > &State::getMinions() const{
+    return minions;
+}
+
+void State::controlMinions(float dt) {
+    for(auto minion : minions){
+        if(!minion->getObject()->isDead()){
+            minion->control(dt);
+        }
+    }
+}
+
 void State::update(float dt) {
     const float COLLISION_PUNISH = 1.f;
     const float BOUNDARY_COLLISION_PUNISH = 1.f;
@@ -79,9 +89,8 @@ void State::update(float dt) {
 
         for(auto iter2 = iter + 1; iter2 != minions.end(); iter2++){
             auto m2 = *iter2;
-            auto ci = cd.checkCircleCircleCollision(*m->getObject(), *m2->getObject(), true);
+            auto ci = cd.checkCircleCircleCollision(*m->getObject(), *m2->getObject());
 
-            float distance = 0.f;
             if(ci->isCollision){
                 auto m1Obj = m->getObject();
                 auto m2Obj = m2->getObject();
@@ -98,27 +107,6 @@ void State::update(float dt) {
                     m1Obj->setLife(m1Obj->getLife() + COLLISION_PUNISH);
                     m2Obj->setLife(m2Obj->getLife() - COLLISION_PUNISH);
                 }
-            } else {
-                distance = glm::length(ci->mtd);
-            }
-
-            auto senses = m->getSenses();
-            if(!m->getObject()->isDead() && distance <= senses->MAX_SENSE_DISTANCE){
-                auto s1 = std::make_shared<MinionSenses::SenseData>();
-                s1->dist = distance;
-                s1->color = m2->getObject()->getSkinColor();
-                s1->angle = glm::orientedAngle(-ci->normal, m->getObject()->getFront());
-
-                m->getSenses()->addSenseData(s1);
-            }
-
-            senses = m2->getSenses();
-            if(!m2->getObject()->isDead() && distance <= senses->MAX_SENSE_DISTANCE){
-                auto s2 = std::make_shared<MinionSenses::SenseData>();
-                s2->dist = distance;
-                s2->color = m->getObject()->getSkinColor();
-                s2->angle = glm::orientedAngle(ci->normal, m2->getObject()->getFront());
-                m2->getSenses()->addSenseData(s2);
             }
         }
 
@@ -132,7 +120,7 @@ void State::update(float dt) {
         m->update(dt);
         if(m->getObject()->isDecayed()){
             *iter = minionGenerator->generateMinion();
-            // TODO replace minion and initialize its kinematic properties to zero
+            // TODO place minion somewhere where there is no collision and initialize its kinematic properties to zero
         }
     }
 

@@ -4,13 +4,20 @@ Minion::Minion() = default;
 Minion::~Minion() = default;
 
 void Minion::update(float deltaT) {
-    controller->controlMinion(object, senses);
-    senses->clearData();
     object->update(deltaT);
+}
+
+void Minion::control(float deltaT) {
+    senses->clearData();
+    senses->gatherData(object);
+    controller->controlMinion(object, senses);
 }
 
 void Minion::draw() {
     object->draw();
+    if(!object->isDead()){
+        senses->draw();
+    }
 }
 
 const std::shared_ptr<MinionObject> &Minion::getObject() const {
