@@ -10,6 +10,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include <chrono>
 #include <minion/factories/ExplicitBehaviourMinionGenerator.h>
+#include <minion/factories/NeuralNetMinionGenerator.h>
 #include "state/State.h"
 
 #include "state/Log.h"
@@ -87,7 +88,8 @@ void init(){
 
 
     State &s = State::getInstance();
-    s.setMinionGenerator(std::make_shared<ExplicitBehaviourMinionGenerator>());
+//    s.setMinionGenerator(std::make_shared<ExplicitBehaviourMinionGenerator>());
+    s.setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
     s.initBoundary(450.f);
     s.spawnMinions(10);
 }

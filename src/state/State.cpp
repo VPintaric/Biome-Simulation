@@ -103,6 +103,11 @@ void State::initBoundary(float r) {
     boundary = std::make_shared<Boundary>();
     boundary->setR2(r);
     boundary->setPos(glm::vec2(0.f, 0.f));
+    boundary->setAngle(0.f);
+    boundary->setVelocity(glm::vec2(0.f, 0.f));
+    boundary->setAcceleration(glm::vec2(0.f, 0.f));
+    boundary->setAngleVel(0.f);
+    boundary->setAngleAcc(0.f);
     boundary->setColor(glm::vec4(1.f, 0.f, 0.f, 1.f));
 }
 

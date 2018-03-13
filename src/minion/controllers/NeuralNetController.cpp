@@ -57,4 +57,6 @@ void NeuralNetController::controlMinion(const std::shared_ptr<MinionObject> &m,
 
     m->setControlForce(x(0, 0));
     m->setControlRotMoment(x(0, 1));
+
+    m->setControlForce(10.f);
 }

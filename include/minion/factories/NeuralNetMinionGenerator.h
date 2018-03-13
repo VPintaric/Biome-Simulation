@@ -5,10 +5,12 @@
 #include "MinionGenerator.h"
 
 class NeuralNetMinionGenerator : public MinionGenerator {
-private:
-
 public:
+    NeuralNetMinionGenerator();
+    virtual ~NeuralNetMinionGenerator();
+
     std::shared_ptr<Minion> generateMinion() override;
+private:
 
 };
 
