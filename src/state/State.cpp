@@ -31,6 +31,47 @@ State::~State() {
     Log().Get(logDEBUG) << "Destroying state instance";
 }
 
+void State::setMinionStartingPosition(Minion &minion) {
+    CollisionDetection cd = CollisionDetection::getInstance();
+    const auto &object = minion.getObject();
+
+    std::uniform_real_distribution<float> angleDistr(0.f, glm::two_pi<float>());
+    std::uniform_real_distribution<float> distanceDistr(0.f, boundary->getR1() - object->getRadius());
+
+    object->setVelocity(glm::vec2(0.f, 0.f));
+    object->setAcceleration(glm::vec2(0.f, 0.f));
+
+    int nTries = 0;
+    const int TRIES_BEFORE_WARNING = 10;
+    bool validPosition = false;
+
+    while(!validPosition){
+        ++nTries;
+        if(nTries > TRIES_BEFORE_WARNING){
+            Log().Get(logWARNING) << "Large amount of tries to initialize a non-colliding initial position for a minion!"
+                                  "Current number of tries: " << nTries;
+        }
+
+        float angle = angleDistr(rng);
+        float dist = distanceDistr(rng);
+
+        object->setPos(glm::vec2(dist * glm::cos(angle), dist * glm::sin(angle)));
+        validPosition = true;
+        for (auto &minion : minions) {
+            // hacky...
+            if(minion->getObject() == object){
+                continue;
+            }
+            auto ci = cd.checkCircleCircleCollision(*object, *minion->getObject());
+            if(ci->isCollision){
+                nTries++;
+                validPosition = false;
+                break;
+            }
+        }
+    }
+}
+
 void State::endProgram(){
     this->shouldEndProgramFlag = true;
 }
@@ -120,7 +161,7 @@ void State::update(float dt) {
         m->update(dt);
         if(m->getObject()->isDecayed()){
             *iter = minionGenerator->generateMinion();
-            // TODO place minion somewhere where there is no collision and initialize its kinematic properties to zero
+            setMinionStartingPosition(**iter);
         }
     }
 

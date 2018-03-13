@@ -39,6 +39,8 @@ private:
     std::shared_ptr<Boundary> boundary;
 
     bool shouldEndProgramFlag;
+
+    void setMinionStartingPosition(Minion &minion);
     State();
 };
 
