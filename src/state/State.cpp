@@ -40,6 +40,8 @@ void State::setMinionStartingPosition(Minion &minion) {
 
     object->setVelocity(glm::vec2(0.f, 0.f));
     object->setAcceleration(glm::vec2(0.f, 0.f));
+    object->setAngleVel(0.f);
+    object->setAngleAcc(0.f);
 
     int nTries = 0;
     const int TRIES_BEFORE_WARNING = 10;
@@ -58,6 +60,8 @@ void State::setMinionStartingPosition(Minion &minion) {
         float dist = distanceDistr(rng);
 
         object->setPos(glm::vec2(dist * glm::cos(angle), dist * glm::sin(angle)));
+        object->setAngle(angleDistr(rng));
+
         validPosition = true;
         for (auto &minion : minions) {
             // hacky...
@@ -91,6 +95,7 @@ void State::spawnMinions(int n) {
     for(int i = 0; i < n; i++){
         auto minion = minionGenerator->generateMinion();
         minions.push_back(minion);
+        setMinionStartingPosition(*minion);
     }
 }
 

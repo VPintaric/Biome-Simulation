@@ -15,7 +15,7 @@ public:
     std::shared_ptr<Minion> generateMinion() override;
 
 private:
-    std::uniform_real_distribution<float> posDistr, angleDistr, typeDistr;
+    std::uniform_real_distribution<float> typeDistr;
 
     std::normal_distribution<float> radiusDistr;
 

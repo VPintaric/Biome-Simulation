@@ -88,8 +88,8 @@ void init(){
 
     State &s = State::getInstance();
     s.setMinionGenerator(std::make_shared<ExplicitBehaviourMinionGenerator>());
-    s.spawnMinions(10);
     s.initBoundary(450.f);
+    s.spawnMinions(10);
 }
 
 void windowResize(int w, int h){

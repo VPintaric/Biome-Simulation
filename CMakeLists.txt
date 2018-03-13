@@ -82,7 +82,7 @@ add_executable(Biome_Simulation
         src/minion/controllers/NeuralNetController.cpp
         include/minion/controllers/NeuralNetController.h
         src/minion/factories/MinionGenerator.cpp
-        include/minion/factories/MinionGenerator.h)
+        include/minion/factories/MinionGenerator.h src/minion/factories/NeuralNetMinionGenerator.cpp include/minion/factories/NeuralNetMinionGenerator.h)
 
 message(ERROR " ${SDL2_INCLUDE_DIRS}")
 message(ERROR " ${GLEW_INCLUDE_DIRS}")
