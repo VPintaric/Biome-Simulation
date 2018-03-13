@@ -48,6 +48,8 @@ void State::setMinionStartingPosition(Minion &minion) {
     while(!validPosition){
         ++nTries;
         if(nTries > TRIES_BEFORE_WARNING){
+            // FIXME: if this proves to be a problem instead of randomly generating a new position move the minion a bit
+            // out of the collision using the returned ci->mtd attribute
             Log().Get(logWARNING) << "Large amount of tries to initialize a non-colliding initial position for a minion!"
                                   "Current number of tries: " << nTries;
         }
