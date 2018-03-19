@@ -1,0 +1,10 @@
+#ifndef BIOME_SIMULATION_NEURALNET_H
+#define BIOME_SIMULATION_NEURALNET_H
+
+
+class NeuralNet {
+    
+};
+
+
+#endif //BIOME_SIMULATION_NEURALNET_H

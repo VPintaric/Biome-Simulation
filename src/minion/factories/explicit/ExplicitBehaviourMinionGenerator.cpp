@@ -1,5 +1,5 @@
 #include "glm/gtc/constants.hpp"
-#include "minion/factories/ExplicitBehaviourMinionGenerator.h"
+#include "minion/factories/explicit/ExplicitBehaviourMinionGenerator.h"
 #include "minion/controllers/RandomController.h"
 #include "minion/controllers/CowardController.h"
 #include "minion/controllers/BraveController.h"

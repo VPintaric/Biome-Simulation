@@ -9,8 +9,8 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include <chrono>
-#include <minion/factories/ExplicitBehaviourMinionGenerator.h>
-#include <minion/factories/NeuralNetMinionGenerator.h>
+#include <minion/factories/explicit/ExplicitBehaviourMinionGenerator.h>
+#include <minion/factories/neuralnet/NeuralNetMinionGenerator.h>
 #include "state/State.h"
 
 #include "state/Log.h"

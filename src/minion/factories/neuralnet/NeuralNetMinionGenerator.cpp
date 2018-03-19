@@ -1,5 +1,5 @@
 #include <minion/controllers/NeuralNetController.h>
-#include "minion/factories/NeuralNetMinionGenerator.h"
+#include "minion/factories/neuralnet/NeuralNetMinionGenerator.h"
 
 NeuralNetMinionGenerator::NeuralNetMinionGenerator() = default;
 NeuralNetMinionGenerator::~NeuralNetMinionGenerator() = default;

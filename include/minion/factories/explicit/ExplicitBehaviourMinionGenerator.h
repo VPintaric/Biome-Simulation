@@ -5,7 +5,7 @@
 #include <random>
 #include "minion/Minion.h"
 #include "constants/WindowConstants.h"
-#include "MinionGenerator.h"
+#include "minion/factories/MinionGenerator.h"
 
 class ExplicitBehaviourMinionGenerator : public MinionGenerator{
 public:

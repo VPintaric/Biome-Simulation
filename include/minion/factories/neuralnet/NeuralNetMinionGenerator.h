@@ -2,7 +2,7 @@
 #define BIOME_SIMULATION_NEURALNETMINIONGENERATOR_H
 
 
-#include "MinionGenerator.h"
+#include "minion/factories/MinionGenerator.h"
 
 class NeuralNetMinionGenerator : public MinionGenerator {
 public:

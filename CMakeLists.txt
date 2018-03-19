@@ -75,16 +75,16 @@ add_executable(Biome_Simulation
         include/minion/controllers/CowardController.h
         src/minion/controllers/BraveController.cpp
         include/minion/controllers/BraveController.h
-        src/minion/factories/ExplicitBehaviourMinionGenerator.cpp
-        include/minion/factories/ExplicitBehaviourMinionGenerator.h
+        src/minion/factories/explicit/ExplicitBehaviourMinionGenerator.cpp
+        include/minion/factories/explicit/ExplicitBehaviourMinionGenerator.h
         src/minion/controllers/NullController.cpp
         include/minion/controllers/NullController.h
         src/minion/controllers/NeuralNetController.cpp
         include/minion/controllers/NeuralNetController.h
         src/minion/factories/MinionGenerator.cpp
         include/minion/factories/MinionGenerator.h
-        src/minion/factories/NeuralNetMinionGenerator.cpp
-        include/minion/factories/NeuralNetMinionGenerator.h)
+        src/minion/factories/neuralnet/NeuralNetMinionGenerator.cpp
+        include/minion/factories/neuralnet/NeuralNetMinionGenerator.h src/neuralnet/NeuralNet.cpp src/neuralnet/NeuralNet.h)
 
 message(ERROR " ${SDL2_INCLUDE_DIRS}")
 message(ERROR " ${GLEW_INCLUDE_DIRS}")
