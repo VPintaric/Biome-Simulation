@@ -32,7 +32,7 @@ void MinionObject::draw() const {
     GLuint shaderId = r.getActiveShaderProgram()->getId();
 
     r.pushMatrix(Renderer::Matrix::MODEL);
-    r.transform(pos.x, pos.y, 0.f,
+    r.transform(pos.x, pos.y, -1.f,
             angle, scale, scale);
 
     glUniform4fv(glGetUniformLocation(shaderId, "color_mod"), 1, glm::value_ptr(skinColor));

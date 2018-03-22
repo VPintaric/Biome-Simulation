@@ -87,11 +87,10 @@ void init(){
     Camera::getInstance().setPos(WindowConst::INIT_CAMERA_POS);
     renderer.identity();
 
-
     State &s = State::getInstance();
 //    s.setMinionGenerator(std::make_shared<ExplicitBehaviourMinionGenerator>());
     s.setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
-    s.initBoundary(450.f);
+    s.initBoundary(1000.f);
     s.spawnMinions(40);
 }
 
