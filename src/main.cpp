@@ -11,6 +11,7 @@
 #include <chrono>
 #include <minion/factories/explicit/ExplicitBehaviourMinionGenerator.h>
 #include <minion/factories/neuralnet/NeuralNetMinionGenerator.h>
+#include <neuralnet/NeuralNet.h>
 #include "state/State.h"
 
 #include "state/Log.h"

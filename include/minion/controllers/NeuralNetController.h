@@ -4,6 +4,7 @@
 
 #include "MinionController.h"
 #include "eigen/Eigen"
+#include "neuralnet/NeuralNet.h"
 
 #include <vector>
 
@@ -12,9 +13,7 @@ private:
     const int INPUT_VARS = 3;
     const int OUTPUT_VARS = 2;
 
-    std::vector<std::shared_ptr<Eigen::MatrixXf> > weights;
-    std::vector<std::shared_ptr<Eigen::MatrixXf> > bias;
-    std::function<float(float)> activation;
+    std::shared_ptr<NeuralNet> nn;
 
 public:
     explicit NeuralNetController(const std::vector<int> &hiddenLayers, std::function<float(float)> activation);

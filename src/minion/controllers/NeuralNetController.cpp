@@ -4,25 +4,15 @@
 #include "minion/controllers/NeuralNetController.h"
 
 NeuralNetController::NeuralNetController(const std::vector<int> &hiddenLayers = std::vector<int>(),
-                                         std::function<float(float)> activation = tanhf)
-                                        : activation(std::move(activation)) {
-    int in = INPUT_VARS;
-    for (int hiddenLayer : hiddenLayers) {
-        auto w = std::make_shared<Eigen::MatrixXf>();
-        w->setZero(in, hiddenLayer);
-        auto b = std::make_shared<Eigen::MatrixXf>();
-        b->setZero(1, hiddenLayer);
-        weights.push_back(w);
-        bias.push_back(b);
-        in = hiddenLayer;
-    }
+                                         std::function<float(float)> activation = tanhf) {
 
-    auto w = std::make_shared<Eigen::MatrixXf>();
-    w->setZero(in, OUTPUT_VARS);
-    auto b = std::make_shared<Eigen::MatrixXf>();
-    b->setZero(1, OUTPUT_VARS);
-    weights.push_back(w);
-    bias.push_back(b);
+    std::vector<int> layers;
+    layers.reserve(hiddenLayers.size() + 2);
+    layers.push_back(INPUT_VARS);
+    layers.insert(layers.end(), hiddenLayers.begin(), hiddenLayers.end());
+    layers.push_back(OUTPUT_VARS);
+
+    nn = std::make_shared<NeuralNet>(layers, activation);
 };
 
 NeuralNetController::~NeuralNetController() = default;
@@ -47,13 +37,7 @@ void NeuralNetController::controlMinion(const std::shared_ptr<MinionObject> &m,
         x << closest->dist, closest->angle, 0.f;
     }
 
-    for(int i = 0; i < weights.size(); i++){
-        auto w = weights[i];
-        auto b = bias[i];
-        x *= *w;
-        x += *b;
-        x = x.unaryExpr(activation);
-    }
+    x = nn->forward(x);
 
     m->setControlForce(x(0, 0));
     m->setControlRotMoment(x(0, 1));
