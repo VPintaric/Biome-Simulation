@@ -42,6 +42,8 @@ void State::setMinionStartingPosition(Minion &minion) {
     object->setAcceleration(glm::vec2(0.f, 0.f));
     object->setAngleVel(0.f);
     object->setAngleAcc(0.f);
+    object->setControlForce(0.f);
+    object->setControlRotMoment(0.f);
 
     int nTries = 0;
     const int TRIES_BEFORE_WARNING = 10;

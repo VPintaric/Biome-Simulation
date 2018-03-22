@@ -17,6 +17,10 @@ NeuralNetController::NeuralNetController(const std::vector<int> &hiddenLayers = 
 
 NeuralNetController::~NeuralNetController() = default;
 
+std::shared_ptr<NeuralNet> NeuralNetController::getNeuralNet() {
+    return nn;
+}
+
 void NeuralNetController::controlMinion(const std::shared_ptr<MinionObject> &m,
                                         const std::shared_ptr<MinionSenses> &senses) {
     auto closest = senses->popSenseData();

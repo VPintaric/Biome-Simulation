@@ -92,7 +92,7 @@ void init(){
 //    s.setMinionGenerator(std::make_shared<ExplicitBehaviourMinionGenerator>());
     s.setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
     s.initBoundary(450.f);
-    s.spawnMinions(10);
+    s.spawnMinions(40);
 }
 
 void windowResize(int w, int h){

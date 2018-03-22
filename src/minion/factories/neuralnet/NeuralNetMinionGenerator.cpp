@@ -22,5 +22,7 @@ std::shared_ptr<Minion> NeuralNetMinionGenerator::generateMinion() {
     minion->setSenses(senses);
     minion->setController(controller);
 
+    controller->getNeuralNet()->initRandom();
+
     return minion;
 }
