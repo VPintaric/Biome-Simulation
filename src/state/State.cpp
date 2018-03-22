@@ -31,12 +31,18 @@ State::~State() {
     Log().Get(logDEBUG) << "Destroying state instance";
 }
 
-void State::setMinionStartingPosition(Minion &minion) {
+void State::initializeMinion(Minion &minion) {
     CollisionDetection cd = CollisionDetection::getInstance();
     const auto &object = minion.getObject();
 
     std::uniform_real_distribution<float> angleDistr(0.f, glm::two_pi<float>());
     std::uniform_real_distribution<float> distanceDistr(0.f, boundary->getR1() - object->getRadius());
+
+    minion.setTimeLived(0.f);
+    minion.setDecay(2.5f);
+    minion.setMaxLife(100.f);
+    minion.setMinLife(-100.f);
+    minion.setLife(100.f);
 
     object->setVelocity(glm::vec2(0.f, 0.f));
     object->setAcceleration(glm::vec2(0.f, 0.f));
@@ -97,7 +103,7 @@ void State::spawnMinions(int n) {
     for(int i = 0; i < n; i++){
         auto minion = minionGenerator->generateMinion();
         minions.push_back(minion);
-        setMinionStartingPosition(*minion);
+        initializeMinion(*minion);
     }
 }
 
@@ -126,9 +132,7 @@ const std::vector< std::shared_ptr<Minion> > &State::getMinions() const{
 
 void State::controlMinions(float dt) {
     for(auto minion : minions){
-        if(!minion->getObject()->isDead()){
-            minion->control(dt);
-        }
+        minion->control(dt);
     }
 }
 
@@ -147,20 +151,17 @@ void State::update(float dt) {
             auto ci = cd.checkCircleCircleCollision(*m->getObject(), *m2->getObject());
 
             if(ci->isCollision){
-                auto m1Obj = m->getObject();
-                auto m2Obj = m2->getObject();
-
                 cr.doCollisionResponse(*m->getObject(), *m2->getObject(), ci);
 
-                if(!m1Obj->isDead() && !m2Obj->isDead()){
-                    m1Obj->setLife(m1Obj->getLife() - COLLISION_PUNISH);
-                    m2Obj->setLife(m2Obj->getLife() - COLLISION_PUNISH);
-                } else if(m1Obj->isDead() && !m2Obj->isDead()){
-                    m1Obj->setLife(m1Obj->getLife() - COLLISION_PUNISH);
-                    m2Obj->setLife(m2Obj->getLife() + COLLISION_PUNISH);
-                } else if(!m1Obj->isDead() && m2Obj->isDead()){
-                    m1Obj->setLife(m1Obj->getLife() + COLLISION_PUNISH);
-                    m2Obj->setLife(m2Obj->getLife() - COLLISION_PUNISH);
+                if(!m->isDead() && !m2->isDead()){
+                    m->setLife(m->getLife() - COLLISION_PUNISH);
+                    m2->setLife(m2->getLife() - COLLISION_PUNISH);
+                } else if(m->isDead() && !m2->isDead()){
+                    m->setLife(m->getLife() - COLLISION_PUNISH);
+                    m2->setLife(m2->getLife() + COLLISION_PUNISH);
+                } else if(!m->isDead() && m2->isDead()){
+                    m->setLife(m->getLife() + COLLISION_PUNISH);
+                    m2->setLife(m2->getLife() - COLLISION_PUNISH);
                 }
             }
         }
@@ -169,13 +170,13 @@ void State::update(float dt) {
         if(ci->isCollision){
             cr.doCollisionResponse(*m->getObject(), *boundary, ci);
 
-            m->getObject()->setLife(m->getObject()->getLife() - BOUNDARY_COLLISION_PUNISH);
+            m->setLife(m->getLife() - BOUNDARY_COLLISION_PUNISH);
         }
 
         m->update(dt);
-        if(m->getObject()->isDecayed()){
+        if(m->isDecayed()){
             *iter = minionGenerator->generateMinion();
-            setMinionStartingPosition(**iter);
+            initializeMinion(**iter);
         }
     }
 

@@ -13,22 +13,16 @@ public:
     virtual ~MinionObject();
     
     void setSkinColor(glm::vec4 c);
-    void setMaxLife(float l);
-    void setLife(float l);
-    void setDecay(float d);
-    
+
     glm::vec4 getSkinColor() const;
+
     glm::vec4 getBodyColor() const;
-    float getMaxLife() const;
-    float getLife() const;
-    float getDecay() const;
+
+    void setBodyColor(glm::vec4 color);
 
     void draw() const;
+
     void update(float deltaT) override;
-
-    bool isDead() const;
-
-    void setDead(bool dead);
 
     float getControlForce() const;
 
@@ -38,21 +32,11 @@ public:
 
     void setControlRotMoment(float controlRotMoment);
 
-    float getMinLife() const;
-
-    void setMinLife(float minLife);
-
-    bool isDecayed() const;
-
-    void setDecayed(bool decayed);
-
 private:
     std::shared_ptr<Model> bodyModel, circleModel;
 
-    glm::vec4 skinColor;
-    float maxLife, minLife, life, decay, controlForce, controlRotMoment;
-
-    bool dead, decayed;
+    glm::vec4 skinColor, bodyColor;
+    float controlForce, controlRotMoment;
 };
 
 #endif /* MINION_OBJECT_H */

@@ -13,10 +13,6 @@ std::shared_ptr<Minion> NeuralNetMinionGenerator::generateMinion() {
     object->setSkinColor(glm::vec4(0.f, 0.f, 1.f, 1.f));
     object->setRadius(15.f);
     object->setRMass(20.f / (object->getRadius()));
-    object->setDecay(2.5f);
-    object->setMaxLife(100.f);
-    object->setMinLife(-100.f);
-    object->setLife(100.f);
 
     minion->setObject(object);
     minion->setSenses(senses);

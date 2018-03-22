@@ -27,11 +27,47 @@ public:
     void control(float deltaT);
     void draw();
 
+    float getMaxLife() const;
+
+    void setMaxLife(float maxLife);
+
+    float getMinLife() const;
+
+    void setMinLife(float minLife);
+
+    float getLife() const;
+
+    void setLife(float life);
+
+    float getDecay() const;
+
+    void setDecay(float decay);
+
+    float getTimeLived() const;
+
+    void setTimeLived(float timeLived);
+
+    bool isDead() const;
+
+    void setDead(bool dead);
+
+    bool isDecayed() const;
+
+    void setDecayed(bool decayed);
+
+    int getId() const;
+
+    void setId(int id);
+
 private:
 
     std::shared_ptr<MinionObject> object;
     std::shared_ptr<MinionSenses> senses;
     std::shared_ptr<MinionController> controller;
+
+    int id;
+    float maxLife, minLife, life, decay, timeLived;
+    bool dead, decayed;
 };
 
 

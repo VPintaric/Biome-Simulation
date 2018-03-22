@@ -26,10 +26,6 @@ std::shared_ptr<Minion> ExplicitBehaviourMinionGenerator::generateMinion() {
     object->setSkinColor(COLOR_TYPES[type]);
     object->setRadius(std::fabs(radiusDistr(rng.get())) + 1e-1f);
     object->setRMass(20.f / (object->getRadius()));
-    object->setDecay(2.5f);
-    object->setMaxLife(100.f);
-    object->setMinLife(-100.f);
-    object->setLife(100.f);
 
     auto senses = std::make_shared<MinionSenses>();
 

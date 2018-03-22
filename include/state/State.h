@@ -40,7 +40,7 @@ private:
 
     bool shouldEndProgramFlag;
 
-    void setMinionStartingPosition(Minion &minion);
+    void initializeMinion(Minion &minion);
     State();
 };
 
