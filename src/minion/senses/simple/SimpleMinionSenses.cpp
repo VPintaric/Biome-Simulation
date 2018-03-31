@@ -195,3 +195,7 @@ void SimpleMinionSenses::draw() {
 
     r.popMatrix(Renderer::Matrix::MODEL);
 }
+
+float SimpleMinionSenses::getMaxSenseDistance() {
+    return maxSenseDistance;
+}

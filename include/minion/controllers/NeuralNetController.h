@@ -15,8 +15,12 @@ private:
 
     std::shared_ptr<NeuralNet> nn;
 
+    std::weak_ptr<Minion> minion;
+
 public:
-    explicit NeuralNetController(const std::vector<int> &hiddenLayers, std::function<float(float)> activation);
+    explicit NeuralNetController(std::weak_ptr<Minion> minion,
+                                 const std::vector<int> &hiddenLayers,
+                                 std::function<float(float)> activation);
     ~NeuralNetController() override;
 
     std::vector<float> controlMinion(std::vector<float> senseData) override;

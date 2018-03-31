@@ -20,7 +20,7 @@ ExplicitBehaviourMinionGenerator::~ExplicitBehaviourMinionGenerator() = default;
 std::shared_ptr<Minion> ExplicitBehaviourMinionGenerator::generateMinion() {
     auto rng = State::getInstance().getRng();
 //    int type = getRandomType();
-    int type = 3;
+    int type = 0;
 
     auto minion = std::make_shared<Minion>();
     auto object = std::make_shared<MinionObject>();
@@ -66,4 +66,9 @@ int ExplicitBehaviourMinionGenerator::getRandomType() {
     }
 
     return NUM_TYPES - 1;
+}
+
+std::shared_ptr<Minion> ExplicitBehaviourMinionGenerator::generateChild(std::shared_ptr<Minion> first,
+                                                                        std::shared_ptr<Minion> second) {
+    return nullptr;
 }

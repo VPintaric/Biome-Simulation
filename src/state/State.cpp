@@ -2,6 +2,9 @@
 
 #include <random>
 #include <chrono>
+#include <utility>
+#include <constants/SimulationConstants.h>
+#include <helpers/MathHelpers.h>
 #include "glm/gtc/constants.hpp"
 #include "glm/gtx/vector_angle.hpp"
 #include "state/State.h"
@@ -16,7 +19,7 @@ State& State::getInstance() {
     return instance;
  }
 
-State::State() {
+State::State() : nextMinionId(1) {
     Log().Get(logDEBUG) << "Creating new state instance";
     shouldEndProgramFlag = false;
     rng.seed(static_cast<unsigned long>(std::chrono::system_clock::now().time_since_epoch().count()));
@@ -25,6 +28,14 @@ State::State() {
 
 void State::setMinionGenerator(std::shared_ptr<MinionGenerator> gen) {
     minionGenerator = std::move(gen);
+    if(selectionAlg){
+        selectionAlg->setMinionGenerator(minionGenerator);
+    }
+}
+
+void State::setSelectionAlg(std::shared_ptr<Selection> sel) {
+    selectionAlg = std::move(sel);
+    selectionAlg->setMinionGenerator(minionGenerator);
 }
 
 State::~State() {
@@ -34,15 +45,23 @@ State::~State() {
 void State::initializeMinion(Minion &minion) {
     CollisionDetection cd = CollisionDetection::getInstance();
     const auto &object = minion.getObject();
+    const auto &senses = minion.getSenses();
 
     std::uniform_real_distribution<float> angleDistr(0.f, glm::two_pi<float>());
     std::uniform_real_distribution<float> distanceDistr(0.f, boundary->getR1() - object->getRadius());
 
+    senses->setMaxSenseDistance(Math::clamp(senses->getMaxSenseDistance(), SimConst::MINION_MIN_MAX_SENSE_DISTANCE,
+                                            SimConst::MINION_MAX_MAX_SENSE_DISTANCE));
+    minion.setDecay(SimConst::MINION_DECAY_RATE_SENSE_DISTANCE_FACTOR * senses->getMaxSenseDistance() +
+                            SimConst::MINION_DEFAULT_DECAY_RATE);
+    object->setRadius(Math::clamp(object->getRadius(), SimConst::MINION_MIN_RADIUS, SimConst::MINION_MAX_RADIUS));
+    object->setRMass(SimConst::MINION_RADIUS_TO_RMASS_RATIO / object->getRadius());
+    minion.setMaxLife(SimConst::MINION_MAX_LIFE_RADIUS_FACTOR * object->getRadius());
+    minion.setMinLife(-minion.getMaxLife());
+
     minion.setTimeLived(0.f);
-    minion.setDecay(2.5f);
-    minion.setMaxLife(100.f);
-    minion.setMinLife(-100.f);
-    minion.setLife(100.f);
+    minion.setLife(minion.getMaxLife());
+    minion.setId(nextMinionId++);
 
     object->setVelocity(glm::vec2(0.f, 0.f));
     object->setAcceleration(glm::vec2(0.f, 0.f));

@@ -13,6 +13,7 @@ public:
     virtual ~MinionSenses();
 
     virtual void setMaxSenseDistance(float dist) = 0;
+    virtual float getMaxSenseDistance() = 0;
     virtual int getDataSize() = 0;
     virtual std::vector<float> gatherData(float deltaT) = 0;
     virtual void draw() = 0;

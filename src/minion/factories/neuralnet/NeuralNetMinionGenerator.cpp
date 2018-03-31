@@ -9,7 +9,7 @@ std::shared_ptr<Minion> NeuralNetMinionGenerator::generateMinion() {
     auto minion = std::make_shared<Minion>();
     auto object = std::make_shared<MinionObject>();
     auto senses = std::make_shared<SimpleMinionSenses>(minion);
-    auto controller = std::shared_ptr<NeuralNetController>(new NeuralNetController({10, 10}, tanhf));
+    auto controller = std::shared_ptr<NeuralNetController>(new NeuralNetController(minion, {10, 10}, tanhf));
 
     minion->setObject(object);
     minion->setSenses(senses);
@@ -24,4 +24,20 @@ std::shared_ptr<Minion> NeuralNetMinionGenerator::generateMinion() {
     senses->setMaxSenseDistance(100.f);
 
     return minion;
+}
+
+std::shared_ptr<Minion> NeuralNetMinionGenerator::generateChild(std::shared_ptr<Minion> first,
+                                                                std::shared_ptr<Minion> second) {
+    auto child = crossover(first, second);
+    mutate(child);
+    return child;
+}
+
+std::shared_ptr<Minion> NeuralNetMinionGenerator::crossover(std::shared_ptr<Minion> first,
+                                                            std::shared_ptr<Minion> second) {
+    return nullptr;
+}
+
+void NeuralNetMinionGenerator::mutate(std::shared_ptr<Minion> m) {
+
 }

@@ -7,11 +7,15 @@
 class NeuralNetMinionGenerator : public MinionGenerator {
 public:
     NeuralNetMinionGenerator();
-    virtual ~NeuralNetMinionGenerator();
+    ~NeuralNetMinionGenerator() override;
 
     std::shared_ptr<Minion> generateMinion() override;
-private:
 
+    std::shared_ptr<Minion> generateChild(std::shared_ptr<Minion> first, std::shared_ptr<Minion> second) override;
+
+private:
+    std::shared_ptr<Minion> crossover(std::shared_ptr<Minion> first, std::shared_ptr<Minion> second);
+    void mutate(std::shared_ptr<Minion> m);
 };
 
 

@@ -14,6 +14,8 @@ public:
 
     std::shared_ptr<Minion> generateMinion() override;
 
+    std::shared_ptr<Minion> generateChild(std::shared_ptr<Minion> first, std::shared_ptr<Minion> second) override;
+
 private:
     std::uniform_real_distribution<float> typeDistr;
 

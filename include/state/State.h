@@ -9,6 +9,7 @@
 #include "minion/object/MinionObject.h"
 #include "objects/Boundary.h"
 #include "minion/Minion.h"
+#include "minion/selection/Selection.h"
 
 class State {
 public:
@@ -27,6 +28,8 @@ public:
 
     void setMinionGenerator(std::shared_ptr<MinionGenerator> gen);
 
+    void setSelectionAlg(std::shared_ptr<Selection> sel);
+
     std::reference_wrapper< std::default_random_engine > getRng();
 
     const std::vector< std::shared_ptr<Minion> > &getMinions() const;
@@ -36,10 +39,13 @@ private:
     std::default_random_engine rng;
 
     std::shared_ptr<MinionGenerator> minionGenerator;
+    std::shared_ptr<Selection> selectionAlg;
     std::vector< std::shared_ptr<Minion> > minions;
     std::shared_ptr<Boundary> boundary;
 
     bool shouldEndProgramFlag;
+
+    int nextMinionId;
 
     void initializeMinion(Minion &minion);
     State();

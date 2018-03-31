@@ -4,8 +4,10 @@
 
 #include "minion/controllers/NeuralNetController.h"
 
-NeuralNetController::NeuralNetController(const std::vector<int> &hiddenLayers = std::vector<int>(),
-                                         std::function<float(float)> activation = tanhf) {
+NeuralNetController::NeuralNetController(std::weak_ptr<Minion> minion,
+                                         const std::vector<int> &hiddenLayers = std::vector<int>(),
+                                         std::function<float(float)> activation = tanhf)
+                                        :  minion(minion) {
 
     std::vector<int> layers;
     layers.reserve(hiddenLayers.size() + 2);

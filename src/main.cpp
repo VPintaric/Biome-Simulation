@@ -12,6 +12,7 @@
 #include <minion/factories/explicit/ExplicitBehaviourMinionGenerator.h>
 #include <minion/factories/neuralnet/NeuralNetMinionGenerator.h>
 #include <neuralnet/NeuralNet.h>
+#include <minion/selection/CurrentLongestLivingSelection.h>
 #include "state/State.h"
 
 #include "state/Log.h"
@@ -89,6 +90,7 @@ void init(){
 
     State &s = State::getInstance();
     s.setMinionGenerator(std::make_shared<ExplicitBehaviourMinionGenerator>());
+//    s.setSelectionAlg(std::make_shared<CurrentLongestLivingSelection>());
 //    s.setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
     s.initBoundary(300.f);
     s.spawnMinions(5);
