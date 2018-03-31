@@ -6,6 +6,9 @@
 #include "minion/senses/MinionSenses.h"
 #include "minion/controllers/MinionController.h"
 
+class MinionSenses;
+class MinionController;
+
 class Minion {
 public:
     Minion();

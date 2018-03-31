@@ -130,6 +130,10 @@ const std::vector< std::shared_ptr<Minion> > &State::getMinions() const{
     return minions;
 }
 
+std::shared_ptr<Boundary> State::getBoundary() const {
+    return boundary;
+}
+
 void State::controlMinions(float dt) {
     for(auto minion : minions){
         minion->control(dt);

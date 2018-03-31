@@ -29,7 +29,7 @@ private:
         glm::vec4(0.5f, 0.5f, 0.5f, 1.f),
         glm::vec4(0.f, 1.f, 0.f, 1.f),
         glm::vec4(1.f, 0.f, 0.f, 1.f),
-        glm::vec4(0.2f, 0.2f, 0.6f, 1.f),
+        glm::vec4(0.5f, 0.5f, 1.f, 1.f),
     };
     std::shared_ptr<MinionController> getControllerForType(int type);
 

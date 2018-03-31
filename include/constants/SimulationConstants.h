@@ -20,6 +20,8 @@ namespace SimConst {
     const float MINION_MAX_ACC = 20.f;
     const float MINION_MAX_ANGLE_ACC = 300.f;
     const float MINION_MIN_ANGLE_ACC = -MINION_MAX_ANGLE_ACC;
+    const float MINION_DEFAULT_MAX_SENSE_DISTANCE = 70.f;
+    const int MINION_DEFAULT_N_SIGHT_LINES = 15;
 }
 
 #endif /* SIMULATIONCONSTANTS_H */

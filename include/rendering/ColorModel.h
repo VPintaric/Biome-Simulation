@@ -6,13 +6,16 @@
 
 class ColorModel : public Model {
 public:
-    ColorModel(const std::vector<GLfloat> &vs, const std::vector<GLfloat> &cs);
+    explicit ColorModel(const std::vector<GLfloat> &vs, const std::vector<GLfloat> &cs,
+                        GLenum primitiveType = GL_TRIANGLES, GLenum colorBufferUsage = GL_STATIC_DRAW);
     virtual ~ColorModel();
     virtual void draw();
-    
+    virtual void updateColorBuffer();
+
+    std::vector<GLfloat> colors;
+
 private:
     GLuint colorsVboId;
-    std::vector<GLfloat> colors;
 };
 
 #endif /* COLORMODEL_H */

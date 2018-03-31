@@ -1,3 +1,4 @@
+#include <minion/senses/simple/SimpleMinionSenses.h>
 #include "glm/gtc/constants.hpp"
 #include "minion/factories/explicit/ExplicitBehaviourMinionGenerator.h"
 #include "minion/controllers/RandomController.h"
@@ -18,22 +19,22 @@ ExplicitBehaviourMinionGenerator::~ExplicitBehaviourMinionGenerator() = default;
 
 std::shared_ptr<Minion> ExplicitBehaviourMinionGenerator::generateMinion() {
     auto rng = State::getInstance().getRng();
+//    int type = getRandomType();
+    int type = 3;
 
     auto minion = std::make_shared<Minion>();
-    int type = getRandomType();
-
     auto object = std::make_shared<MinionObject>();
+    auto senses = std::make_shared<SimpleMinionSenses>(minion);
+    auto controller = getControllerForType(type);
+    minion->setObject(object);
+    minion->setSenses(senses);
+    minion->setController(controller);
+
     object->setSkinColor(COLOR_TYPES[type]);
     object->setRadius(std::fabs(radiusDistr(rng.get())) + 1e-1f);
     object->setRMass(20.f / (object->getRadius()));
 
-    auto senses = std::make_shared<MinionSenses>();
-
-    auto controller = getControllerForType(type);
-
-    minion->setObject(object);
-    minion->setSenses(senses);
-    minion->setController(controller);
+    senses->setMaxSenseDistance(100.f);
 
     return minion;
 }

@@ -30,6 +30,7 @@ public:
     std::reference_wrapper< std::default_random_engine > getRng();
 
     const std::vector< std::shared_ptr<Minion> > &getMinions() const;
+    std::shared_ptr<Boundary> getBoundary() const;
 
 private:
     std::default_random_engine rng;

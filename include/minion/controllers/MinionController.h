@@ -9,9 +9,7 @@ public:
     MinionController();
     virtual ~MinionController();
 
-    virtual void controlMinion(const std::shared_ptr<MinionObject> &m, const std::shared_ptr<MinionSenses> &senses) = 0;
-private:
-
+    virtual std::vector<float> controlMinion(std::vector<float> senseData) = 0;
 };
 
 

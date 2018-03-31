@@ -88,10 +88,10 @@ void init(){
     renderer.identity();
 
     State &s = State::getInstance();
-//    s.setMinionGenerator(std::make_shared<ExplicitBehaviourMinionGenerator>());
-    s.setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
-    s.initBoundary(1000.f);
-    s.spawnMinions(40);
+    s.setMinionGenerator(std::make_shared<ExplicitBehaviourMinionGenerator>());
+//    s.setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
+    s.initBoundary(300.f);
+    s.spawnMinions(5);
 }
 
 void windowResize(int w, int h){

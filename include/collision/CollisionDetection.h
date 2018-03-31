@@ -15,6 +15,9 @@ public:
     std::shared_ptr<CollisionInfo> checkCircleCircleCollision(CircleObject &a, CircleObject &b, bool forceGetInfo=false);
     std::shared_ptr<CollisionInfo> checkCircleHollowCollision(CircleObject &a, HollowCircleObject &b, bool forceGetInfo=false);
 
+    bool pointInCircle(const glm::vec2& p, CircleObject &o);
+    bool pointInHollowCircle(const glm::vec2& p, HollowCircleObject &o);
+
 private:
     CollisionDetection();
 };

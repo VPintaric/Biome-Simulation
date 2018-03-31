@@ -62,3 +62,11 @@ std::shared_ptr<CollisionInfo> CollisionDetection::checkCircleHollowCollision(Ci
     return ci;
 }
 
+bool CollisionDetection::pointInCircle(const glm::vec2 &p, CircleObject &o) {
+    return glm::length2(p - o.getPos()) <= o.getRadius() * o.getRadius();
+}
+
+bool CollisionDetection::pointInHollowCircle(const glm::vec2 &p, HollowCircleObject &o) {
+    float d2 = glm::length2(p - o.getPos());
+    return d2 <= o.getR2() * o.getR2() && d2 >= o.getR1() * o.getR1();
+}

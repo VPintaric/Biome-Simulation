@@ -3,7 +3,7 @@
 
 #include "rendering/Model.h"
 
-Model::Model(const std::vector<GLfloat> &vs) : vertices(vs) {
+Model::Model(const std::vector<GLfloat> &vs, GLenum primitiveType) : vertices(vs), primitiveType(primitiveType) {
     glGenVertexArrays(1, &vaoId);
     glBindVertexArray(vaoId);
 
@@ -21,5 +21,5 @@ Model::~Model() {
 
 void Model::draw() {
     glBindVertexArray(vaoId);
-    glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vertices.size()));
+    glDrawArrays(primitiveType, 0, static_cast<GLsizei>(vertices.size()));
 }

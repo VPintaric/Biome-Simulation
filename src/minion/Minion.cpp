@@ -24,10 +24,20 @@ void Minion::update(float deltaT) {
 }
 
 void Minion::control(float deltaT) {
-    senses->clearData();
+    senses->setAngle(object->getAngle());
+    senses->setPos(object->getPos());
+    senses->setAngleVel(object->getAngleVel());
+    senses->setVelocity(object->getVelocity());
+    senses->setRMass(object->getRMass());
+
     if(!isDead()){
-        senses->gatherData(object);
-        controller->controlMinion(object, senses);
+        std::vector<float> controlParams = controller->controlMinion(senses->gatherData(deltaT));
+        while(controlParams.size() < 2){
+            controlParams.push_back(0.f);
+        }
+
+        object->setControlForce(controlParams[0]);
+        object->setControlRotMoment(controlParams[1]);
     } else {
         object->setControlForce(0.f);
         object->setControlRotMoment(0.f);

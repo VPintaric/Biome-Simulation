@@ -9,7 +9,7 @@ public:
     NullController();
     ~NullController() override;
 
-    void controlMinion(const std::shared_ptr<MinionObject> &m, const std::shared_ptr<MinionSenses> &senses) override;
+    std::vector<float> controlMinion(std::vector<float> senseData) override;
 };
 
 

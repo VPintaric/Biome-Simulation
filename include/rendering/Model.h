@@ -6,7 +6,7 @@
 
 class Model {
 public:
-    Model(const std::vector<GLfloat> &vs);
+    explicit Model(const std::vector<GLfloat> &vs, GLenum primitiveType = GL_TRIANGLES);
     virtual ~Model();
 
     virtual void draw();
@@ -16,6 +16,7 @@ protected:
     GLuint verticesVboId;
     std::vector<GLfloat> vertices;
 
+    GLenum primitiveType;
 };
 
 #endif // MODEL_H
