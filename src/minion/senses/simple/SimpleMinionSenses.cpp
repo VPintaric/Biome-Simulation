@@ -7,8 +7,6 @@
 #include <glm/gtx/vector_angle.hpp>
 #include <rendering/Renderer.h>
 #include <glm/gtc/type_ptr.hpp>
-#include <utility>
-#include <utility>
 #include <state/Log.h>
 #include "minion/senses/simple/SimpleMinionSenses.h"
 
