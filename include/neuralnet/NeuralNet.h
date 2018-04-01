@@ -9,11 +9,11 @@
 
 class NeuralNet {
 private:
+public:
     std::vector<std::shared_ptr<Eigen::MatrixXf> > weights;
     std::vector<std::shared_ptr<Eigen::MatrixXf> > bias;
-    std::function<float(float)> activation;
 
-public:
+    std::function<float(float)> activation;
 
     NeuralNet(const std::vector<int> &layers, std::function<float(float)> activation);
     explicit NeuralNet(std::string fileName);

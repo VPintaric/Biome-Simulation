@@ -1,6 +1,9 @@
 #include <state/State.h>
 #include "minion/selection/CurrentLongestLivingSelection.h"
 
+CurrentLongestLivingSelection::CurrentLongestLivingSelection() = default;
+CurrentLongestLivingSelection::~CurrentLongestLivingSelection() = default;
+
 std::shared_ptr<Minion> CurrentLongestLivingSelection::getNewMinion() {
     auto& s = State::getInstance();
     auto& minions = s.getMinions();

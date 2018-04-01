@@ -4,11 +4,12 @@
 
 #include "Selection.h"
 
-class CurrentLongestLivingSelection : Selection {
+class CurrentLongestLivingSelection : public Selection {
 public:
-private:
-    std::shared_ptr<Minion> getNewMinion() override;
+    CurrentLongestLivingSelection();
+    ~CurrentLongestLivingSelection();
 
+    std::shared_ptr<Minion> getNewMinion() override;
     void setMinionGenerator(std::shared_ptr<MinionGenerator> mg) override;
 
 private:

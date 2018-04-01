@@ -89,11 +89,11 @@ void init(){
     renderer.identity();
 
     State &s = State::getInstance();
-    s.setMinionGenerator(std::make_shared<ExplicitBehaviourMinionGenerator>());
-//    s.setSelectionAlg(std::make_shared<CurrentLongestLivingSelection>());
-//    s.setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
-    s.initBoundary(300.f);
-    s.spawnMinions(5);
+//    s.setMinionGenerator(std::make_shared<ExplicitBehaviourMinionGenerator>());
+    s.setSelectionAlg(std::shared_ptr<Selection>(new CurrentLongestLivingSelection()));
+    s.setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
+    s.initBoundary(600.f);
+    s.spawnMinions(20);
 }
 
 void windowResize(int w, int h){

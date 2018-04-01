@@ -50,6 +50,9 @@ void State::initializeMinion(Minion &minion) {
     std::uniform_real_distribution<float> angleDistr(0.f, glm::two_pi<float>());
     std::uniform_real_distribution<float> distanceDistr(0.f, boundary->getR1() - object->getRadius());
 
+    auto c = object->getSkinColor();
+    object->setSkinColor(glm::vec4(Math::clamp(c.r, 0.f, 1.f), Math::clamp(c.g, 0.f, 1.f), Math::clamp(c.b, 0.f, 1.f), 1.f));
+
     senses->setMaxSenseDistance(Math::clamp(senses->getMaxSenseDistance(), SimConst::MINION_MIN_MAX_SENSE_DISTANCE,
                                             SimConst::MINION_MAX_MAX_SENSE_DISTANCE));
     minion.setDecay(SimConst::MINION_DECAY_RATE_SENSE_DISTANCE_FACTOR * senses->getMaxSenseDistance() +
@@ -198,7 +201,7 @@ void State::update(float dt) {
 
         m->update(dt);
         if(m->isDecayed()){
-            *iter = minionGenerator->generateMinion();
+            *iter = selectionAlg->getNewMinion();
             initializeMinion(**iter);
         }
     }
