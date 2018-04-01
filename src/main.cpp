@@ -92,8 +92,8 @@ void init(){
 //    s.setMinionGenerator(std::make_shared<ExplicitBehaviourMinionGenerator>());
     s.setSelectionAlg(std::shared_ptr<Selection>(new CurrentLongestLivingSelection()));
     s.setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
-    s.initBoundary(600.f);
-    s.spawnMinions(20);
+    s.initBoundary(700.f);
+    s.spawnMinions(30);
 }
 
 void windowResize(int w, int h){

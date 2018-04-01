@@ -13,11 +13,10 @@ NeuralNetMinionGenerator::~NeuralNetMinionGenerator() = default;
 std::shared_ptr<Minion> NeuralNetMinionGenerator::createRawMinion() {
     auto minion = std::make_shared<Minion>();
     auto object = std::make_shared<MinionObject>();
-    auto senses = std::make_shared<SimpleMinionSenses>(minion);
-    auto controller = std::shared_ptr<NeuralNetController>(new NeuralNetController(minion, nnHiddenLayers, tanhf));
-
     minion->setObject(object);
+    auto senses = std::make_shared<SimpleMinionSenses>(minion);
     minion->setSenses(senses);
+    auto controller = std::shared_ptr<NeuralNetController>(new NeuralNetController(minion, nnHiddenLayers, tanhf));
     minion->setController(controller);
 
     return minion;
@@ -81,7 +80,7 @@ std::shared_ptr<Minion> NeuralNetMinionGenerator::crossover(std::shared_ptr<Mini
 }
 
 void NeuralNetMinionGenerator::mutate(std::shared_ptr<Minion> m) {
-    std::normal_distribution<float> colorMut(0.f, 1.f);
+    std::normal_distribution<float> colorMut(0.f, 0.1f);
     std::normal_distribution<float> radiusMut(0.f, 5.f);
     std::normal_distribution<float> senseDistMut(0.f, 5.f);
     std::normal_distribution<float> nnMut(0.f, 10.f);

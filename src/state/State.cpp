@@ -19,7 +19,7 @@ State& State::getInstance() {
     return instance;
  }
 
-State::State() : nextMinionId(1) {
+State::State() : nextMinionId(1), currentBestMinion(nullptr) {
     Log().Get(logDEBUG) << "Creating new state instance";
     shouldEndProgramFlag = false;
     rng.seed(static_cast<unsigned long>(std::chrono::system_clock::now().time_since_epoch().count()));
@@ -201,6 +201,10 @@ void State::update(float dt) {
 
         m->update(dt);
         if(m->isDecayed()){
+            if(currentBestMinion == nullptr || currentBestMinion->getTimeLived() < m->getTimeLived()){
+                currentBestMinion = m;
+                Log().Get(logINFO) << "New longest living time: " << currentBestMinion->getTimeLived();
+            }
             *iter = selectionAlg->getNewMinion();
             initializeMinion(**iter);
         }

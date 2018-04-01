@@ -10,7 +10,6 @@
 
 class NeuralNetController : public MinionController {
 private:
-    const int INPUT_VARS = 3;
     const int OUTPUT_VARS = 2;
 
     std::shared_ptr<NeuralNet> nn;

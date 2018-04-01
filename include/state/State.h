@@ -47,6 +47,8 @@ private:
 
     int nextMinionId;
 
+    std::shared_ptr<Minion> currentBestMinion;
+
     void initializeMinion(Minion &minion);
     State();
 };
