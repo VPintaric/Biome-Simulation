@@ -19,7 +19,7 @@ State& State::getInstance() {
     return instance;
  }
 
-State::State() : nextMinionId(1), currentBestMinion(nullptr) {
+State::State() : nextMinionId(1), currentBestMinion(nullptr), pGenerateRandomMinion(0.f) {
     Log().Get(logDEBUG) << "Creating new state instance";
     shouldEndProgramFlag = false;
     rng.seed(static_cast<unsigned long>(std::chrono::system_clock::now().time_since_epoch().count()));
@@ -205,7 +205,13 @@ void State::update(float dt) {
                 currentBestMinion = m;
                 Log().Get(logINFO) << "New longest living time: " << currentBestMinion->getTimeLived();
             }
-            *iter = selectionAlg->getNewMinion();
+
+            float roll = std::uniform_real_distribution<float>(0.f, 1.f)(rng);
+            if(roll <= pGenerateRandomMinion){
+                *iter = minionGenerator->generateMinion();
+            } else {
+                *iter = selectionAlg->getNewMinion();
+            }
             initializeMinion(**iter);
         }
     }
@@ -218,4 +224,12 @@ void State::update(float dt) {
 
 std::reference_wrapper< std::default_random_engine > State::getRng(){
     return std::ref(rng);
+}
+
+float State::getPGenerateRandomMinion() const {
+    return pGenerateRandomMinion;
+}
+
+void State::setPGenerateRandomMinion(float p) {
+    pGenerateRandomMinion = Math::clamp(p, 0.f, 1.f);
 }

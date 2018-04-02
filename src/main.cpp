@@ -94,6 +94,7 @@ void init(){
     s.setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
     s.initBoundary(700.f);
     s.spawnMinions(30);
+    s.setPGenerateRandomMinion(0.25f);
 }
 
 void windowResize(int w, int h){

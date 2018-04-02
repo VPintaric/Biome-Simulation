@@ -30,6 +30,9 @@ public:
 
     void setSelectionAlg(std::shared_ptr<Selection> sel);
 
+    void setPGenerateRandomMinion(float p);
+    float getPGenerateRandomMinion() const;
+
     std::reference_wrapper< std::default_random_engine > getRng();
 
     const std::vector< std::shared_ptr<Minion> > &getMinions() const;
@@ -46,6 +49,8 @@ private:
     bool shouldEndProgramFlag;
 
     int nextMinionId;
+
+    float pGenerateRandomMinion;
 
     std::shared_ptr<Minion> currentBestMinion;
 
