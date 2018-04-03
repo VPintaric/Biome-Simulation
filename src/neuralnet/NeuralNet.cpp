@@ -5,7 +5,7 @@
 #include "neuralnet/NeuralNet.h"
 
 NeuralNet::NeuralNet(const std::vector<int> &layers, std::function<float(float)> activation) :
-                    activation(std::move(activation)){
+                    activation(std::move(activation)), layers(layers){
     int in = layers.front();
     for (auto iter = layers.begin() + 1; iter != layers.end() - 1; ++iter) {
         auto w = std::make_shared<Eigen::MatrixXf>();
@@ -23,10 +23,6 @@ NeuralNet::NeuralNet(const std::vector<int> &layers, std::function<float(float)>
     b->setZero(1, layers.back());
     weights.push_back(w);
     bias.push_back(b);
-}
-
-NeuralNet::NeuralNet(std::string fileName) {
-    this->loadFromFile(std::move(fileName));
 }
 
 NeuralNet::~NeuralNet() = default;
@@ -47,85 +43,6 @@ Eigen::MatrixXf NeuralNet::forward(Eigen::MatrixXf input) {
     return input;
 }
 
-/*
- * Saving it in plain text format for easier debugging and human readability.
- * Could be optimized by doing this in a separate thread and/or saving in binary format.
- */
-void NeuralNet::saveToFile(std::string fileName) {
-    std::ofstream file;
-    file.open(fileName);
-
-    if(!file.is_open()){
-        Log().Get(logWARNING) << "Unable to save neuralnet data to file named: " << fileName;
-        return;
-    }
-
-    for(int i = 0; i < weights.size(); ++i){
-        auto& w = *weights[i];
-        auto& b = *bias[i];
-
-        file << w.rows() << " " << w.cols() << std::endl;
-
-        for(int j = 0; j < w.rows(); j++){
-            for(int k = 0; k < w.cols(); k++){
-                file << w(j, k) << " ";
-            }
-        }
-        file << std::endl;
-
-        for(int j = 0; j < b.cols(); j++){
-            file << b(0, j) << " ";
-        }
-        file << std::endl << std::endl;
-    }
-
-    file.close();
-}
-
-void NeuralNet::loadFromFile(std::string fileName) {
-    std::ifstream file;
-    file.open(fileName);
-
-    if(!file.is_open()){
-        Log().Get(logWARNING) << "Unable to load neuralnet from file named: " << fileName;
-        return;
-    }
-
-    std::string line;
-    while(std::getline(file, line)){
-        if(line.empty()){
-            continue;
-        }
-
-        std::istringstream iss(line);
-
-        int rows, cols;
-        iss >> rows >> cols;
-
-        auto w = std::make_shared<Eigen::MatrixXf>();
-        w->setZero(rows, cols);
-        auto b = std::make_shared<Eigen::MatrixXf>();
-        b->setZero(1, cols);
-
-        std::getline(file, line);
-        iss.str(line);
-        for(int i = 0; i < rows; i++){
-            for(int j = 0; j < cols; j++){
-                iss >> w->operator()(i, j);
-            }
-        }
-
-        std::getline(file, line);
-        iss.str(line);
-        for(int j = 0; j < cols; j++){
-            iss >> b->operator()(0, j);
-        }
-
-        weights.push_back(w);
-        bias.push_back(b);
-    }
-}
-
 void NeuralNet::initRandom() {
     std::uniform_real_distribution<float> distr(-100.f, 100.f);
 
@@ -139,5 +56,89 @@ void NeuralNet::initRandom() {
                 bias[layer]->operator()(0, j) = distr(rng.get());
             }
         }
+    }
+}
+
+void NeuralNet::persistToJSON(rjs::Value &root, rjs::Document::AllocatorType &alloc) {
+    root.SetObject();
+
+    rjs::Value layersJSON(rjs::kArrayType);
+    for(int layer : layers){
+        layersJSON.PushBack(rjs::Value(layer), alloc);
+    }
+    root.AddMember(rjs::StringRef(JSON_LAYERS), layersJSON, alloc);
+
+    rjs::Value weightsJSON(rjs::kArrayType);
+    for(const auto &w : weights){
+        for(int row = 0; row < w->rows(); row++){
+            for(int col = 0; col < w->cols(); col++){
+                weightsJSON.PushBack(rjs::Value(w->operator()(row, col)), alloc);
+            }
+        }
+    }
+    root.AddMember(rjs::StringRef(JSON_WEIGHTS), weightsJSON, alloc);
+
+    rjs::Value biasJSON(rjs::kArrayType);
+    for(auto b : bias){
+        for(int col = 0; col < b->cols(); col++){
+            biasJSON.PushBack(rjs::Value(b->operator()(0, col)), alloc);
+        }
+    }
+    root.AddMember(rjs::StringRef(JSON_BIAS), biasJSON, alloc);
+}
+
+void NeuralNet::initFromJSON(rjs::Value &root) {
+    auto layersJSON = root.FindMember(rjs::StringRef(JSON_LAYERS));
+    auto weightsJSON = root.FindMember(rjs::StringRef(JSON_WEIGHTS));
+    auto biasJSON = root.FindMember(rjs::StringRef(JSON_BIAS));
+
+    if (layersJSON == root.MemberEnd() || !layersJSON->value.IsArray() ||
+            weightsJSON == root.MemberEnd() || !weightsJSON->value.IsArray() ||
+            biasJSON == root.MemberEnd() || !biasJSON->value.IsArray()) {
+        Log().Get(logWARNING) << "\"" << JSON_LAYERS << "\", \"" << JSON_WEIGHTS << "\" or \"" << JSON_BIAS << "\""
+                " not found or invalid in JSON, can't initialize";
+        return;
+    }
+
+    layers.clear();
+    for (const auto &layer : layersJSON->value.GetArray()) {
+        layers.push_back(layer.GetInt());
+    }
+
+    auto weightsArray = weightsJSON->value.GetArray();
+
+    weights.clear();
+    int rows = layers.front();
+    int idxJSON = 0;
+    for(int i = 1; i < layers.size(); i++){
+        int cols = layers[i];
+        auto w = std::make_shared<Eigen::MatrixXf>();
+        w->setZero(rows, cols);
+
+        for(int j = 0; j < rows; j++){
+            for(int k = 0; k < cols; k++){
+                w->operator()(j, k) = weightsArray[idxJSON++].GetFloat();
+            }
+        }
+
+        weights.push_back(w);
+        rows = cols;
+    }
+
+    auto biasArray = biasJSON->value.GetArray();
+
+    bias.clear();
+    idxJSON = 0;
+    for(int i = 1; i < layers.size(); i++){
+        int cols = layers[i];
+
+        auto b = std::make_shared<Eigen::MatrixXf>();
+        b->setZero(1, cols);
+
+        for(int j = 0; j < cols; j++){
+            b->operator()(0, j) = biasArray[idxJSON++].GetFloat();
+        }
+
+        bias.push_back(b);
     }
 }

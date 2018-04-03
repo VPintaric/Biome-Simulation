@@ -84,7 +84,20 @@ add_executable(Biome_Simulation
         src/minion/factories/MinionGenerator.cpp
         include/minion/factories/MinionGenerator.h
         src/minion/factories/neuralnet/NeuralNetMinionGenerator.cpp
-        include/minion/factories/neuralnet/NeuralNetMinionGenerator.h src/neuralnet/NeuralNet.cpp include/neuralnet/NeuralNet.h src/minion/senses/simple/SimpleMinionSenses.cpp include/minion/senses/simple/SimpleMinionSenses.h src/minion/selection/Selection.cpp include/minion/selection/Selection.h src/minion/selection/CurrentLongestLivingSelection.cpp include/minion/selection/CurrentLongestLivingSelection.h src/minion/selection/CurrentLongestLivingSelection.cpp include/minion/selection/CurrentLongestLivingSelection.h)
+        include/minion/factories/neuralnet/NeuralNetMinionGenerator.h
+        src/neuralnet/NeuralNet.cpp
+        include/neuralnet/NeuralNet.h
+        src/minion/senses/simple/SimpleMinionSenses.cpp
+        include/minion/senses/simple/SimpleMinionSenses.h
+        src/minion/selection/Selection.cpp
+        include/minion/selection/Selection.h
+        src/minion/selection/CurrentLongestLivingSelection.cpp
+        include/minion/selection/CurrentLongestLivingSelection.h
+        src/minion/selection/CurrentLongestLivingSelection.cpp
+        include/minion/selection/CurrentLongestLivingSelection.h
+        src/persistence/Persistence.cpp
+        include/persistence/Persistence.h
+        include/persistence/JSONPersistable.h)
 
 message(ERROR " ${SDL2_INCLUDE_DIRS}")
 message(ERROR " ${GLEW_INCLUDE_DIRS}")

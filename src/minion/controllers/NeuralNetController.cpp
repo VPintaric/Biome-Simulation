@@ -37,3 +37,22 @@ std::vector<float> NeuralNetController::controlMinion(std::vector<float> senseDa
 
     return std::vector<float>({x(0, 0), x(0, 1)});
 }
+
+void NeuralNetController::persistToJSON(rjs::Value &root, rjs::Document::AllocatorType &alloc) {
+    root.SetObject();
+
+    rjs::Value nnJSON(rjs::kObjectType);
+
+    nn->persistToJSON(nnJSON, alloc);
+
+    root.AddMember(rjs::StringRef(JSON_NEURAL_NET), nnJSON, alloc);
+}
+
+void NeuralNetController::initFromJSON(rjs::Value &root) {
+    auto neuralnet = root.FindMember(rjs::StringRef(JSON_NEURAL_NET));
+    if(neuralnet == root.MemberEnd() || !neuralnet->value.IsObject()){
+        Log().Get(logWARNING) << "\"" << JSON_NEURAL_NET << "\" not found or invalid in JSON, can't initalize";
+    } else {
+        nn->initFromJSON(neuralnet->value);
+    }
+}

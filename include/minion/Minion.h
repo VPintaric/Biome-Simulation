@@ -5,11 +5,16 @@
 #include "minion/object/MinionObject.h"
 #include "minion/senses/MinionSenses.h"
 #include "minion/controllers/MinionController.h"
+#include <rapidjson/document.h>
+#include <string>
+#include <persistence/JSONPersistable.h>
+
+namespace rjs = rapidjson;
 
 class MinionSenses;
 class MinionController;
 
-class Minion {
+class Minion : public JSONPersistable {
 public:
     Minion();
     virtual ~Minion();
@@ -26,8 +31,14 @@ public:
 
     void setController(const std::shared_ptr<MinionController> &controller);
 
+    void persistToJSON(rjs::Value& root, rjs::Document::AllocatorType& alloc) override;
+
+    void initFromJSON(rjs::Value &root) override;
+
     void update(float deltaT);
+
     void control(float deltaT);
+
     void draw();
 
     float getMaxLife() const;
@@ -71,6 +82,10 @@ private:
     int id;
     float maxLife, minLife, life, decay, timeLived;
     bool dead, decayed;
+
+    const char * JSON_OBJECT = "object";
+    const char * JSON_SENSES = "senses";
+    const char * JSON_CONTROLLER = "controller";
 };
 
 

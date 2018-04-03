@@ -5,13 +5,17 @@
 #include <memory>
 #include "rendering/Model.h"
 #include "objects/CircleObject.h"
+#include <persistence/JSONPersistable.h>
 
-
-class MinionObject : public CircleObject{
+class MinionObject : public CircleObject, JSONPersistable {
 public:
     MinionObject();
     virtual ~MinionObject();
-    
+
+    void persistToJSON(rjs::Value &root, rjs::Document::AllocatorType &alloc) override;
+
+    void initFromJSON(rjs::Value &root) override;
+
     void setSkinColor(glm::vec4 c);
 
     glm::vec4 getSkinColor() const;
@@ -37,6 +41,9 @@ private:
 
     glm::vec4 skinColor, bodyColor;
     float controlForce, controlRotMoment;
+
+    const char * JSON_SKIN_COLOR = "skin_color";
+    const char * JSON_RADIUS = "radius";
 };
 
 #endif /* MINION_OBJECT_H */

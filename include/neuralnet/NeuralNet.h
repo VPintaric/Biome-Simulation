@@ -7,22 +7,30 @@
 #include <memory>
 #include <string>
 
-class NeuralNet {
-private:
+class NeuralNet : public JSONPersistable {
 public:
+    std::vector<int> layers;
     std::vector<std::shared_ptr<Eigen::MatrixXf> > weights;
     std::vector<std::shared_ptr<Eigen::MatrixXf> > bias;
 
     std::function<float(float)> activation;
 
     NeuralNet(const std::vector<int> &layers, std::function<float(float)> activation);
-    explicit NeuralNet(std::string fileName);
+
     ~NeuralNet();
 
     Eigen::MatrixXf forward(Eigen::MatrixXf input);
-    void saveToFile(std::string fileName);
-    void loadFromFile(std::string fileName);
+
     void initRandom();
+
+    void persistToJSON(rjs::Value &root, rjs::Document::AllocatorType &alloc) override;
+
+    void initFromJSON(rjs::Value &root) override;
+
+private:
+    const char * JSON_LAYERS = "layers";
+    const char * JSON_WEIGHTS = "weights";
+    const char * JSON_BIAS = "bias";
 };
 
 

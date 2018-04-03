@@ -13,11 +13,17 @@ public:
     ~SimpleMinionSenses() override;
 
     void setMaxSenseDistance(float dist) override;
+
     float getMaxSenseDistance() override;
+
     void setNSightLines(int n);
+
     void setSightLineColor(int idx, glm::vec3 color);
+
     int getDataSize() override;
+
     std::vector<float> gatherData(float deltaT) override;
+
     void draw() override;
 
 private:

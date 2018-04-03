@@ -1,6 +1,7 @@
 #define GLM_FORCE_RADIANS
 
 #include <GL/glew.h>
+#include <state/Log.h>
 #include "minion/object/MinionObject.h"
 #include "rendering/Renderer.h"
 #include "constants/SimulationConstants.h"
@@ -10,6 +11,8 @@
 #include "glm/gtx/quaternion.hpp"
 #include "glm/gtx/vector_angle.hpp"
 #include "glm/gtc/type_ptr.hpp"
+
+namespace rjs = rapidjson;
 
 MinionObject::MinionObject() {
     Renderer &r = Renderer::getInstance();
@@ -85,4 +88,36 @@ float MinionObject::getControlRotMoment() const {
 void MinionObject::setControlRotMoment(float controlRotMoment) {
     const float MAX_CONTROL_ROT_MOMENT = 10000.f;
     MinionObject::controlRotMoment = Math::clamp(controlRotMoment, -MAX_CONTROL_ROT_MOMENT, MAX_CONTROL_ROT_MOMENT);
+}
+
+void MinionObject::persistToJSON(rjs::Value &root, rjs::Document::AllocatorType &alloc) {
+    root.SetObject();
+
+    rjs::Value colorEntry(rjs::kArrayType);
+    glm::vec4 col = getSkinColor();
+    colorEntry.PushBack(rjs::Value(col.r), alloc);
+    colorEntry.PushBack(rjs::Value(col.g), alloc);
+    colorEntry.PushBack(rjs::Value(col.b), alloc);
+    root.AddMember(rjs::StringRef(JSON_SKIN_COLOR), colorEntry, alloc);
+
+    root.AddMember(rjs::StringRef(JSON_RADIUS), rjs::Value(getRadius()), alloc);
+}
+
+void MinionObject::initFromJSON(rjs::Value &root) {
+    auto colorEntry = root.FindMember(rjs::StringRef(JSON_SKIN_COLOR));
+    if(colorEntry == root.MemberEnd() || !colorEntry->value.IsArray() || colorEntry->value.GetArray().Size() != 3){
+        Log().Get(logWARNING) << "\"" << JSON_SKIN_COLOR << "\" array not found (or is invalid) in JSON, can't initialize";
+        setSkinColor(glm::vec4(1.f, 1.f, 1.f, 1.f));
+    } else {
+        auto array = colorEntry->value.GetArray();
+        setSkinColor(glm::vec4(array[0].GetFloat(), array[1].GetFloat(), array[2].GetFloat(), 1.f));
+    }
+
+    auto radius = root.FindMember(rjs::StringRef(JSON_RADIUS));
+    if(radius == root.MemberEnd() || !radius->value.IsFloat()){
+        Log().Get(logWARNING) << "\"" << JSON_SKIN_COLOR << "\" array not found (or is invalid) in JSON, can't initialize";
+        setRadius(SimConst::MINION_MIN_RADIUS);
+    } else {
+        setRadius(radius->value.GetFloat());
+    }
 }

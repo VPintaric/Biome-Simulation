@@ -42,8 +42,8 @@ private:
     std::default_random_engine rng;
 
     std::shared_ptr<MinionGenerator> minionGenerator;
-    std::shared_ptr<Selection> selectionAlg;
     std::vector< std::shared_ptr<Minion> > minions;
+    std::shared_ptr<Selection> selectionAlg;
     std::shared_ptr<Boundary> boundary;
 
     bool shouldEndProgramFlag;

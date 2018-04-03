@@ -7,16 +7,28 @@
 
 class Minion;
 
-class MinionSenses : public CircleObject {
+class MinionSenses : public CircleObject, JSONPersistable {
 public:
     MinionSenses();
+
     virtual ~MinionSenses();
 
     virtual void setMaxSenseDistance(float dist) = 0;
+
     virtual float getMaxSenseDistance() = 0;
+
     virtual int getDataSize() = 0;
+
     virtual std::vector<float> gatherData(float deltaT) = 0;
+
     virtual void draw() = 0;
+
+    void persistToJSON(rjs::Value &root, rjs::Document::AllocatorType &alloc) override;
+
+    void initFromJSON(rjs::Value &root) override;
+
+protected:
+    const char * JSON_MAX_SENSE_DISTANCE = "max_sense_distance";
 };
 
 

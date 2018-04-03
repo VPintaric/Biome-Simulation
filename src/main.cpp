@@ -13,6 +13,8 @@
 #include <minion/factories/neuralnet/NeuralNetMinionGenerator.h>
 #include <neuralnet/NeuralNet.h>
 #include <minion/selection/CurrentLongestLivingSelection.h>
+#include <persistence/Persistence.h>
+#include <minion/controllers/NeuralNetController.h>
 #include "state/State.h"
 
 #include "state/Log.h"
@@ -171,6 +173,7 @@ void processInput(State &state) {
 }
 
 int main(int argc, char** argv) {
+
     using namespace std::chrono;
 
     auto t1 = high_resolution_clock::now();

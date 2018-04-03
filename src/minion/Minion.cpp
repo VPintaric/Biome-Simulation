@@ -1,10 +1,51 @@
 #include <constants/SimulationConstants.h>
+#include <state/Log.h>
 #include "minion/Minion.h"
 
 Minion::Minion() : dead(false), decayed(false), id(0), timeLived(0.f){
 
 };
+
 Minion::~Minion() = default;
+
+void Minion::persistToJSON(rjs::Value &root, rjs::Document::AllocatorType& alloc) {
+    root.SetObject();
+
+    rjs::Value objectJSON(rjs::kObjectType);
+    object->persistToJSON(objectJSON, alloc);
+    root.AddMember(rjs::StringRef(JSON_OBJECT), objectJSON, alloc);
+
+    rjs::Value sensesJSON(rjs::kObjectType);
+    senses->persistToJSON(sensesJSON, alloc);
+    root.AddMember(rjs::StringRef(JSON_SENSES), sensesJSON, alloc);
+
+    rjs::Value controllerJSON(rjs::kObjectType);
+    controller->persistToJSON(controllerJSON, alloc);
+    root.AddMember(rjs::StringRef(JSON_CONTROLLER), controllerJSON, alloc);
+}
+
+void Minion::initFromJSON(rjs::Value &root) {
+    auto objectJSON = root.FindMember(rjs::StringRef(JSON_OBJECT));
+    if(objectJSON == root.MemberEnd() || !objectJSON->value.IsObject()){
+        Log().Get(logWARNING) << "\"" << JSON_OBJECT << "\" not found in JSON, can't initialize";
+    } else {
+        object->initFromJSON(objectJSON->value);
+    }
+
+    auto sensesJSON = root.FindMember(rjs::StringRef(JSON_SENSES));
+    if(sensesJSON == root.MemberEnd() || !sensesJSON->value.IsObject()){
+        Log().Get(logWARNING) << "\"" << JSON_SENSES << "\" not found in JSON, can't initialize";
+    } else {
+        senses->initFromJSON(sensesJSON->value);
+    }
+
+    auto controllerJSON = root.FindMember(rjs::StringRef(JSON_CONTROLLER));
+    if(controllerJSON == root.MemberEnd() || !controllerJSON->value.IsObject()){
+        Log().Get(logWARNING) << "\"" << JSON_CONTROLLER << "\" not found in JSON, can't initialize";
+    } else {
+        controller->initFromJSON(controllerJSON->value);
+    }
+}
 
 void Minion::update(float deltaT) {
     if(!isDead()){

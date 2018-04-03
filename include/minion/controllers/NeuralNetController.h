@@ -9,13 +9,6 @@
 #include <vector>
 
 class NeuralNetController : public MinionController {
-private:
-    const int OUTPUT_VARS = 2;
-
-    std::shared_ptr<NeuralNet> nn;
-
-    std::weak_ptr<Minion> minion;
-
 public:
     explicit NeuralNetController(std::weak_ptr<Minion> minion,
                                  const std::vector<int> &hiddenLayers,
@@ -25,6 +18,20 @@ public:
     std::vector<float> controlMinion(std::vector<float> senseData) override;
 
     std::shared_ptr<NeuralNet> getNeuralNet();
+
+    void persistToJSON(rjs::Value &root, rjs::Document::AllocatorType &alloc) override;
+
+    void initFromJSON(rjs::Value &root) override;
+
+private:
+
+    const int OUTPUT_VARS = 2;
+
+    std::shared_ptr<NeuralNet> nn;
+
+    std::weak_ptr<Minion> minion;
+
+    const char * JSON_NEURAL_NET = "neural_net";
 };
 
 
