@@ -71,7 +71,7 @@ void SimpleMinionSenses::setSightLineColor(int idx, glm::vec3 color) {
 }
 
 int SimpleMinionSenses::getDataSize() {
-    return 5 * nSightLines + 1;
+    return 5 * nSightLines + 5;
 }
 
 /*
@@ -81,8 +81,12 @@ int SimpleMinionSenses::getDataSize() {
  * type is set to 0.f.
  * First elements are data from the first sight line on the hard right side of the minion, next sight line
  * is a bit to the left (amount of data given depends on the number of sight lines).
- * Last element of the vector is the distance of an object behind the minion (half circle behind the minion) if any
- * object is detected there.
+ * Last elements of the vector in order are:
+ *      - distance of an object behind the minion (half circle behind the minion)
+ *      - current life of the minion
+ *      - norm of current velocity of the minion
+ *      - angle between current velocity vector and the vector pointing forward from the minion
+ *      - current angle velocity of the minion
  */
 std::vector<float> SimpleMinionSenses::gatherData(float deltaT) {
     auto minion = lockMinion();
@@ -173,6 +177,11 @@ std::vector<float> SimpleMinionSenses::gatherData(float deltaT) {
     sightLinesModel->updateColorBuffer();
 
     data.push_back(nearestBehind);
+    data.push_back(minion->getLife());
+    data.push_back(glm::length(minion->getObject()->getVelocity()));
+    data.push_back(glm::orientedAngle(minion->getObject()->getFront(), minion->getObject()->getVelocity()));
+    data.push_back(minion->getObject()->getAngleVel());
+
     return data;
 }
 
