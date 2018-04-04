@@ -14,16 +14,21 @@
 class State {
 public:
     static State& getInstance();
+
     virtual ~State();
 
     void spawnMinions(int n);
+
     void initBoundary(float r);
 
     void draw();
+
     void update(float dt);
+
     void controlMinions(float dt);
     
     void endProgram();
+
     bool getShouldEndProgram() const;
 
     void setMinionGenerator(std::shared_ptr<MinionGenerator> gen);
@@ -31,12 +36,20 @@ public:
     void setSelectionAlg(std::shared_ptr<Selection> sel);
 
     void setPGenerateRandomMinion(float p);
+
     float getPGenerateRandomMinion() const;
 
     std::reference_wrapper< std::default_random_engine > getRng();
 
     const std::vector< std::shared_ptr<Minion> > &getMinions() const;
+
     std::shared_ptr<Boundary> getBoundary() const;
+
+    void setPersistenceDirectory(std::string dirName);
+
+    std::string getPersistenceDirectory();
+
+    void persistCurrentGeneration();
 
 private:
     std::default_random_engine rng;
@@ -45,6 +58,10 @@ private:
     std::vector< std::shared_ptr<Minion> > minions;
     std::shared_ptr<Selection> selectionAlg;
     std::shared_ptr<Boundary> boundary;
+
+    std::string persistenceDirectory;
+
+    int nextPersistedGeneration;
 
     bool shouldEndProgramFlag;
 
@@ -55,6 +72,7 @@ private:
     std::shared_ptr<Minion> currentBestMinion;
 
     void initializeMinion(Minion &minion);
+
     State();
 };
 

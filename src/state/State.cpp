@@ -2,7 +2,6 @@
 
 #include <random>
 #include <chrono>
-#include <utility>
 #include <constants/SimulationConstants.h>
 #include <helpers/MathHelpers.h>
 #include "glm/gtc/constants.hpp"
@@ -13,13 +12,18 @@
 #include "../../include/collision/CollisionDetection.h"
 #include "../../include/collision/CollisionResponse.h"
 #include "rendering/Camera.h"
+#include <persistence/Persistence.h>
+#include <experimental/filesystem>
+
+namespace fs = std::experimental::filesystem;
 
 State& State::getInstance() {
     static State instance;
     return instance;
  }
 
-State::State() : nextMinionId(1), currentBestMinion(nullptr), pGenerateRandomMinion(0.f) {
+State::State() : nextMinionId(1), currentBestMinion(nullptr), pGenerateRandomMinion(0.f),
+                nextPersistedGeneration(1), persistenceDirectory("saved_minions"){
     Log().Get(logDEBUG) << "Creating new state instance";
     shouldEndProgramFlag = false;
     rng.seed(static_cast<unsigned long>(std::chrono::system_clock::now().time_since_epoch().count()));
@@ -127,6 +131,8 @@ void State::spawnMinions(int n) {
         minions.push_back(minion);
         initializeMinion(*minion);
     }
+
+    persistCurrentGeneration();
 }
 
 void State::initBoundary(float r) {
@@ -204,6 +210,7 @@ void State::update(float dt) {
             if(currentBestMinion == nullptr || currentBestMinion->getTimeLived() < m->getTimeLived()){
                 currentBestMinion = m;
                 Log().Get(logINFO) << "New longest living time: " << currentBestMinion->getTimeLived();
+                persistCurrentGeneration();
             }
 
             float roll = std::uniform_real_distribution<float>(0.f, 1.f)(rng);
@@ -232,4 +239,30 @@ float State::getPGenerateRandomMinion() const {
 
 void State::setPGenerateRandomMinion(float p) {
     pGenerateRandomMinion = Math::clamp(p, 0.f, 1.f);
+}
+
+void State::setPersistenceDirectory(std::string dirName) {
+    persistenceDirectory = std::move(dirName);
+}
+
+std::string State::getPersistenceDirectory() {
+    return persistenceDirectory;
+}
+
+void State::persistCurrentGeneration() {
+    auto& p = Persistence::getInstance();
+
+    if(!fs::exists(persistenceDirectory) || !fs::is_directory(persistenceDirectory)){
+        fs::create_directory(persistenceDirectory);
+    }
+
+    std::string genDir = persistenceDirectory + "/generation_" + std::to_string(nextPersistedGeneration);
+    fs::create_directory(genDir);
+
+    Log().Get(logINFO) << "Persisting current generation to folder: " << genDir;
+    for(const auto &minion : minions){
+        p.saveMinionToFile(genDir + "/minion_" + std::to_string(minion->getId()), minion);
+    }
+
+    nextPersistedGeneration++;
 }

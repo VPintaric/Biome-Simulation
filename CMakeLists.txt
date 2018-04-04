@@ -107,4 +107,4 @@ message(ERROR " ${SDL2_LIBRARIES}")
 message(ERROR " ${GLEW_LIBRARIES}")
 message(ERROR " ${OpenGL_LIBRARIES}")
 
-target_link_libraries(Biome_Simulation ${SDL2_LIBRARIES} ${GLEW_LIBRARIES} ${OpenGL_LIBRARIES} "-lGL")
+target_link_libraries(Biome_Simulation ${SDL2_LIBRARIES} ${GLEW_LIBRARIES} ${OpenGL_LIBRARIES} "-lGL -lstdc++fs")

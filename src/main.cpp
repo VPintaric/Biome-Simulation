@@ -165,6 +165,9 @@ void processInput(State &state) {
                 case SDLK_e:
                     c.stopMoveInDirection(Camera::IN);
                     break;
+                case SDLK_f:
+                    State::getInstance().persistCurrentGeneration();
+                    break;
                 default:
                     break;
             }
