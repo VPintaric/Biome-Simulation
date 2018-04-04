@@ -257,6 +257,11 @@ void State::persistCurrentGeneration() {
     }
 
     std::string genDir = persistenceDirectory + "/generation_" + std::to_string(nextPersistedGeneration);
+
+    while(fs::exists(genDir) && fs::is_directory(genDir)){
+        nextPersistedGeneration++;
+        genDir = persistenceDirectory + "/generation_" + std::to_string(nextPersistedGeneration);
+    }
     fs::create_directory(genDir);
 
     Log().Get(logINFO) << "Persisting current generation to folder: " << genDir;
@@ -265,4 +270,22 @@ void State::persistCurrentGeneration() {
     }
 
     nextPersistedGeneration++;
+}
+
+void State::loadMinionsFromFolder(std::string dirName) {
+    auto& p = Persistence::getInstance();
+
+    if(!fs::exists(dirName) || !fs::is_directory(dirName)){
+        Log().Get(logWARNING) << "Directory " << dirName << " does not exist";
+        return;
+    }
+
+    minions.clear();
+    for(auto it = fs::directory_iterator(dirName); it != fs::directory_iterator(); ++it){
+        std::string fileName = (*it).path().string();
+        auto minion = minionGenerator->generateMinion();
+        p.initMinionFromFile(fileName, minion);
+        initializeMinion(*minion);
+        minions.push_back(minion);
+    }
 }

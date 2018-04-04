@@ -51,6 +51,8 @@ public:
 
     void persistCurrentGeneration();
 
+    void loadMinionsFromFolder(std::string dirName);
+
 private:
     std::default_random_engine rng;
 
