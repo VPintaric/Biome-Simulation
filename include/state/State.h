@@ -60,8 +60,11 @@ private:
     std::default_random_engine rng;
 
     std::shared_ptr<MinionGenerator> minionGenerator;
+
     std::vector< std::shared_ptr<Minion> > minions;
+
     std::shared_ptr<Selection> selectionAlg;
+
     std::shared_ptr<Boundary> boundary;
 
     int nMinions;
@@ -75,6 +78,12 @@ private:
     int nextMinionId;
 
     std::shared_ptr<Minion> currentBestMinion;
+
+    float simulatedTimePassed;
+
+    float printEvery;
+
+    float nextInfoPrintTime;
 
     void initializeMinion(Minion &minion);
 

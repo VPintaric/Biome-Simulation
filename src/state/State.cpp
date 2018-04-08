@@ -27,7 +27,8 @@ State& State::getInstance() {
 
 State::State() : nextMinionId(1), currentBestMinion(nullptr),
                 nextPersistedGeneration(1), persistenceDirectory("saved_minions"),
-                nMinions(SimConst::DEFAULT_NUMBER_OF_MINIONS){
+                nMinions(SimConst::DEFAULT_NUMBER_OF_MINIONS), printEvery(30.f),
+                nextInfoPrintTime(printEvery), simulatedTimePassed(0.f) {
     Log().Get(logDEBUG) << "Creating new state instance";
     shouldEndProgramFlag = false;
     rng.seed(static_cast<unsigned long>(std::chrono::system_clock::now().time_since_epoch().count()));
@@ -175,6 +176,12 @@ void State::controlMinions(float dt) {
 void State::update(float dt) {
     const float COLLISION_PUNISH = 1.f;
     const float BOUNDARY_COLLISION_PUNISH = 1.f;
+
+    simulatedTimePassed += dt;
+    if(simulatedTimePassed >= nextInfoPrintTime){
+        Log().Get(logINFO) << "Simulated time passed: " << simulatedTimePassed;
+        nextInfoPrintTime += printEvery;
+    }
 
     CollisionDetection cd = CollisionDetection::getInstance();
     CollisionResponse cr = CollisionResponse::getInstance();

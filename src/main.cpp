@@ -27,6 +27,8 @@
 #include "../include/helpers/ModelCreator.h"
 #include "rendering/Camera.h"
 
+bool renderFrames = true;
+
 void init(){
     Log::ReportingLevel() = logDEBUG;
 
@@ -168,6 +170,14 @@ void processInput(State &state) {
                 case SDLK_f:
                     State::getInstance().persistCurrentGeneration();
                     break;
+                case SDLK_SPACE:
+                    if(renderFrames){
+                        Log().Get(logINFO) << "Disabling frame rendering (speeds up the simulation)";
+                    } else {
+                        Log().Get(logINFO) << "Enabling frame rendering (slows down the simulation)";
+                    }
+                    renderFrames = !renderFrames;
+                    break;
                 default:
                     break;
             }
@@ -200,10 +210,12 @@ int main(int argc, char** argv) {
         processInput(state);
         state.controlMinions(SimConst::UPDATE_ITERATIONS_EACH_FRAME * SimConst::UPDATE_DELTA);
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        state.draw();
+        if(renderFrames){
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            state.draw();
 
-        SDL_GL_SwapWindow(Display::getInstance().window);
+            SDL_GL_SwapWindow(Display::getInstance().window);
+        }
 
         if(state.getShouldEndProgram()){
             break;
