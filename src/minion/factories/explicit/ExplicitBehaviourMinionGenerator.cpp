@@ -72,3 +72,7 @@ std::shared_ptr<Minion> ExplicitBehaviourMinionGenerator::generateChild(std::sha
                                                                         std::shared_ptr<Minion> second) {
     return nullptr;
 }
+
+void ExplicitBehaviourMinionGenerator::configureFromJSON(rjs::Value &root) {
+
+}

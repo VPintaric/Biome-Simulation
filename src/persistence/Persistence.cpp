@@ -53,4 +53,6 @@ void Persistence::initMinionFromFile(std::string fileName, std::shared_ptr<Minio
     doc.ParseStream(fs);
 
     m->initFromJSON(doc);
+
+    fclose(fp);
 }

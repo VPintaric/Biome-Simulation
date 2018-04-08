@@ -3,8 +3,9 @@
 
 
 #include <minion/Minion.h>
+#include <config/JSONConfigurable.h>
 
-class MinionGenerator {
+class MinionGenerator : public JSONConfigurable {
 public:
     MinionGenerator();
     virtual ~MinionGenerator();

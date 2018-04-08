@@ -24,6 +24,9 @@ namespace SimConst {
     const float MINION_DECAY_RATE_SENSE_DISTANCE_FACTOR = 0.01f;
     const float MINION_DEFAULT_MAX_SENSE_DISTANCE = 70.f;
     const int MINION_DEFAULT_N_SIGHT_LINES = 15;
+
+    const float DEFAULT_BOUNDARY_RADIUS = 500.f;
+    const int DEFAULT_NUMBER_OF_MINIONS = 30;
 }
 
 #endif /* SIMULATIONCONSTANTS_H */

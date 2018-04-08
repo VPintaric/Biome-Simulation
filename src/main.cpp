@@ -15,6 +15,7 @@
 #include <minion/selection/CurrentLongestLivingSelection.h>
 #include <persistence/Persistence.h>
 #include <minion/controllers/NeuralNetController.h>
+#include <config/Config.h>
 #include "state/State.h"
 
 #include "state/Log.h"
@@ -90,14 +91,12 @@ void init(){
     Camera::getInstance().setPos(WindowConst::INIT_CAMERA_POS);
     renderer.identity();
 
+    auto& config = Config::getInstance();
+    config.parseConfigFile("config.txt");
+
     State &s = State::getInstance();
-//    s.setMinionGenerator(std::make_shared<ExplicitBehaviourMinionGenerator>());
-    s.setSelectionAlg(std::shared_ptr<Selection>(new CurrentLongestLivingSelection()));
-    s.setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
-    s.initBoundary(700.f);
-    s.spawnMinions(30);
-//    s.loadMinionsFromFolder("saved_minions/generation_23");
-    s.setPGenerateRandomMinion(0.25f);
+    s.configureFromJSON(config.getConfig());
+    s.spawnMinions();
 }
 
 void windowResize(int w, int h){

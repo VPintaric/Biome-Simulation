@@ -14,6 +14,8 @@ public:
 
     std::shared_ptr<Minion> generateChild(std::shared_ptr<Minion> first, std::shared_ptr<Minion> second) override;
 
+    void configureFromJSON(rjs::Value &root) override;
+
 private:
     std::vector<int> nnHiddenLayers;
 

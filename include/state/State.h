@@ -6,18 +6,19 @@
 #include <random>
 #include <minion/factories/MinionGenerator.h>
 #include <collision/CollisionInfo.h>
+#include <config/JSONConfigurable.h>
 #include "minion/object/MinionObject.h"
 #include "objects/Boundary.h"
 #include "minion/Minion.h"
 #include "minion/selection/Selection.h"
 
-class State {
+class State : public JSONConfigurable {
 public:
     static State& getInstance();
 
     virtual ~State();
 
-    void spawnMinions(int n);
+    void spawnMinions();
 
     void initBoundary(float r);
 
@@ -35,10 +36,6 @@ public:
 
     void setSelectionAlg(std::shared_ptr<Selection> sel);
 
-    void setPGenerateRandomMinion(float p);
-
-    float getPGenerateRandomMinion() const;
-
     std::reference_wrapper< std::default_random_engine > getRng();
 
     const std::vector< std::shared_ptr<Minion> > &getMinions() const;
@@ -53,6 +50,12 @@ public:
 
     void loadMinionsFromFolder(std::string dirName);
 
+    void configureFromJSON(rjs::Value &root) override;
+
+    int getNMinions() const;
+
+    void setNMinions(int nMinions);
+
 private:
     std::default_random_engine rng;
 
@@ -61,6 +64,8 @@ private:
     std::shared_ptr<Selection> selectionAlg;
     std::shared_ptr<Boundary> boundary;
 
+    int nMinions;
+
     std::string persistenceDirectory;
 
     int nextPersistedGeneration;
@@ -68,8 +73,6 @@ private:
     bool shouldEndProgramFlag;
 
     int nextMinionId;
-
-    float pGenerateRandomMinion;
 
     std::shared_ptr<Minion> currentBestMinion;
 

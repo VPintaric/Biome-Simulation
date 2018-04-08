@@ -97,7 +97,7 @@ add_executable(Biome_Simulation
         include/minion/selection/CurrentLongestLivingSelection.h
         src/persistence/Persistence.cpp
         include/persistence/Persistence.h
-        include/persistence/JSONPersistable.h)
+        include/persistence/JSONPersistable.h src/config/Config.cpp include/config/Config.h include/config/JSONConfigurable.h)
 
 message(ERROR " ${SDL2_INCLUDE_DIRS}")
 message(ERROR " ${GLEW_INCLUDE_DIRS}")

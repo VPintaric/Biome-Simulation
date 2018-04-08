@@ -14,6 +14,9 @@
 #include "rendering/Camera.h"
 #include <persistence/Persistence.h>
 #include <experimental/filesystem>
+#include <minion/selection/CurrentLongestLivingSelection.h>
+#include <minion/factories/explicit/ExplicitBehaviourMinionGenerator.h>
+#include <minion/factories/neuralnet/NeuralNetMinionGenerator.h>
 
 namespace fs = std::experimental::filesystem;
 
@@ -22,8 +25,9 @@ State& State::getInstance() {
     return instance;
  }
 
-State::State() : nextMinionId(1), currentBestMinion(nullptr), pGenerateRandomMinion(0.f),
-                nextPersistedGeneration(1), persistenceDirectory("saved_minions"){
+State::State() : nextMinionId(1), currentBestMinion(nullptr),
+                nextPersistedGeneration(1), persistenceDirectory("saved_minions"),
+                nMinions(SimConst::DEFAULT_NUMBER_OF_MINIONS){
     Log().Get(logDEBUG) << "Creating new state instance";
     shouldEndProgramFlag = false;
     rng.seed(static_cast<unsigned long>(std::chrono::system_clock::now().time_since_epoch().count()));
@@ -120,13 +124,13 @@ bool State::getShouldEndProgram() const {
     return this->shouldEndProgramFlag;
 }
 
-void State::spawnMinions(int n) {
+void State::spawnMinions() {
     if(minionGenerator == nullptr){
         Log().Get(logWARNING) << "State has no reference to a minion generator object, unable to spawn minions";
         return;
     }
 
-    for(int i = 0; i < n; i++){
+    for(int i = 0; i < nMinions; i++){
         auto minion = minionGenerator->generateMinion();
         minions.push_back(minion);
         initializeMinion(*minion);
@@ -214,11 +218,7 @@ void State::update(float dt) {
             }
 
             float roll = std::uniform_real_distribution<float>(0.f, 1.f)(rng);
-            if(roll <= pGenerateRandomMinion){
-                *iter = minionGenerator->generateMinion();
-            } else {
-                *iter = selectionAlg->getNewMinion();
-            }
+            *iter = selectionAlg->getNewMinion();
             initializeMinion(**iter);
         }
     }
@@ -231,14 +231,6 @@ void State::update(float dt) {
 
 std::reference_wrapper< std::default_random_engine > State::getRng(){
     return std::ref(rng);
-}
-
-float State::getPGenerateRandomMinion() const {
-    return pGenerateRandomMinion;
-}
-
-void State::setPGenerateRandomMinion(float p) {
-    pGenerateRandomMinion = Math::clamp(p, 0.f, 1.f);
 }
 
 void State::setPersistenceDirectory(std::string dirName) {
@@ -288,4 +280,54 @@ void State::loadMinionsFromFolder(std::string dirName) {
         initializeMinion(*minion);
         minions.push_back(minion);
     }
+}
+
+void State::configureFromJSON(rjs::Value &root) {
+    const char * MINION_GEN = "minion_generator";
+    const char * BOUNDARY_RADIUS = "boundary_radius";
+    const char * N_MINIONS = "number_of_minions";
+    const char * MINION_GEN_CONFIG = "minion_generator_config";
+
+    if(!root.IsObject()){
+        Log().Get(logWARNING) << "Can't get configuration from non-object value in JSON";
+        return;
+    }
+
+    setSelectionAlg(std::make_shared<CurrentLongestLivingSelection>());
+
+    if(root.HasMember(MINION_GEN) && root[MINION_GEN].IsString()){
+        auto minionGenerator = root[MINION_GEN].GetString();
+        if(minionGenerator == "explicit_behaviour"){
+            setMinionGenerator(std::make_shared<ExplicitBehaviourMinionGenerator>());
+        } else {
+            setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
+        }
+
+        if(root.HasMember(MINION_GEN_CONFIG) && root[MINION_GEN_CONFIG].IsObject()){
+            this->minionGenerator->configureFromJSON(root[MINION_GEN_CONFIG]);
+        }
+
+    } else {
+        setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
+    }
+
+    if(root.HasMember(BOUNDARY_RADIUS) && root[BOUNDARY_RADIUS].IsNumber()){
+        initBoundary(root[BOUNDARY_RADIUS].GetFloat());
+    } else {
+        initBoundary(SimConst::DEFAULT_BOUNDARY_RADIUS);
+    }
+
+    if(root.HasMember(N_MINIONS) && root[N_MINIONS].IsInt()){
+        setNMinions(root[N_MINIONS].GetInt());
+    } else {
+        setNMinions(SimConst::DEFAULT_NUMBER_OF_MINIONS);
+    }
+}
+
+int State::getNMinions() const {
+    return nMinions;
+}
+
+void State::setNMinions(int nMinions) {
+    State::nMinions = nMinions;
 }

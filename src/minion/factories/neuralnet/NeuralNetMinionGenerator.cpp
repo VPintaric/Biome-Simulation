@@ -1,6 +1,7 @@
 #include <minion/controllers/NeuralNetController.h>
 #include <minion/senses/simple/SimpleMinionSenses.h>
 #include <state/State.h>
+#include <state/Log.h>
 #include "minion/factories/neuralnet/NeuralNetMinionGenerator.h"
 
 NeuralNetMinionGenerator::NeuralNetMinionGenerator(std::vector<int> nnHiddenLayers)
@@ -106,5 +107,25 @@ void NeuralNetMinionGenerator::mutate(std::shared_ptr<Minion> m) {
                 w->operator()(r, c) += nnMut(rng.get());
             }
         }
+    }
+}
+
+void NeuralNetMinionGenerator::configureFromJSON(rjs::Value &root) {
+    const char * ARCHITECTURE = "architecture_hidden";
+
+    if(root.HasMember(ARCHITECTURE) && root[ARCHITECTURE].IsArray()){
+        auto array = root[ARCHITECTURE].GetArray();
+
+        nnHiddenLayers.clear();
+        for(const auto &x : array){
+            if(x.IsInt()){
+                nnHiddenLayers.push_back(x.GetInt());
+            } else {
+                Log().Get(logWARNING) << "NN architecture configuration: element in architecture array is not an int, ignoring...";
+            }
+        }
+
+    } else {
+        nnHiddenLayers = { 40, 30 };
     }
 }
