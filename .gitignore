@@ -1,0 +1,11 @@
+*
+!external/
+!external/**
+!src/
+!src/**
+!include/
+!include/**
+!resources/
+!resources/**
+!CMakeLists.txt
+!.gitignore
