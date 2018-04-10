@@ -8,8 +8,8 @@ namespace SimConst {
     const std::string MINION_CIRCLE_MODEL_NAME = "minion_circle_model";
     const std::string HOLLOW_CIRCLE_MODEL_NAME = "hollow_circle_model";
 
-    const float UPDATE_DELTA = 1e-3;
-    const int UPDATE_ITERATIONS_EACH_FRAME = 10;
+    const float UPDATE_DELTA = 1e-2;
+    const int UPDATE_ITERATIONS_EACH_FRAME = 1;
 
     const float MINION_MIN_RADIUS = 10.f;
     const float MINION_MAX_RADIUS = 30.f;

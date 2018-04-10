@@ -224,7 +224,6 @@ void State::update(float dt) {
                 persistCurrentGeneration();
             }
 
-            float roll = std::uniform_real_distribution<float>(0.f, 1.f)(rng);
             *iter = selectionAlg->getNewMinion();
             initializeMinion(**iter);
         }

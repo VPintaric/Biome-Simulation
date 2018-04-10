@@ -5,16 +5,29 @@
 #include "objects/Object.h"
 
 void Object::update(float deltaT) {
-    const float FRICTION_COEFF_TRANSL = 1e-7f;
-    const float FRICTION_COEFF_ROT = 1e-5f;
+    const float FRICTION_COEFF_TRANSL = 1e-3f;
+    const float FRICTION_COEFF_ROT = 1e-2f;
 
-    setAngleVel(angleVel + deltaT * angleAcc - FRICTION_COEFF_ROT * std::fabs(angleVel) * angleVel);
-    setAngle(angle + deltaT * angleVel);
+    // Apply air resistance
+    setAngleAcc(getAngleAcc() - FRICTION_COEFF_ROT * getRInertia() * std::fabs(getAngleVel()) * getAngleVel());
+    setAcceleration(getAcceleration() - FRICTION_COEFF_TRANSL * getRMass() * glm::length2(getVelocity()) * getVelocity());
+
+    // Numerical integration for angle velocity and position using Simpson's rule
+    float ak1, ak2, ak3;
+    ak1 = getAngleVel();
+    ak2 = getAngleVel() + 0.5f * deltaT * getAngleAcc();
+    ak3 = getAngleVel() + deltaT * getAngleAcc();
+    setAngleVel(ak3);
+    setAngle(getAngle() + deltaT * (ak1 + 4.f * ak2 + ak3) / 6.f);
     setAngleAcc(0.f);
 
-    glm::vec2 orient = glm::rotate(glm::vec2(0.f, 1.f), angle);
-    setVelocity(velocity + deltaT * acceleration - FRICTION_COEFF_TRANSL * glm::length2(velocity) * velocity);
-    setPos(pos + deltaT * velocity);
+    // Numerical integration for translational velocity and position using Simpson's rule
+    glm::vec2 vk1, vk2, vk3;
+    vk1 = getVelocity();
+    vk2 = getVelocity() + 0.5f * deltaT * getAcceleration();
+    vk3 = getVelocity() + deltaT * getAcceleration();
+    setVelocity(vk3);
+    setPos(getPos() + deltaT * (vk1 + 4.f * vk2 + vk3) / 6.f);
     setAcceleration(glm::vec2(0.f, 0.f));
 }
 
