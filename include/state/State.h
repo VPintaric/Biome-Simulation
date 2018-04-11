@@ -83,13 +83,17 @@ private:
 
     std::shared_ptr<Minion> currentBestMinion;
 
-    float simulatedTimePassed;
+    long realTimePassed;
 
-    float printEvery;
+    long printEveryRealTime, persistMinionsEveryRealTime;
 
-    float nextInfoPrintTime;
+    long nextPrintTimestamp, nextPersistTimestamp;
+
+    long lastCalledTimestamp;
 
     void initializeMinion(Minion &minion);
+
+    void realTimeUpdate();
 
     State();
 };

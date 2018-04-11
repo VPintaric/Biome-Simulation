@@ -19,6 +19,7 @@
 #include <minion/factories/neuralnet/NeuralNetMinionGenerator.h>
 
 namespace fs = std::experimental::filesystem;
+namespace chr = std::chrono;
 
 State& State::getInstance() {
     static State instance;
@@ -27,11 +28,13 @@ State& State::getInstance() {
 
 State::State() : nextMinionId(1), currentBestMinion(nullptr),
                 nextPersistedGeneration(1), persistenceDirectory("saved_minions"),
-                nMinions(SimConst::DEFAULT_NUMBER_OF_MINIONS), printEvery(30.f),
-                nextInfoPrintTime(printEvery), simulatedTimePassed(0.f) {
+                nMinions(SimConst::DEFAULT_NUMBER_OF_MINIONS), printEveryRealTime(30000),
+                persistMinionsEveryRealTime(300000), nextPersistTimestamp(persistMinionsEveryRealTime),
+                nextPrintTimestamp(printEveryRealTime){
     Log().Get(logDEBUG) << "Creating new state instance";
     shouldEndProgramFlag = false;
-    rng.seed(static_cast<unsigned long>(std::chrono::system_clock::now().time_since_epoch().count()));
+    lastCalledTimestamp = chr::duration_cast<chr::milliseconds>(chr::system_clock::now().time_since_epoch()).count();
+    rng.seed(static_cast<unsigned long>(lastCalledTimestamp));
     Log().Get(logDEBUG) << "Created new state instance";
 }
 
@@ -136,8 +139,6 @@ void State::spawnMinions() {
         minions.push_back(minion);
         initializeMinion(*minion);
     }
-
-    persistCurrentGeneration();
 }
 
 void State::initBoundary(float r) {
@@ -225,12 +226,29 @@ void State::resolveMinionBoundaryCollisionDamage(Minion &m, CollisionInfo &ci) {
     }
 }
 
-void State::update(float dt) {
-    simulatedTimePassed += dt;
-    if(simulatedTimePassed >= nextInfoPrintTime){
-        Log().Get(logINFO) << "Simulated time passed: " << simulatedTimePassed;
-        nextInfoPrintTime += printEvery;
+void State::realTimeUpdate() {
+    long timestamp = chr::duration_cast<chr::milliseconds>(chr::system_clock::now().time_since_epoch()).count();
+    long dt = timestamp - lastCalledTimestamp;
+    lastCalledTimestamp = timestamp;
+    realTimePassed += dt;
+
+    if(realTimePassed >= nextPrintTimestamp){
+        Log().Get(logINFO) << "Time passed: " << (realTimePassed / 1000.0) << " seconds";
+        nextPrintTimestamp += printEveryRealTime;
     }
+
+    if(realTimePassed >= nextPersistTimestamp){
+        persistCurrentGeneration();
+        nextPersistTimestamp += persistMinionsEveryRealTime;
+    }
+
+    timestamp = chr::duration_cast<chr::milliseconds>(chr::system_clock::now().time_since_epoch()).count();
+    realTimePassed += timestamp - lastCalledTimestamp;
+    lastCalledTimestamp = timestamp;
+}
+
+void State::update(float dt) {
+    realTimeUpdate();
 
     CollisionDetection cd = CollisionDetection::getInstance();
     CollisionResponse cr = CollisionResponse::getInstance();
@@ -261,7 +279,6 @@ void State::update(float dt) {
             if(currentBestMinion == nullptr || currentBestMinion->getTimeLived() < m->getTimeLived()){
                 currentBestMinion = m;
                 Log().Get(logINFO) << "New longest living time: " << currentBestMinion->getTimeLived();
-//                persistCurrentGeneration();
             }
 
             *iter = selectionAlg->getNewMinion();
@@ -333,6 +350,9 @@ void State::configureFromJSON(rjs::Value &root) {
     const char * BOUNDARY_RADIUS = "boundary_radius";
     const char * N_MINIONS = "number_of_minions";
     const char * MINION_GEN_CONFIG = "minion_generator_config";
+    const char * PRINT_INFO_EVERY_SECONDS = "print_info_every_seconds";
+    const char * PERSIST_MINIONS_EVERY_SECONDS = "persist_minions_every_seconds";
+    const char * PERSISTENCE_DIRECTORY = "persistence_directory";
 
     if(!root.IsObject()){
         Log().Get(logWARNING) << "Can't get configuration from non-object value in JSON";
@@ -367,6 +387,22 @@ void State::configureFromJSON(rjs::Value &root) {
         setNMinions(root[N_MINIONS].GetInt());
     } else {
         setNMinions(SimConst::DEFAULT_NUMBER_OF_MINIONS);
+    }
+
+    if(root.HasMember(PRINT_INFO_EVERY_SECONDS) && root[PRINT_INFO_EVERY_SECONDS].IsInt()){
+        printEveryRealTime = root[PRINT_INFO_EVERY_SECONDS].GetInt() * 1000;
+        nextPrintTimestamp = printEveryRealTime;
+        realTimePassed = 0;
+    }
+
+    if(root.HasMember(PERSIST_MINIONS_EVERY_SECONDS) && root[PERSIST_MINIONS_EVERY_SECONDS].IsInt()){
+        persistMinionsEveryRealTime = root[PERSIST_MINIONS_EVERY_SECONDS].GetInt() * 1000;
+        nextPersistTimestamp = persistMinionsEveryRealTime;
+        realTimePassed = 0;
+    }
+
+    if(root.HasMember(PERSISTENCE_DIRECTORY) && root[PERSISTENCE_DIRECTORY].IsString()){
+        setPersistenceDirectory(root[PERSISTENCE_DIRECTORY].GetString());
     }
 }
 

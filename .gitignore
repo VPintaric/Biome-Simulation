@@ -9,3 +9,4 @@
 !resources/**
 !CMakeLists.txt
 !.gitignore
+!config.txt

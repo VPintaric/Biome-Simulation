@@ -1,0 +1,11 @@
+{
+"minion_generator" : "neural_net",
+"minion_generator_config" : {
+        "architecture_hidden" : [60, 50, 30, 40, 20]
+    },
+"boundary_radius" : 500,
+"number_of_minions" : 30,
+"print_info_every_seconds" : 60,
+"persist_minions_every_seconds" : 300,
+"persistence_directory" : "saved_minions"
+}
