@@ -168,15 +168,64 @@ std::shared_ptr<Boundary> State::getBoundary() const {
 }
 
 void State::controlMinions(float dt) {
-    for(auto minion : minions){
+    for(const auto &minion : minions){
         minion->control(dt);
     }
 }
 
-void State::update(float dt) {
-    const float COLLISION_PUNISH = 1.f;
-    const float BOUNDARY_COLLISION_PUNISH = 1.f;
+void State::resolveMinionCollisionDamage(Minion &m1, Minion &m2, CollisionInfo &ci) {
+    if(m1.isDead() && m2.isDead()){
+        return;
+    } else if(!m1.isDead() && !m2.isDead()){
+        const float COLLISION_DMG_CONSTANT = 3e-4f;
 
+        const auto &obj1 = m1.getObject();
+        const auto &obj2 = m2.getObject();
+
+        glm::vec2 relativeVelocity = obj1->getVelocity() - obj2->getVelocity();
+
+        glm::vec2 collisionDirection = ci.p1 - obj1->getPos();
+        float dmgTo2 = COLLISION_DMG_CONSTANT *
+                        std::max(0.f, glm::dot(collisionDirection, obj1->getFront())) *
+                        std::max(0.f, glm::dot(collisionDirection, relativeVelocity)) *
+                        obj2->getRMass();
+
+        collisionDirection = ci.p2 - obj2->getPos();
+        float dmgTo1 = COLLISION_DMG_CONSTANT *
+                        std::max(0.f, glm::dot(collisionDirection, obj2->getFront())) *
+                        std::max(0.f, glm::dot(collisionDirection, -relativeVelocity)) *
+                        obj1->getRMass();
+
+        m1.setLife(m1.getLife() - dmgTo1);
+        m2.setLife(m2.getLife() - dmgTo2);
+    } else {
+        const float COLLISION_LEECH_CONSTANT = 0.5f;
+
+        if(m1.isDead()){
+            m1.setLife(m1.getLife() - COLLISION_LEECH_CONSTANT);
+            m2.setLife(m2.getLife() + COLLISION_LEECH_CONSTANT);
+        } else {
+            m1.setLife(m1.getLife() + COLLISION_LEECH_CONSTANT);
+            m2.setLife(m2.getLife() - COLLISION_LEECH_CONSTANT);
+        }
+    }
+}
+
+void State::resolveMinionBoundaryCollisionDamage(Minion &m, CollisionInfo &ci) {
+    const float COLLISION_DMG_BOUNDARY_COEFF = 1e-3f;
+    const float BOUNDARY_CONSTANT_DAMAGE = 0.25f;
+
+    if(!m.isDead()){
+        glm::vec2 relativeVelocity = m.getObject()->getVelocity() - boundary->getVelocity();
+        glm::vec2 collisionDirection = ci.p1 - m.getObject()->getPos();
+
+        float dmg = BOUNDARY_CONSTANT_DAMAGE +
+                    COLLISION_DMG_BOUNDARY_COEFF * std::max(0.f, glm::dot(collisionDirection, relativeVelocity));
+        m.setLife(m.getLife() - dmg);
+    }
+}
+
+void State::update(float dt) {
     simulatedTimePassed += dt;
     if(simulatedTimePassed >= nextInfoPrintTime){
         Log().Get(logINFO) << "Simulated time passed: " << simulatedTimePassed;
@@ -194,26 +243,17 @@ void State::update(float dt) {
             auto ci = cd.checkCircleCircleCollision(*m->getObject(), *m2->getObject());
 
             if(ci->isCollision){
-                cr.doCollisionResponse(*m->getObject(), *m2->getObject(), ci);
-
-                if(!m->isDead() && !m2->isDead()){
-                    m->setLife(m->getLife() - COLLISION_PUNISH);
-                    m2->setLife(m2->getLife() - COLLISION_PUNISH);
-                } else if(m->isDead() && !m2->isDead()){
-                    m->setLife(m->getLife() - COLLISION_PUNISH);
-                    m2->setLife(m2->getLife() + COLLISION_PUNISH);
-                } else if(!m->isDead() && m2->isDead()){
-                    m->setLife(m->getLife() + COLLISION_PUNISH);
-                    m2->setLife(m2->getLife() - COLLISION_PUNISH);
+                resolveMinionCollisionDamage(*m, *m2, *ci);
+                if(!m->isDead() && !m2->isDead() || m->isDead() && m2->isDead()) {
+                    cr.doCollisionResponse(*m->getObject(), *m2->getObject(), ci);
                 }
             }
         }
 
         auto ci = cd.checkCircleHollowCollision(*m->getObject(), *boundary);
         if(ci->isCollision){
+            resolveMinionBoundaryCollisionDamage(*m, *ci);
             cr.doCollisionResponse(*m->getObject(), *boundary, ci);
-
-            m->setLife(m->getLife() - BOUNDARY_COLLISION_PUNISH);
         }
 
         m->update(dt);
@@ -221,7 +261,7 @@ void State::update(float dt) {
             if(currentBestMinion == nullptr || currentBestMinion->getTimeLived() < m->getTimeLived()){
                 currentBestMinion = m;
                 Log().Get(logINFO) << "New longest living time: " << currentBestMinion->getTimeLived();
-                persistCurrentGeneration();
+//                persistCurrentGeneration();
             }
 
             *iter = selectionAlg->getNewMinion();

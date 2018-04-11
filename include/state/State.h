@@ -56,6 +56,10 @@ public:
 
     void setNMinions(int nMinions);
 
+    void resolveMinionCollisionDamage(Minion& m1, Minion& m2, CollisionInfo& ci);
+
+    void resolveMinionBoundaryCollisionDamage(Minion& m, CollisionInfo& ci);
+
 private:
     std::default_random_engine rng;
 
