@@ -134,9 +134,10 @@ std::vector<float> SimpleMinionSenses::gatherData(float deltaT) {
         float distance = 0.f;
         bool detectedObject = false;
         for(int j = 0; j < N_SIGHT_LINE_CHECK_POINTS && !detectedObject; j++){
-            for(auto m : minionsInRange){
+            for(const auto &m : minionsInRange){
                 if(cd.pointInCircle(p, *m->getObject())){
                     detectedObject = true;
+
                     data.push_back(distance);
                     data.push_back(m->isDead() ? DEAD_MINION_TYPE : ALIVE_MINION_TYPE);
                     auto color = m->getObject()->getSkinColor();
@@ -145,10 +146,13 @@ std::vector<float> SimpleMinionSenses::gatherData(float deltaT) {
                     data.push_back(color.b);
 
                     setSightLineColor(i, color);
+
+                    break;
                 }
             }
             if(!detectedObject && boundaryInRange && cd.pointInHollowCircle(p, *state.getBoundary())){
                 detectedObject = true;
+
                 data.push_back(distance);
                 data.push_back(BOUNDARY_TYPE);
                 auto color = state.getBoundary()->getColor();
