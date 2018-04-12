@@ -6,6 +6,10 @@
 #include <eigen/Eigen>
 #include <memory>
 #include <string>
+#include <rapidjson/rapidjson.h>
+#include "persistence/JSONPersistable.h"
+
+namespace rjs = rapidjson;
 
 class NeuralNet : public JSONPersistable {
 public:

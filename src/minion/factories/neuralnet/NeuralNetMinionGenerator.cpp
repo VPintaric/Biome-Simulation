@@ -2,7 +2,11 @@
 #include <minion/senses/simple/SimpleMinionSenses.h>
 #include <state/State.h>
 #include <state/Log.h>
+#include <minion/factories/neuralnet/crossover/ArithmeticAverageCrossover.h>
+#include <minion/factories/neuralnet/crossover/InterleaveLayersCrossover.h>
 #include "minion/factories/neuralnet/NeuralNetMinionGenerator.h"
+#include "minion/factories/neuralnet/mutation/GaussNoiseMutation.h"
+#include "minion/factories/neuralnet/mutation/SparseResetMutation.h"
 
 NeuralNetMinionGenerator::NeuralNetMinionGenerator(std::vector<int> nnHiddenLayers)
                                                 : nnHiddenLayers(nnHiddenLayers){
@@ -55,8 +59,10 @@ std::shared_ptr<Minion> NeuralNetMinionGenerator::generateChild(std::shared_ptr<
 
 std::shared_ptr<Minion> NeuralNetMinionGenerator::crossover(std::shared_ptr<Minion> first,
                                                             std::shared_ptr<Minion> second) {
-    std::uniform_real_distribution<float> coeffDistr(0.f, 1.f);
-    float coeff = coeffDistr(State::getInstance().getRng().get());
+    auto rng = State::getInstance().getRng();
+
+    std::uniform_real_distribution<float> uniformDistr(0.f, 1.f);
+    float coeff = uniformDistr(rng.get());
 
     auto child = createRawMinion();
     auto object = child->getObject();
@@ -70,12 +76,10 @@ std::shared_ptr<Minion> NeuralNetMinionGenerator::crossover(std::shared_ptr<Mini
     senses->setMaxSenseDistance(coeff * first->getSenses()->getMaxSenseDistance() +
                                 (1 - coeff) * second->getSenses()->getMaxSenseDistance());
 
-    auto firstNN = std::static_pointer_cast<NeuralNetController>(first->getController())->getNeuralNet();
-    auto secondNN = std::static_pointer_cast<NeuralNetController>(second->getController())->getNeuralNet();
-    for(int layer = 0; layer < nn->weights.size(); layer++){
-        *nn->weights[layer] = coeff * *firstNN->weights[layer] + (1 - coeff) * *secondNN->weights[layer];
-        *nn->bias[layer] = coeff * *firstNN->bias[layer] + (1 - coeff) * *secondNN->bias[layer];
-    }
+    int operatorIdx = getRandomIndexFromProbs(crossoverOpProbs);
+    auto first_nn = std::static_pointer_cast<NeuralNetController>(first->getController())->getNeuralNet();
+    auto second_nn = std::static_pointer_cast<NeuralNetController>(second->getController())->getNeuralNet();
+    crossoverOps[operatorIdx]->crossover(first_nn, second_nn, nn);
 
     return child;
 }
@@ -84,7 +88,6 @@ void NeuralNetMinionGenerator::mutate(std::shared_ptr<Minion> m) {
     std::normal_distribution<float> colorMut(0.f, 0.1f);
     std::normal_distribution<float> radiusMut(0.f, 5.f);
     std::normal_distribution<float> senseDistMut(0.f, 5.f);
-    std::normal_distribution<float> nnMut(0.f, 10.f);
 
     auto rng = State::getInstance().getRng();
 
@@ -98,20 +101,14 @@ void NeuralNetMinionGenerator::mutate(std::shared_ptr<Minion> m) {
     object->setRadius(object->getRadius() + radiusMut(rng.get()));
     senses->setMaxSenseDistance(senses->getMaxSenseDistance() + senseDistMut(rng.get()));
 
-    for(int layer = 0; layer < nn->weights.size(); layer++){
-        auto w = nn->weights[layer];
-        auto b = nn->bias[layer];
-        for(int c = 0; c < w->cols(); c++){
-            b->operator()(0, c) += nnMut(rng.get());
-            for(int r = 0; r < w->rows(); r++){
-                w->operator()(r, c) += nnMut(rng.get());
-            }
-        }
-    }
+    int operatorIdx = getRandomIndexFromProbs(mutationOpProbs);
+    mutationOps[operatorIdx]->mutate(nn);
 }
 
 void NeuralNetMinionGenerator::configureFromJSON(rjs::Value &root) {
     const char * ARCHITECTURE = "architecture_hidden";
+    const char * MUTATION_OPS = "mutations";
+    const char * CROSSOVER_OPS = "crossovers";
 
     if(root.HasMember(ARCHITECTURE) && root[ARCHITECTURE].IsArray()){
         auto array = root[ARCHITECTURE].GetArray();
@@ -124,8 +121,141 @@ void NeuralNetMinionGenerator::configureFromJSON(rjs::Value &root) {
                 Log().Get(logWARNING) << "NN architecture configuration: element in architecture array is not an int, ignoring...";
             }
         }
-
     } else {
         nnHiddenLayers = { 40, 30 };
     }
+
+    if(root.HasMember(MUTATION_OPS) && root[MUTATION_OPS].IsArray()){
+        auto mutations = root[MUTATION_OPS].GetArray();
+
+        for(auto& op : mutations){
+            configAddMutationOp(op);
+        }
+
+        fixProbabilities(mutationOpProbs);
+    } else {
+        mutationOps.push_back(std::make_shared<GaussNoiseMutation>());
+        mutationOpProbs.push_back(1.f);
+    }
+
+    if(root.HasMember(CROSSOVER_OPS) && root[CROSSOVER_OPS].IsArray()){
+        auto crossovers = root[CROSSOVER_OPS].GetArray();
+
+        for(auto& op : crossovers){
+            configAddCrossoverOp(op);
+        }
+
+        fixProbabilities(crossoverOpProbs);
+    } else {
+        crossoverOps.push_back(std::make_shared<ArithmeticAverageCrossover>());
+        crossoverOpProbs.push_back(1.f);
+    }
+}
+
+void NeuralNetMinionGenerator::configAddMutationOp(rjs::Value &root) {
+    const char * NAME = "name";
+    const char * PROBABILITY = "probability";
+    const char * CONFIG = "config";
+
+    std::shared_ptr<NeuralNetMutation> mutationOp;
+
+    if(root.HasMember(NAME) && root[NAME].IsString()){
+        std::string opName = root[NAME].GetString();
+
+        if(opName == "gauss_noise"){
+            mutationOp = std::make_shared<GaussNoiseMutation>();
+        } else if(opName == "sparse_reset"){
+            mutationOp = std::make_shared<SparseResetMutation>();
+        } else {
+            mutationOp = std::make_shared<GaussNoiseMutation>();
+        }
+    } else {
+        return;
+    }
+
+    if(root.HasMember(PROBABILITY) && root[PROBABILITY].IsFloat()){
+        mutationOpProbs.push_back(root[PROBABILITY].GetFloat());
+    } else {
+        mutationOpProbs.push_back(-1.f);
+    }
+
+    if(root.HasMember(CONFIG) && root[CONFIG].IsObject()){
+        mutationOp->configureFromJSON(root[CONFIG]);
+    }
+
+    mutationOps.push_back(mutationOp);
+}
+
+void NeuralNetMinionGenerator::configAddCrossoverOp(rjs::Value &root) {
+    const char * NAME = "name";
+    const char * PROBABILITY = "probability";
+    const char * CONFIG = "config";
+
+    std::shared_ptr<NeuralNetCrossover> crossoverOp;
+
+    if(root.HasMember(NAME) && root[NAME].IsString()) {
+        std::string opName = root[NAME].GetString();
+
+        if (opName == "arithmetic_average") {
+            crossoverOp = std::make_shared<ArithmeticAverageCrossover>();
+        } else if(opName == "interleave_layers") {
+            crossoverOp = std::make_shared<InterleaveLayersCrossover>();
+        } else {
+            crossoverOp = std::make_shared<ArithmeticAverageCrossover>();
+        }
+    } else {
+        return;
+    }
+
+    if(root.HasMember(PROBABILITY) && root[PROBABILITY].IsFloat()){
+        crossoverOpProbs.push_back(root[PROBABILITY].GetFloat());
+    } else {
+        crossoverOpProbs.push_back(-1.f);
+    }
+
+    if(root.HasMember(CONFIG) && root[CONFIG].IsObject()){
+        crossoverOp->configureFromJSON(root[CONFIG]);
+    }
+
+    crossoverOps.push_back(crossoverOp);
+}
+
+void NeuralNetMinionGenerator::fixProbabilities(std::vector<float> &v) {
+    float leftProb = 1.f;
+    int nUnknown = 0;
+
+    for(float val : v){
+        if(val >= 0.f){
+            leftProb -= val;
+        } else {
+            nUnknown++;
+        }
+    }
+
+    if(nUnknown){
+        for(float& val : v){
+            if(val < 0.f){
+                val = leftProb / nUnknown;
+            }
+        }
+    }
+}
+
+int NeuralNetMinionGenerator::getRandomIndexFromProbs(std::vector<float> &probs) {
+    auto rng = State::getInstance().getRng();
+
+    std::uniform_real_distribution<float> uniformDistr(0.f, 1.f);
+
+    float roll = uniformDistr(rng.get());
+
+    float cumSum = 0.f;
+
+    for(int idx = 0; idx < probs.size(); idx++){
+        cumSum += probs[idx];
+        if(roll <= cumSum){
+            return idx;
+        }
+    }
+
+    return static_cast<int>(probs.size() - 1);
 }

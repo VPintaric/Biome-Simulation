@@ -1,11 +1,40 @@
 {
 "minion_generator" : "neural_net",
 "minion_generator_config" : {
-        "architecture_hidden" : [60, 50, 30, 40, 20]
+        "architecture_hidden" : [60, 50, 30, 40, 20],
+        "mutations" : [
+            {
+            "name" : "gauss_noise",
+            "probability" : 0.5,
+            "config" : {
+                    "variance" : 10.0
+                }
+            },
+            {
+            "name" : "sparse_reset",
+            "probability" : 0.5,
+            "config" : {
+                    "reset_probability" : 0.0005,
+                    "reset_gauss_variance" : 50.0
+                }
+            }
+         ],
+         "crossovers" : [
+            {
+            "name" : "arithmetic_average",
+            "probability" : 0.5
+            },
+            {
+            "name" : "interleave_layers",
+            "probability" : 0.5
+            }
+         ]
     },
 "boundary_radius" : 500,
 "number_of_minions" : 30,
 "print_info_every_seconds" : 60,
 "persist_minions_every_seconds" : 300,
-"persistence_directory" : "saved_minions"
+"evolution_type" : "steady_state",
+"load_directory" : "",
+"save_directory" : "saved_minions"
 }

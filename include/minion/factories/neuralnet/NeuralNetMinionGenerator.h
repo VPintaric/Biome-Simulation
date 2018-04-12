@@ -4,6 +4,8 @@
 
 #include "minion/factories/MinionGenerator.h"
 #include <random>
+#include <minion/factories/neuralnet/mutation/NeuralNetMutation.h>
+#include <minion/factories/neuralnet/crossover/NeuralNetCrossover.h>
 
 class NeuralNetMinionGenerator : public MinionGenerator {
 public:
@@ -18,10 +20,17 @@ public:
 
 private:
     std::vector<int> nnHiddenLayers;
+    std::vector<std::shared_ptr<NeuralNetMutation> > mutationOps;
+    std::vector<std::shared_ptr<NeuralNetCrossover> > crossoverOps;
+    std::vector<float> mutationOpProbs, crossoverOpProbs;
 
     std::shared_ptr<Minion> createRawMinion();
     std::shared_ptr<Minion> crossover(std::shared_ptr<Minion> first, std::shared_ptr<Minion> second);
     void mutate(std::shared_ptr<Minion> m);
+    void fixProbabilities(std::vector<float> &v);
+    void configAddMutationOp(rjs::Value& root);
+    void configAddCrossoverOp(rjs::Value& root);
+    int getRandomIndexFromProbs(std::vector<float> &probs);
 };
 
 
