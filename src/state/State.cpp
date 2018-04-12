@@ -30,7 +30,7 @@ State::State() : nextMinionId(1), currentBestMinion(nullptr),
                 nextPersistedGeneration(1), persistenceDirectory("saved_minions"),
                 nMinions(SimConst::DEFAULT_NUMBER_OF_MINIONS), printEveryRealTime(30000),
                 persistMinionsEveryRealTime(300000), nextPersistTimestamp(persistMinionsEveryRealTime),
-                nextPrintTimestamp(printEveryRealTime){
+                nextPrintTimestamp(printEveryRealTime), useGenerationalGA(true){
     Log().Get(logDEBUG) << "Creating new state instance";
     shouldEndProgramFlag = false;
     lastCalledTimestamp = chr::duration_cast<chr::milliseconds>(chr::system_clock::now().time_since_epoch()).count();
@@ -107,7 +107,7 @@ void State::initializeMinion(Minion &minion) {
         validPosition = true;
         for (auto &minion : minions) {
             // hacky...
-            if(minion->getObject() == object){
+            if(minion->isDead() || minion->getObject() == object){
                 continue;
             }
             auto ci = cd.checkCircleCircleCollision(*object, *minion->getObject());
@@ -139,6 +139,7 @@ void State::spawnMinions() {
         minions.push_back(minion);
         initializeMinion(*minion);
     }
+    decayedMinions.clear();
 }
 
 void State::initBoundary(float r) {
@@ -155,7 +156,9 @@ void State::initBoundary(float r) {
 
 void State::draw() {
     for(const std::shared_ptr<Minion> &m : minions){
-        m->draw();
+        if(!m->isDecayed()){
+            m->draw();
+        }
     }
     boundary->draw();
 }
@@ -247,6 +250,16 @@ void State::realTimeUpdate() {
     lastCalledTimestamp = timestamp;
 }
 
+void State::initializeNextGeneration() {
+    currentGeneration++;
+    Log().Get(logINFO) << "new gen";
+    for(auto& m : minions){
+        m = selectionAlg->getNewMinion();
+        initializeMinion(*m);
+    }
+    decayedMinions.clear();
+}
+
 void State::update(float dt) {
     realTimeUpdate();
 
@@ -281,8 +294,17 @@ void State::update(float dt) {
                 Log().Get(logINFO) << "New longest living time: " << currentBestMinion->getTimeLived();
             }
 
-            *iter = selectionAlg->getNewMinion();
-            initializeMinion(**iter);
+            if(!useGenerationalGA){
+                *iter = selectionAlg->getNewMinion();
+                initializeMinion(**iter);
+                currentGeneration++;
+            } else {
+                decayedMinions.insert(*iter);
+
+                if(decayedMinions.size() == minions.size()){
+                    initializeNextGeneration();
+                }
+            }
         }
     }
 
@@ -353,6 +375,8 @@ void State::configureFromJSON(rjs::Value &root) {
     const char * PRINT_INFO_EVERY_SECONDS = "print_info_every_seconds";
     const char * PERSIST_MINIONS_EVERY_SECONDS = "persist_minions_every_seconds";
     const char * PERSISTENCE_DIRECTORY = "persistence_directory";
+    const char * EVOLUTION_TYPE = "evolution_type";
+    const char * EVOLUTION_STEADY_STATE_TYPE = "steady_state";
 
     if(!root.IsObject()){
         Log().Get(logWARNING) << "Can't get configuration from non-object value in JSON";
@@ -403,6 +427,10 @@ void State::configureFromJSON(rjs::Value &root) {
 
     if(root.HasMember(PERSISTENCE_DIRECTORY) && root[PERSISTENCE_DIRECTORY].IsString()){
         setPersistenceDirectory(root[PERSISTENCE_DIRECTORY].GetString());
+    }
+
+    if(root.HasMember(EVOLUTION_TYPE) && root[EVOLUTION_TYPE].IsString()){
+        useGenerationalGA = !(root[EVOLUTION_TYPE] == EVOLUTION_STEADY_STATE_TYPE);
     }
 }
 

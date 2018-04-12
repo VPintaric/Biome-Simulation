@@ -7,10 +7,13 @@
 #include <minion/factories/MinionGenerator.h>
 #include <collision/CollisionInfo.h>
 #include <config/JSONConfigurable.h>
+#include <set>
 #include "minion/object/MinionObject.h"
 #include "objects/Boundary.h"
 #include "minion/Minion.h"
 #include "minion/selection/Selection.h"
+
+// This class really need a do-over.......
 
 class State : public JSONConfigurable {
 public:
@@ -67,6 +70,8 @@ private:
 
     std::vector< std::shared_ptr<Minion> > minions;
 
+    std::set< std::shared_ptr<Minion> > decayedMinions;
+
     std::shared_ptr<Selection> selectionAlg;
 
     std::shared_ptr<Boundary> boundary;
@@ -91,7 +96,13 @@ private:
 
     long lastCalledTimestamp;
 
+    bool useGenerationalGA;
+
+    int currentGeneration;
+
     void initializeMinion(Minion &minion);
+
+    void initializeNextGeneration();
 
     void realTimeUpdate();
 
