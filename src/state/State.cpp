@@ -134,11 +134,16 @@ void State::spawnMinions() {
         return;
     }
 
-    for(int i = 0; i < nMinions; i++){
-        auto minion = minionGenerator->generateMinion();
-        minions.push_back(minion);
-        initializeMinion(*minion);
+    if(!loadDirectory.empty()){
+        loadMinionsFromFolder(loadDirectory);
+    } else {
+        for(int i = 0; i < nMinions; i++){
+            auto minion = minionGenerator->generateMinion();
+            minions.push_back(minion);
+            initializeMinion(*minion);
+        }
     }
+
     decayedMinions.clear();
 }
 
@@ -327,6 +332,11 @@ std::string State::getPersistenceDirectory() {
 }
 
 void State::persistCurrentGeneration() {
+    if(persistenceDirectory.empty()){
+        Log().Get(logINFO) << "No save directory given, not persisting minions";
+        return;
+    }
+
     auto& p = Persistence::getInstance();
 
     if(!fs::exists(persistenceDirectory) || !fs::is_directory(persistenceDirectory)){
@@ -377,6 +387,8 @@ void State::configureFromJSON(rjs::Value &root) {
     const char * PERSISTENCE_DIRECTORY = "persistence_directory";
     const char * EVOLUTION_TYPE = "evolution_type";
     const char * EVOLUTION_STEADY_STATE_TYPE = "steady_state";
+    const char * LOAD_MINIONS_DIRECTORY = "load_directory";
+    const char * SAVE_MINIONS_DIRECTORY = "save_directory";
 
     if(!root.IsObject()){
         Log().Get(logWARNING) << "Can't get configuration from non-object value in JSON";
@@ -431,6 +443,18 @@ void State::configureFromJSON(rjs::Value &root) {
 
     if(root.HasMember(EVOLUTION_TYPE) && root[EVOLUTION_TYPE].IsString()){
         useGenerationalGA = !(root[EVOLUTION_TYPE] == EVOLUTION_STEADY_STATE_TYPE);
+    }
+
+    if(root.HasMember(LOAD_MINIONS_DIRECTORY) && root[LOAD_MINIONS_DIRECTORY].IsString()){
+        loadDirectory = root[LOAD_MINIONS_DIRECTORY].GetString();
+    } else {
+        loadDirectory.clear();
+    }
+
+    if(root.HasMember(SAVE_MINIONS_DIRECTORY) && root[SAVE_MINIONS_DIRECTORY].IsString()){
+        persistenceDirectory = root[SAVE_MINIONS_DIRECTORY].GetString();
+    } else {
+        persistenceDirectory.clear();
     }
 }
 

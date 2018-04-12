@@ -80,6 +80,8 @@ private:
 
     std::string persistenceDirectory;
 
+    std::string loadDirectory;
+
     int nextPersistedGeneration;
 
     bool shouldEndProgramFlag;
