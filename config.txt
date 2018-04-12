@@ -30,11 +30,11 @@
             }
          ]
     },
-"boundary_radius" : 500,
+"boundary_radius" : 750,
 "number_of_minions" : 30,
 "print_info_every_seconds" : 60,
 "persist_minions_every_seconds" : 300,
-"evolution_type" : "steady_state",
+"evolution_type" : "generational",
 "load_directory" : "",
 "save_directory" : "saved_minions"
 }

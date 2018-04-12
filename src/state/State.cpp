@@ -210,10 +210,10 @@ void State::resolveMinionCollisionDamage(Minion &m1, Minion &m2, CollisionInfo &
     } else {
         const float COLLISION_LEECH_CONSTANT = 0.5f;
 
-        if(m1.isDead()){
+        if(m1.isDead() && !m1.isDecayed()){
             m1.setLife(m1.getLife() - COLLISION_LEECH_CONSTANT);
             m2.setLife(m2.getLife() + COLLISION_LEECH_CONSTANT);
-        } else {
+        } else if(m2.isDead() && !m2.isDecayed()){
             m1.setLife(m1.getLife() + COLLISION_LEECH_CONSTANT);
             m2.setLife(m2.getLife() - COLLISION_LEECH_CONSTANT);
         }
@@ -257,7 +257,7 @@ void State::realTimeUpdate() {
 
 void State::initializeNextGeneration() {
     currentGeneration++;
-    Log().Get(logINFO) << "new gen";
+    Log().Get(logINFO) << "Generating " << currentGeneration << ". generation";
     for(auto& m : minions){
         m = selectionAlg->getNewMinion();
         initializeMinion(*m);

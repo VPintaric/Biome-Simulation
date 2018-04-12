@@ -100,7 +100,7 @@ std::vector<float> SimpleMinionSenses::gatherData(float deltaT) {
 
     for(auto m : state.getMinions()){
         // don't check collision of this minion's senses with itself
-        if(m == minion){
+        if(m == minion || m->isDecayed()){
             continue;
         }
         auto ci = cd.checkCircleCircleCollision(*this, *m->getObject());
