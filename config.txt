@@ -1,7 +1,8 @@
 {
+"selection_algorithm" : "most_active",
 "minion_generator" : "neural_net",
 "minion_generator_config" : {
-        "architecture_hidden" : [60, 50, 30, 40, 20],
+        "architecture_hidden" : [100, 80, 40],
         "mutations" : [
             {
             "name" : "gauss_noise",
@@ -22,11 +23,11 @@
          "crossovers" : [
             {
             "name" : "arithmetic_average",
-            "probability" : 0.5
+            "probability" : 0.2
             },
             {
             "name" : "interleave_layers",
-            "probability" : 0.5
+            "probability" : 0.8
             }
          ]
     },
@@ -35,6 +36,5 @@
 "print_info_every_seconds" : 60,
 "persist_minions_every_seconds" : 300,
 "evolution_type" : "generational",
-"load_directory" : "",
 "save_directory" : "saved_minions"
 }

@@ -66,7 +66,13 @@ void Minion::update(float deltaT) {
         setDecayed(true);
     }
 
+    auto posBefore = object->getPos();
     object->update(deltaT);
+    auto posAfter = object->getPos();
+
+    if(!isDead()){
+        setDistanceTraveled(getDistanceTraveled() + glm::length(posAfter - posBefore));
+    }
 }
 
 void Minion::control(float deltaT) {
@@ -203,4 +209,28 @@ int Minion::getId() const {
 
 void Minion::setId(int id){
     this->id = id;
+}
+
+float Minion::getDistanceTraveled() const {
+    return distanceTraveled;
+}
+
+void Minion::setDistanceTraveled(float distanceTraveled) {
+    Minion::distanceTraveled = distanceTraveled;
+}
+
+float Minion::getDamageDealt() const {
+    return damageDealt;
+}
+
+void Minion::setDamageDealt(float damageDealt) {
+    Minion::damageDealt = damageDealt;
+}
+
+float Minion::getHealthRecovered() const {
+    return healthRecovered;
+}
+
+void Minion::setHealthRecovered(float healthRecovered) {
+    Minion::healthRecovered = healthRecovered;
 }

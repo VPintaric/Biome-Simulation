@@ -73,6 +73,18 @@ public:
 
     void setId(int id);
 
+    float getDistanceTraveled() const;
+
+    void setDistanceTraveled(float distanceTraveled);
+
+    float getDamageDealt() const;
+
+    void setDamageDealt(float damageDealt);
+
+    float getHealthRecovered() const;
+
+    void setHealthRecovered(float healthRecovered);
+
 private:
 
     std::shared_ptr<MinionObject> object;
@@ -80,8 +92,10 @@ private:
     std::shared_ptr<MinionController> controller;
 
     int id;
-    float maxLife, minLife, life, decay, timeLived;
+    float maxLife, minLife, life, decay;
     bool dead, decayed;
+
+    float timeLived, distanceTraveled, damageDealt, healthRecovered;
 
     const char * JSON_OBJECT = "object";
     const char * JSON_SENSES = "senses";

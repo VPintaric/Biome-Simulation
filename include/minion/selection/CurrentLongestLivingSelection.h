@@ -12,6 +12,8 @@ public:
     std::shared_ptr<Minion> getNewMinion() override;
     void setMinionGenerator(std::shared_ptr<MinionGenerator> mg) override;
 
+    float getFitness(std::shared_ptr<Minion> m) override;
+
 private:
     std::shared_ptr<MinionGenerator> minionGenerator;
 };

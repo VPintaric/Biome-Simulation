@@ -12,6 +12,7 @@ public:
 
     virtual std::shared_ptr<Minion> getNewMinion() = 0;
     virtual void setMinionGenerator(std::shared_ptr<MinionGenerator> mg) = 0;
+    virtual float getFitness(std::shared_ptr<Minion> m) = 0;
 };
 
 

@@ -17,6 +17,7 @@
 #include <minion/selection/CurrentLongestLivingSelection.h>
 #include <minion/factories/explicit/ExplicitBehaviourMinionGenerator.h>
 #include <minion/factories/neuralnet/NeuralNetMinionGenerator.h>
+#include <minion/selection/MostActiveSelection.h>
 
 namespace fs = std::experimental::filesystem;
 namespace chr = std::chrono;
@@ -75,6 +76,9 @@ void State::initializeMinion(Minion &minion) {
     minion.setMinLife(-minion.getMaxLife());
 
     minion.setTimeLived(0.f);
+    minion.setDamageDealt(0.f);
+    minion.setDistanceTraveled(0.f);
+    minion.setHealthRecovered(0.f);
     minion.setLife(minion.getMaxLife());
     minion.setId(nextMinionId++);
 
@@ -207,15 +211,22 @@ void State::resolveMinionCollisionDamage(Minion &m1, Minion &m2, CollisionInfo &
 
         m1.setLife(m1.getLife() - dmgTo1);
         m2.setLife(m2.getLife() - dmgTo2);
+
+        m1.setDamageDealt(m1.getDamageDealt() + dmgTo2);
+        m2.setDamageDealt(m2.getDamageDealt() + dmgTo1);
     } else {
         const float COLLISION_LEECH_CONSTANT = 0.5f;
 
         if(m1.isDead() && !m1.isDecayed()){
             m1.setLife(m1.getLife() - COLLISION_LEECH_CONSTANT);
             m2.setLife(m2.getLife() + COLLISION_LEECH_CONSTANT);
+
+            m2.setHealthRecovered(m2.getHealthRecovered() + COLLISION_LEECH_CONSTANT);
         } else if(m2.isDead() && !m2.isDecayed()){
             m1.setLife(m1.getLife() + COLLISION_LEECH_CONSTANT);
             m2.setLife(m2.getLife() - COLLISION_LEECH_CONSTANT);
+
+            m1.setHealthRecovered(m1.getHealthRecovered() + COLLISION_LEECH_CONSTANT);
         }
     }
 }
@@ -294,9 +305,13 @@ void State::update(float dt) {
 
         m->update(dt);
         if(m->isDecayed()){
-            if(currentBestMinion == nullptr || currentBestMinion->getTimeLived() < m->getTimeLived()){
+            if(currentBestMinion == nullptr || selectionAlg->getFitness(currentBestMinion) < selectionAlg->getFitness(m)){
                 currentBestMinion = m;
-                Log().Get(logINFO) << "New longest living time: " << currentBestMinion->getTimeLived();
+                Log().Get(logINFO) << "New best fitness minion: " << selectionAlg->getFitness(currentBestMinion);
+                Log().Get(logINFO) << "   Time lived: " << currentBestMinion->getTimeLived();
+                Log().Get(logINFO) << "   Distance traveled: " << currentBestMinion->getDistanceTraveled();
+                Log().Get(logINFO) << "   Damage dealt: " << currentBestMinion->getDamageDealt();
+                Log().Get(logINFO) << "   Health recovered: " << currentBestMinion->getHealthRecovered();
             }
 
             if(!useGenerationalGA){
@@ -378,6 +393,7 @@ void State::loadMinionsFromFolder(std::string dirName) {
 }
 
 void State::configureFromJSON(rjs::Value &root) {
+    const char * SELECTION_ALGORITHM = "selection_algorithm";
     const char * MINION_GEN = "minion_generator";
     const char * BOUNDARY_RADIUS = "boundary_radius";
     const char * N_MINIONS = "number_of_minions";
@@ -395,10 +411,19 @@ void State::configureFromJSON(rjs::Value &root) {
         return;
     }
 
-    setSelectionAlg(std::make_shared<CurrentLongestLivingSelection>());
+    if(root.HasMember(SELECTION_ALGORITHM) && root[SELECTION_ALGORITHM].IsString()){
+        std::string selectionAlg = root[SELECTION_ALGORITHM].GetString();
+        if(selectionAlg == "longest_living"){
+            setSelectionAlg(std::make_shared<CurrentLongestLivingSelection>());
+        } else if(selectionAlg == "most_active"){
+            setSelectionAlg(std::make_shared<MostActiveSelection>());
+        } else {
+            setSelectionAlg(std::make_shared<CurrentLongestLivingSelection>());
+        }
+    }
 
     if(root.HasMember(MINION_GEN) && root[MINION_GEN].IsString()){
-        auto minionGenerator = root[MINION_GEN].GetString();
+        std::string minionGenerator = root[MINION_GEN].GetString();
         if(minionGenerator == "explicit_behaviour"){
             setMinionGenerator(std::make_shared<ExplicitBehaviourMinionGenerator>());
         } else {

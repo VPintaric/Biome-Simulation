@@ -62,3 +62,7 @@ std::shared_ptr<Minion> CurrentLongestLivingSelection::getNewMinion() {
 void CurrentLongestLivingSelection::setMinionGenerator(std::shared_ptr<MinionGenerator> mg) {
     minionGenerator = mg;
 }
+
+float CurrentLongestLivingSelection::getFitness(std::shared_ptr<Minion> m) {
+    return m->getTimeLived();
+}
