@@ -24,12 +24,13 @@ std::shared_ptr<Minion> CurrentLongestLivingSelection::getNewMinion() {
 
     std::uniform_real_distribution<float> distr(0.f, sum);
     float roll = distr(rng.get());
-    sum = 0.f;
+    float runningSum = 0.f;
     for(int i = 0; i < minions.size(); i++){
-        sum += minions[i]->getTimeLived();
-        if(roll <= sum && first == -1){
+        runningSum += minions[i]->getTimeLived();
+        if(roll <= runningSum && first == -1){
             first = i;
             sum -= minions[i]->getTimeLived();
+            break;
         }
     }
     if(first == -1){
@@ -39,14 +40,15 @@ std::shared_ptr<Minion> CurrentLongestLivingSelection::getNewMinion() {
 
     distr = std::uniform_real_distribution<float>(0.f, sum);
     roll = distr(rng.get());
-    sum = 0.f;
+    runningSum = 0.f;
     for(int i = 0; i < minions.size(); i++){
         if(i == first){
             continue;
         }
-        sum += minions[i]->getTimeLived();
-        if(roll <= sum){
+        runningSum += minions[i]->getTimeLived();
+        if(roll <= runningSum){
             second = i;
+            break;
         }
     }
     if(second == -1){
