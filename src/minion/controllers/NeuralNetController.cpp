@@ -1,5 +1,4 @@
 #include <memory>
-#include <utility>
 #include <state/State.h>
 #include <state/Log.h>
 

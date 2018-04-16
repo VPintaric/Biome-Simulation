@@ -264,12 +264,16 @@ void State::realTimeUpdate() {
 }
 
 void State::updateMinionFitness() {
+    currentFitnessAverage = 0.f;
     for(auto m : minions){
         fitnessAlg->calculateFitness(m);
+        currentFitnessAverage += m->getFitness();
     }
+    currentFitnessAverage /= minions.size();
 }
 
 void State::initializeNextGeneration() {
+    Log().Get(logINFO) << "Final average fitness of " << currentGeneration << ". generation is " << currentFitnessAverage;
     currentGeneration++;
     Log().Get(logINFO) << "Generating " << currentGeneration << ". generation";
 

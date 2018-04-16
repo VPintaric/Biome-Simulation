@@ -1,10 +1,8 @@
 #include "persistence/Persistence.h"
-#include <rapidjson/document.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/filewritestream.h>
 #include <rapidjson/filereadstream.h>
 #include <state/Log.h>
-#include <cstdio>
 
 namespace rjs = rapidjson;
 

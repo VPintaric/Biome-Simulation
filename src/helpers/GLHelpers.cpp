@@ -1,5 +1,4 @@
 #include <GL/glew.h>
-#include <SDL2/SDL_opengl.h>
 #include "state/Log.h"
 
 #include "helpers/GLHelpers.h"

@@ -12,7 +12,6 @@
 #include <minion/factories/explicit/ExplicitBehaviourMinionGenerator.h>
 #include <minion/factories/neuralnet/NeuralNetMinionGenerator.h>
 #include <config/Config.h>
-#include <helpers/RNG.h>
 #include "state/State.h"
 
 #include "state/Log.h"

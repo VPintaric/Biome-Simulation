@@ -1,6 +1,5 @@
 #include <minion/senses/simple/SimpleMinionSenses.h>
 #include <helpers/RNG.h>
-#include "glm/gtc/constants.hpp"
 #include "minion/factories/explicit/ExplicitBehaviourMinionGenerator.h"
 #include "minion/controllers/RandomController.h"
 #include "minion/controllers/CowardController.h"

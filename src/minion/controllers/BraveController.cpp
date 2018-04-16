@@ -1,6 +1,5 @@
 #include "glm/gtc/constants.hpp"
 #include "minion/controllers/BraveController.h"
-#include "helpers/MathHelpers.h"
 #include "state/Log.h"
 
 BraveController::BraveController() = default;

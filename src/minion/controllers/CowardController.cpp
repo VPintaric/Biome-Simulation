@@ -1,7 +1,6 @@
 #include "glm/gtc/constants.hpp"
 #include "minion/controllers/CowardController.h"
 #include "state/Log.h"
-#include "helpers/MathHelpers.h"
 
 CowardController::CowardController() = default;
 CowardController::~CowardController() = default;

@@ -103,6 +103,8 @@ private:
 
     int currentGeneration;
 
+    float currentFitnessAverage;
+
     void initializeMinion(Minion &minion);
 
     void initializeNextGeneration();

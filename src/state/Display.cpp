@@ -1,8 +1,6 @@
 #include "state/Display.h"
 #include "state/Log.h"
 
-#include <string>
-
 Display::Display() {
 
 }

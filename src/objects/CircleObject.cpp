@@ -1,6 +1,5 @@
 #define GLM_FORCE_RADIANS
 
-#include "glm/gtx/rotate_vector.hpp"
 #include "objects/CircleObject.h"
 
 void CircleObject::setRadius(float r) {
