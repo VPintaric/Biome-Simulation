@@ -32,7 +32,7 @@
             }
          ]
     },
-"boundary_radius" : 750,
+"boundary_radius" : 850,
 "number_of_minions" : 30,
 "print_info_every_seconds" : 60,
 "persist_minions_every_seconds" : 1800,

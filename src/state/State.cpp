@@ -440,6 +440,10 @@ void State::configureFromJSON(rjs::Value &root) {
 
     setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
 
+    if(root.HasMember(MINION_GEN_CONFIG) && root[MINION_GEN_CONFIG].IsObject()){
+        minionGenerator->configureFromJSON(root[MINION_GEN_CONFIG]);
+    }
+
     if(root.HasMember(BOUNDARY_RADIUS) && root[BOUNDARY_RADIUS].IsNumber()){
         initBoundary(root[BOUNDARY_RADIUS].GetFloat());
     } else {
