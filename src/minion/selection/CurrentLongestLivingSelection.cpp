@@ -20,6 +20,7 @@ std::shared_ptr<Minion> CurrentLongestLivingSelection::getNewMinion() {
     int first = -1, second = -1;
     for(auto m : minions){
         sum += m->getTimeLived();
+        m->setFitness(m->getTimeLived());
     }
 
     std::uniform_real_distribution<float> distr(0.f, sum);

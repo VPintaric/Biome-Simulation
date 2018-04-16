@@ -96,6 +96,13 @@ private:
     bool dead, decayed;
 
     float timeLived, distanceTraveled, damageDealt, healthRecovered;
+    float fitness;
+public:
+    float getFitness() const;
+
+    void setFitness(float fitness);
+
+private:
 
     const char * JSON_OBJECT = "object";
     const char * JSON_SENSES = "senses";

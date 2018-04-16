@@ -4,6 +4,7 @@
 #include <state/Log.h>
 #include <minion/factories/neuralnet/crossover/ArithmeticAverageCrossover.h>
 #include <minion/factories/neuralnet/crossover/InterleaveLayersCrossover.h>
+#include <minion/factories/neuralnet/crossover/PickRandomCrossover.h>
 #include "minion/factories/neuralnet/NeuralNetMinionGenerator.h"
 #include "minion/factories/neuralnet/mutation/GaussNoiseMutation.h"
 #include "minion/factories/neuralnet/mutation/SparseResetMutation.h"
@@ -200,6 +201,8 @@ void NeuralNetMinionGenerator::configAddCrossoverOp(rjs::Value &root) {
             crossoverOp = std::make_shared<ArithmeticAverageCrossover>();
         } else if(opName == "interleave_layers") {
             crossoverOp = std::make_shared<InterleaveLayersCrossover>();
+        } else if(opName == "pick_random"){
+            crossoverOp = std::make_shared<PickRandomCrossover>();
         } else {
             crossoverOp = std::make_shared<ArithmeticAverageCrossover>();
         }

@@ -22,12 +22,7 @@
          ],
          "crossovers" : [
             {
-            "name" : "arithmetic_average",
-            "probability" : 0.2
-            },
-            {
-            "name" : "interleave_layers",
-            "probability" : 0.8
+            "name" : "pick_random"
             }
          ]
     },

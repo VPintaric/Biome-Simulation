@@ -234,3 +234,11 @@ float Minion::getHealthRecovered() const {
 void Minion::setHealthRecovered(float healthRecovered) {
     Minion::healthRecovered = healthRecovered;
 }
+
+float Minion::getFitness() const {
+    return fitness;
+}
+
+void Minion::setFitness(float fitness) {
+    Minion::fitness = fitness;
+}

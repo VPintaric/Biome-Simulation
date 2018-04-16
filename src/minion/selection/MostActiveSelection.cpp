@@ -70,6 +70,7 @@ void MostActiveSelection::updateFitness() {
     for(auto m : s.getMinions()){
         float f = getFitness(m);
         fitness.push_back(f);
+        m->setFitness(f);
     }
 }
 
