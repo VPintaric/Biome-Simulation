@@ -69,16 +69,6 @@ add_executable(Biome_Simulation
         src/minion/controllers/MinionController.cpp
         include/minion/controllers/MinionController.h
         src/helpers/MathHelpers.cpp
-        src/minion/controllers/RandomController.cpp
-        include/minion/controllers/RandomController.h
-        src/minion/controllers/CowardController.cpp
-        include/minion/controllers/CowardController.h
-        src/minion/controllers/BraveController.cpp
-        include/minion/controllers/BraveController.h
-        src/minion/factories/explicit/ExplicitBehaviourMinionGenerator.cpp
-        include/minion/factories/explicit/ExplicitBehaviourMinionGenerator.h
-        src/minion/controllers/NullController.cpp
-        include/minion/controllers/NullController.h
         src/minion/controllers/NeuralNetController.cpp
         include/minion/controllers/NeuralNetController.h
         src/minion/factories/MinionGenerator.cpp

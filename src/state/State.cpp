@@ -14,7 +14,6 @@
 #include "rendering/Camera.h"
 #include <persistence/Persistence.h>
 #include <experimental/filesystem>
-#include <minion/factories/explicit/ExplicitBehaviourMinionGenerator.h>
 #include <minion/factories/neuralnet/NeuralNetMinionGenerator.h>
 #include <minion/fitness/TimeLivedFitness.h>
 #include <minion/fitness/ActivityFitness.h>
@@ -439,21 +438,7 @@ void State::configureFromJSON(rjs::Value &root) {
         this->fitnessAlg->configureFromJSON(root[FITNESS_ALGORITHM_CONFIG]);
     }
 
-    if(root.HasMember(MINION_GEN) && root[MINION_GEN].IsString()){
-        std::string minionGenerator = root[MINION_GEN].GetString();
-        if(minionGenerator == "explicit_behaviour"){
-            setMinionGenerator(std::make_shared<ExplicitBehaviourMinionGenerator>());
-        } else {
-            setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
-        }
-
-        if(root.HasMember(MINION_GEN_CONFIG) && root[MINION_GEN_CONFIG].IsObject()){
-            this->minionGenerator->configureFromJSON(root[MINION_GEN_CONFIG]);
-        }
-
-    } else {
-        setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
-    }
+    setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
 
     if(root.HasMember(BOUNDARY_RADIUS) && root[BOUNDARY_RADIUS].IsNumber()){
         initBoundary(root[BOUNDARY_RADIUS].GetFloat());
