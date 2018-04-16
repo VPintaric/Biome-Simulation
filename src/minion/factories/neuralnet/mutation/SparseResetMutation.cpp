@@ -1,5 +1,6 @@
 #include <state/State.h>
 #include <state/Log.h>
+#include <helpers/RNG.h>
 #include "minion/factories/neuralnet/mutation/SparseResetMutation.h"
 
 SparseResetMutation::SparseResetMutation() : resetProb(1e-3f), gaussVar(30.f) {
@@ -22,7 +23,6 @@ void SparseResetMutation::configureFromJSON(rjs::Value &root) {
 }
 
 void SparseResetMutation::mutate(std::shared_ptr<NeuralNet> nn) {
-    auto rng = State::getInstance().getRng();
     std::uniform_real_distribution<float> uniform(0.f, 1.f);
     std::normal_distribution<float> normal(0.f, gaussVar);
 
@@ -30,12 +30,12 @@ void SparseResetMutation::mutate(std::shared_ptr<NeuralNet> nn) {
         auto w = nn->weights[layer];
         auto b = nn->bias[layer];
         for(int c = 0; c < w->cols(); c++){
-            if(uniform(rng.get()) <= resetProb){
-                b->operator()(0, c) = normal(rng.get());
+            if(uniform(RNG::get()) <= resetProb){
+                b->operator()(0, c) = normal(RNG::get());
             }
             for(int r = 0; r < w->rows(); r++){
-                if(uniform(rng.get()) <= resetProb){
-                    w->operator()(r, c) = normal(rng.get());
+                if(uniform(RNG::get()) <= resetProb){
+                    w->operator()(r, c) = normal(RNG::get());
                 }
             }
         }

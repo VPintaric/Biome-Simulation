@@ -1,5 +1,11 @@
 {
-"selection_algorithm" : "most_active",
+"fitness" : "activity",
+"fitness_config" : {
+    "time_lived_coeff" : 1.0,
+    "damage_dealt_coeff" : 1.0,
+    "health_recovered_coeff" : 1.75,
+    "distance_traveled_coeff" : 0.02
+},
 "minion_generator" : "neural_net",
 "minion_generator_config" : {
         "architecture_hidden" : [100, 80, 40],

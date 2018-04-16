@@ -2,6 +2,7 @@
 #include <utility>
 #include <state/Log.h>
 #include <state/State.h>
+#include <helpers/RNG.h>
 #include "neuralnet/NeuralNet.h"
 
 NeuralNet::NeuralNet(const std::vector<int> &layers, std::function<float(float)> activation) :
@@ -46,14 +47,11 @@ Eigen::MatrixXf NeuralNet::forward(Eigen::MatrixXf input) {
 void NeuralNet::initRandom() {
     std::uniform_real_distribution<float> distr(-100.f, 100.f);
 
-    State& s = State::getInstance();
-    auto rng = s.getRng();
-
     for(int layer = 0; layer < weights.size(); layer++){
         for(int i = 0; i < weights[layer]->rows(); i++){
             for(int j = 0; j < weights[layer]->cols(); j++){
-                weights[layer]->operator()(i, j) = distr(rng.get());
-                bias[layer]->operator()(0, j) = distr(rng.get());
+                weights[layer]->operator()(i, j) = distr(RNG::get());
+                bias[layer]->operator()(0, j) = distr(RNG::get());
             }
         }
     }

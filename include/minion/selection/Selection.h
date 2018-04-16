@@ -5,15 +5,10 @@
 #include <minion/Minion.h>
 #include <minion/factories/MinionGenerator.h>
 
-class Selection {
+class Selection : public JSONConfigurable {
 public:
-    Selection();
-    virtual ~Selection();
-
-    virtual std::shared_ptr<Minion> getNewMinion() = 0;
-    virtual void setMinionGenerator(std::shared_ptr<MinionGenerator> mg) = 0;
-    virtual float getFitness(std::shared_ptr<Minion> m) = 0;
+    virtual std::pair<std::shared_ptr<Minion>, std::shared_ptr<Minion>>
+        selectParents(std::vector<std::shared_ptr<Minion>> &minions) = 0;
 };
-
 
 #endif //BIOME_SIMULATION_SELECTION_H

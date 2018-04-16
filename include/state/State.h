@@ -8,6 +8,7 @@
 #include <collision/CollisionInfo.h>
 #include <config/JSONConfigurable.h>
 #include <set>
+#include <minion/fitness/Fitness.h>
 #include "minion/object/MinionObject.h"
 #include "objects/Boundary.h"
 #include "minion/Minion.h"
@@ -39,7 +40,7 @@ public:
 
     void setSelectionAlg(std::shared_ptr<Selection> sel);
 
-    std::reference_wrapper< std::default_random_engine > getRng();
+    void setFitnessAlg(std::shared_ptr<Fitness> fitness);
 
     const std::vector< std::shared_ptr<Minion> > &getMinions() const;
 
@@ -64,8 +65,6 @@ public:
     void resolveMinionBoundaryCollisionDamage(Minion& m, CollisionInfo& ci);
 
 private:
-    std::default_random_engine rng;
-
     std::shared_ptr<MinionGenerator> minionGenerator;
 
     std::vector< std::shared_ptr<Minion> > minions;
@@ -73,6 +72,8 @@ private:
     std::set< std::shared_ptr<Minion> > decayedMinions;
 
     std::shared_ptr<Selection> selectionAlg;
+
+    std::shared_ptr<Fitness> fitnessAlg;
 
     std::shared_ptr<Boundary> boundary;
 
@@ -107,6 +108,8 @@ private:
     void initializeNextGeneration();
 
     void realTimeUpdate();
+
+    void updateMinionFitness();
 
     State();
 };

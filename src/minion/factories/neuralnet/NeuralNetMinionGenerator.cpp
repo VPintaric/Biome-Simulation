@@ -5,6 +5,7 @@
 #include <minion/factories/neuralnet/crossover/ArithmeticAverageCrossover.h>
 #include <minion/factories/neuralnet/crossover/InterleaveLayersCrossover.h>
 #include <minion/factories/neuralnet/crossover/PickRandomCrossover.h>
+#include <helpers/RNG.h>
 #include "minion/factories/neuralnet/NeuralNetMinionGenerator.h"
 #include "minion/factories/neuralnet/mutation/GaussNoiseMutation.h"
 #include "minion/factories/neuralnet/mutation/SparseResetMutation.h"
@@ -39,14 +40,12 @@ std::shared_ptr<Minion> NeuralNetMinionGenerator::generateMinion() {
     auto controller = std::static_pointer_cast<NeuralNetController>(minion->getController());
     auto senses = minion->getSenses();
 
-    auto rng = State::getInstance().getRng();
-
-    object->setSkinColor(glm::vec4(colorDistr(rng.get()), colorDistr(rng.get()), colorDistr(rng.get()), 1.f));
-    object->setRadius(radiusDistr(rng.get()));
+    object->setSkinColor(glm::vec4(colorDistr(RNG::get()), colorDistr(RNG::get()), colorDistr(RNG::get()), 1.f));
+    object->setRadius(radiusDistr(RNG::get()));
 
     controller->getNeuralNet()->initRandom();
 
-    senses->setMaxSenseDistance(senseDistDistr(rng.get()));
+    senses->setMaxSenseDistance(senseDistDistr(RNG::get()));
 
     return minion;
 }
@@ -60,10 +59,8 @@ std::shared_ptr<Minion> NeuralNetMinionGenerator::generateChild(std::shared_ptr<
 
 std::shared_ptr<Minion> NeuralNetMinionGenerator::crossover(std::shared_ptr<Minion> first,
                                                             std::shared_ptr<Minion> second) {
-    auto rng = State::getInstance().getRng();
-
     std::uniform_real_distribution<float> uniformDistr(0.f, 1.f);
-    float coeff = uniformDistr(rng.get());
+    float coeff = uniformDistr(RNG::get());
 
     auto child = createRawMinion();
     auto object = child->getObject();
@@ -90,17 +87,15 @@ void NeuralNetMinionGenerator::mutate(std::shared_ptr<Minion> m) {
     std::normal_distribution<float> radiusMut(0.f, 5.f);
     std::normal_distribution<float> senseDistMut(0.f, 5.f);
 
-    auto rng = State::getInstance().getRng();
-
     auto object = m->getObject();
     auto controller = std::static_pointer_cast<NeuralNetController>(m->getController());
     auto senses = m->getSenses();
     auto nn = controller->getNeuralNet();
 
     auto c = object->getSkinColor();
-    object->setSkinColor(glm::vec4(c.r + colorMut(rng.get()), c.g + colorMut(rng.get()), c.b + colorMut(rng.get()), 1.f));
-    object->setRadius(object->getRadius() + radiusMut(rng.get()));
-    senses->setMaxSenseDistance(senses->getMaxSenseDistance() + senseDistMut(rng.get()));
+    object->setSkinColor(glm::vec4(c.r + colorMut(RNG::get()), c.g + colorMut(RNG::get()), c.b + colorMut(RNG::get()), 1.f));
+    object->setRadius(object->getRadius() + radiusMut(RNG::get()));
+    senses->setMaxSenseDistance(senses->getMaxSenseDistance() + senseDistMut(RNG::get()));
 
     int operatorIdx = getRandomIndexFromProbs(mutationOpProbs);
     mutationOps[operatorIdx]->mutate(nn);
@@ -245,11 +240,9 @@ void NeuralNetMinionGenerator::fixProbabilities(std::vector<float> &v) {
 }
 
 int NeuralNetMinionGenerator::getRandomIndexFromProbs(std::vector<float> &probs) {
-    auto rng = State::getInstance().getRng();
-
     std::uniform_real_distribution<float> uniformDistr(0.f, 1.f);
 
-    float roll = uniformDistr(rng.get());
+    float roll = uniformDistr(RNG::get());
 
     float cumSum = 0.f;
 

@@ -14,10 +14,12 @@
 #include "rendering/Camera.h"
 #include <persistence/Persistence.h>
 #include <experimental/filesystem>
-#include <minion/selection/CurrentLongestLivingSelection.h>
 #include <minion/factories/explicit/ExplicitBehaviourMinionGenerator.h>
 #include <minion/factories/neuralnet/NeuralNetMinionGenerator.h>
-#include <minion/selection/MostActiveSelection.h>
+#include <minion/fitness/TimeLivedFitness.h>
+#include <minion/fitness/ActivityFitness.h>
+#include <minion/selection/RoulleteWheelSelection.h>
+#include <helpers/RNG.h>
 
 namespace fs = std::experimental::filesystem;
 namespace chr = std::chrono;
@@ -35,20 +37,15 @@ State::State() : nextMinionId(1), currentBestMinion(nullptr),
     Log().Get(logDEBUG) << "Creating new state instance";
     shouldEndProgramFlag = false;
     lastCalledTimestamp = chr::duration_cast<chr::milliseconds>(chr::system_clock::now().time_since_epoch()).count();
-    rng.seed(static_cast<unsigned long>(lastCalledTimestamp));
     Log().Get(logDEBUG) << "Created new state instance";
 }
 
 void State::setMinionGenerator(std::shared_ptr<MinionGenerator> gen) {
     minionGenerator = std::move(gen);
-    if(selectionAlg){
-        selectionAlg->setMinionGenerator(minionGenerator);
-    }
 }
 
 void State::setSelectionAlg(std::shared_ptr<Selection> sel) {
     selectionAlg = std::move(sel);
-    selectionAlg->setMinionGenerator(minionGenerator);
 }
 
 State::~State() {
@@ -102,11 +99,11 @@ void State::initializeMinion(Minion &minion) {
                                   "Current number of tries: " << nTries;
         }
 
-        float angle = angleDistr(rng);
-        float dist = distanceDistr(rng);
+        float angle = angleDistr(RNG::get());
+        float dist = distanceDistr(RNG::get());
 
         object->setPos(glm::vec2(dist * glm::cos(angle), dist * glm::sin(angle)));
-        object->setAngle(angleDistr(rng));
+        object->setAngle(angleDistr(RNG::get()));
 
         validPosition = true;
         for (auto &minion : minions) {
@@ -266,13 +263,20 @@ void State::realTimeUpdate() {
     lastCalledTimestamp = timestamp;
 }
 
+void State::updateMinionFitness() {
+    for(auto m : minions){
+        fitnessAlg->calculateFitness(m);
+    }
+}
+
 void State::initializeNextGeneration() {
     currentGeneration++;
     Log().Get(logINFO) << "Generating " << currentGeneration << ". generation";
 
     std::vector<std::shared_ptr<Minion> > newGeneration;
     for(int i = 0; i < minions.size(); i++){
-        auto m = selectionAlg->getNewMinion();
+        auto parents = selectionAlg->selectParents(minions);
+        auto m = minionGenerator->generateChild(parents.first, parents.second);
         initializeMinion(*m);
         newGeneration.push_back(m);
     }
@@ -286,6 +290,7 @@ void State::update(float dt) {
     CollisionDetection cd = CollisionDetection::getInstance();
     CollisionResponse cr = CollisionResponse::getInstance();
 
+    updateMinionFitness();
     for (auto iter = minions.begin(); iter != minions.end(); iter++) {
         auto m = *iter;
 
@@ -309,9 +314,9 @@ void State::update(float dt) {
 
         m->update(dt);
         if(m->isDecayed()){
-            if(currentBestMinion == nullptr || selectionAlg->getFitness(currentBestMinion) < selectionAlg->getFitness(m)){
+            if(currentBestMinion == nullptr || currentBestMinion->getFitness() < m->getFitness()){
                 currentBestMinion = m;
-                Log().Get(logINFO) << "New best fitness minion: " << selectionAlg->getFitness(currentBestMinion);
+                Log().Get(logINFO) << "New best fitness minion: " << currentBestMinion->getFitness();
                 Log().Get(logINFO) << "   Time lived: " << currentBestMinion->getTimeLived();
                 Log().Get(logINFO) << "   Distance traveled: " << currentBestMinion->getDistanceTraveled();
                 Log().Get(logINFO) << "   Damage dealt: " << currentBestMinion->getDamageDealt();
@@ -319,7 +324,8 @@ void State::update(float dt) {
             }
 
             if(!useGenerationalGA){
-                *iter = selectionAlg->getNewMinion();
+                auto parents = selectionAlg->selectParents(minions);
+                *iter = minionGenerator->generateChild(parents.first, parents.second);
                 initializeMinion(**iter);
                 currentGeneration++;
             } else {
@@ -336,10 +342,6 @@ void State::update(float dt) {
 
     Camera &c = Camera::getInstance();
     c.update(dt);
-}
-
-std::reference_wrapper< std::default_random_engine > State::getRng(){
-    return std::ref(rng);
 }
 
 void State::setPersistenceDirectory(std::string dirName) {
@@ -397,7 +399,8 @@ void State::loadMinionsFromFolder(std::string dirName) {
 }
 
 void State::configureFromJSON(rjs::Value &root) {
-    const char * SELECTION_ALGORITHM = "selection_algorithm";
+    const char * FITNESS_ALGORITHM = "fitness";
+    const char * FITNESS_ALGORITHM_CONFIG = "fitness_config";
     const char * MINION_GEN = "minion_generator";
     const char * BOUNDARY_RADIUS = "boundary_radius";
     const char * N_MINIONS = "number_of_minions";
@@ -415,15 +418,21 @@ void State::configureFromJSON(rjs::Value &root) {
         return;
     }
 
-    if(root.HasMember(SELECTION_ALGORITHM) && root[SELECTION_ALGORITHM].IsString()){
-        std::string selectionAlg = root[SELECTION_ALGORITHM].GetString();
-        if(selectionAlg == "longest_living"){
-            setSelectionAlg(std::make_shared<CurrentLongestLivingSelection>());
-        } else if(selectionAlg == "most_active"){
-            setSelectionAlg(std::make_shared<MostActiveSelection>());
+    setSelectionAlg(std::make_shared<RoulleteWheelSelection>());
+
+    if(root.HasMember(FITNESS_ALGORITHM) && root[FITNESS_ALGORITHM].IsString()){
+        std::string fitnessAlg = root[FITNESS_ALGORITHM].GetString();
+        if(fitnessAlg == "time_alive"){
+            setFitnessAlg(std::make_shared<TimeLivedFitness>());
         } else {
-            setSelectionAlg(std::make_shared<CurrentLongestLivingSelection>());
+            setFitnessAlg(std::make_shared<ActivityFitness>());
         }
+    } else {
+        setFitnessAlg(std::make_shared<ActivityFitness>());
+    }
+
+    if(root.HasMember(FITNESS_ALGORITHM_CONFIG) && root[FITNESS_ALGORITHM_CONFIG].IsObject()){
+        this->fitnessAlg->configureFromJSON(root[FITNESS_ALGORITHM_CONFIG]);
     }
 
     if(root.HasMember(MINION_GEN) && root[MINION_GEN].IsString()){
@@ -493,4 +502,8 @@ int State::getNMinions() const {
 
 void State::setNMinions(int nMinions) {
     State::nMinions = nMinions;
+}
+
+void State::setFitnessAlg(std::shared_ptr<Fitness> fitness) {
+    State::fitnessAlg = fitness;
 }

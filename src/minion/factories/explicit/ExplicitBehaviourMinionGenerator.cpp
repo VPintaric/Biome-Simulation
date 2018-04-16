@@ -1,4 +1,5 @@
 #include <minion/senses/simple/SimpleMinionSenses.h>
+#include <helpers/RNG.h>
 #include "glm/gtc/constants.hpp"
 #include "minion/factories/explicit/ExplicitBehaviourMinionGenerator.h"
 #include "minion/controllers/RandomController.h"
@@ -18,7 +19,6 @@ ExplicitBehaviourMinionGenerator::ExplicitBehaviourMinionGenerator() :
 ExplicitBehaviourMinionGenerator::~ExplicitBehaviourMinionGenerator() = default;
 
 std::shared_ptr<Minion> ExplicitBehaviourMinionGenerator::generateMinion() {
-    auto rng = State::getInstance().getRng();
 //    int type = getRandomType();
     int type = 0;
 
@@ -31,7 +31,7 @@ std::shared_ptr<Minion> ExplicitBehaviourMinionGenerator::generateMinion() {
     minion->setController(controller);
 
     object->setSkinColor(COLOR_TYPES[type]);
-    object->setRadius(std::fabs(radiusDistr(rng.get())) + 1e-1f);
+    object->setRadius(std::fabs(radiusDistr(RNG::get())) + 1e-1f);
     object->setRMass(20.f / (object->getRadius()));
 
     senses->setMaxSenseDistance(100.f);
@@ -55,7 +55,7 @@ std::shared_ptr<MinionController> ExplicitBehaviourMinionGenerator::getControlle
 }
 
 int ExplicitBehaviourMinionGenerator::getRandomType() {
-    float p = typeDistr(State::getInstance().getRng().get());
+    float p = typeDistr(RNG::get());
     float acc = 0.f;
 
     for(int type = 0; type < NUM_TYPES; type++){

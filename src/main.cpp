@@ -11,20 +11,16 @@
 #include <chrono>
 #include <minion/factories/explicit/ExplicitBehaviourMinionGenerator.h>
 #include <minion/factories/neuralnet/NeuralNetMinionGenerator.h>
-#include <neuralnet/NeuralNet.h>
-#include <minion/selection/CurrentLongestLivingSelection.h>
-#include <persistence/Persistence.h>
-#include <minion/controllers/NeuralNetController.h>
 #include <config/Config.h>
+#include <helpers/RNG.h>
 #include "state/State.h"
 
 #include "state/Log.h"
-#include "constants/WindowConstants.h"
 #include "state/Display.h"
 #include "shader_handling/ProgramLoader.h"
 #include "rendering/Renderer.h"
 #include "constants/SimulationConstants.h"
-#include "../include/helpers/ModelCreator.h"
+#include "helpers/ModelCreator.h"
 #include "rendering/Camera.h"
 
 bool renderFrames = true;
@@ -186,7 +182,6 @@ void processInput(State &state) {
 }
 
 int main(int argc, char** argv) {
-
     using namespace std::chrono;
 
     auto t1 = high_resolution_clock::now();

@@ -89,12 +89,7 @@ add_executable(Biome_Simulation
         include/neuralnet/NeuralNet.h
         src/minion/senses/simple/SimpleMinionSenses.cpp
         include/minion/senses/simple/SimpleMinionSenses.h
-        src/minion/selection/Selection.cpp
         include/minion/selection/Selection.h
-        src/minion/selection/CurrentLongestLivingSelection.cpp
-        include/minion/selection/CurrentLongestLivingSelection.h
-        src/minion/selection/CurrentLongestLivingSelection.cpp
-        include/minion/selection/CurrentLongestLivingSelection.h
         src/persistence/Persistence.cpp
         include/persistence/Persistence.h
         include/persistence/JSONPersistable.h
@@ -102,7 +97,28 @@ add_executable(Biome_Simulation
         include/config/Config.h
         include/config/JSONConfigurable.h
         src/minion/factories/neuralnet/crossover/NeuralNetCrossover.cpp
-        include/minion/factories/neuralnet/crossover/NeuralNetCrossover.h src/minion/factories/neuralnet/mutation/NeuralNetMutation.cpp include/minion/factories/neuralnet/mutation/NeuralNetMutation.h src/minion/factories/neuralnet/crossover/ArithmeticAverageCrossover.cpp include/minion/factories/neuralnet/crossover/ArithmeticAverageCrossover.h src/minion/factories/neuralnet/mutation/GaussNoiseMutation.cpp include/minion/factories/neuralnet/mutation/GaussNoiseMutation.h src/minion/factories/neuralnet/mutation/SparseResetMutation.cpp include/minion/factories/neuralnet/mutation/SparseResetMutation.h src/minion/factories/neuralnet/crossover/InterleaveLayersCrossover.cpp include/minion/factories/neuralnet/crossover/InterleaveLayersCrossover.h src/minion/selection/MostActiveSelection.cpp include/minion/selection/MostActiveSelection.h src/minion/factories/neuralnet/crossover/PickRandomCrossover.cpp include/minion/factories/neuralnet/crossover/PickRandomCrossover.h)
+        include/minion/factories/neuralnet/crossover/NeuralNetCrossover.h
+        src/minion/factories/neuralnet/mutation/NeuralNetMutation.cpp
+        include/minion/factories/neuralnet/mutation/NeuralNetMutation.h
+        src/minion/factories/neuralnet/crossover/ArithmeticAverageCrossover.cpp
+        include/minion/factories/neuralnet/crossover/ArithmeticAverageCrossover.h
+        src/minion/factories/neuralnet/mutation/GaussNoiseMutation.cpp
+        include/minion/factories/neuralnet/mutation/GaussNoiseMutation.h
+        src/minion/factories/neuralnet/mutation/SparseResetMutation.cpp
+        include/minion/factories/neuralnet/mutation/SparseResetMutation.h
+        src/minion/factories/neuralnet/crossover/InterleaveLayersCrossover.cpp
+        include/minion/factories/neuralnet/crossover/InterleaveLayersCrossover.h
+        src/minion/factories/neuralnet/crossover/PickRandomCrossover.cpp
+        include/minion/factories/neuralnet/crossover/PickRandomCrossover.h
+        include/minion/fitness/Fitness.h
+        src/minion/fitness/TimeLivedFitness.cpp
+        include/minion/fitness/TimeLivedFitness.h
+        src/minion/fitness/ActivityFitness.cpp
+        include/minion/fitness/ActivityFitness.h
+        src/minion/selection/RoulleteWheelSelection.cpp
+        include/minion/selection/RoulleteWheelSelection.h
+        src/helpers/RNG.cpp
+        include/helpers/RNG.h)
 
 message(ERROR " ${SDL2_INCLUDE_DIRS}")
 message(ERROR " ${GLEW_INCLUDE_DIRS}")
