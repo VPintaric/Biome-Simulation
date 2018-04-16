@@ -9,8 +9,8 @@
 #include "state/State.h"
 #include "state/Log.h"
 #include "rendering/Renderer.h"
-#include "../../include/collision/CollisionDetection.h"
-#include "../../include/collision/CollisionResponse.h"
+#include "collision/CollisionDetection.h"
+#include "collision/CollisionResponse.h"
 #include "rendering/Camera.h"
 #include <persistence/Persistence.h>
 #include <experimental/filesystem>
