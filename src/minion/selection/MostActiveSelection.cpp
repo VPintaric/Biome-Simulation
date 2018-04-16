@@ -1,5 +1,6 @@
 #include <random>
 #include <state/State.h>
+#include <state/Log.h>
 #include "minion/selection/MostActiveSelection.h"
 
 std::shared_ptr<Minion> MostActiveSelection::getNewMinion() {
@@ -24,12 +25,13 @@ std::shared_ptr<Minion> MostActiveSelection::getNewMinion() {
 
     std::uniform_real_distribution<float> distr(0.f, sum);
     float roll = distr(rng.get());
-    sum = 0.f;
+    float runningSum = 0.f;
     for(int i = 0; i < minions.size(); i++){
-        sum += fitness[i];
-        if(roll <= sum && first == -1){
+        runningSum += fitness[i];
+        if(roll <= runningSum && first == -1){
             first = i;
             sum -= fitness[i];
+            break;
         }
     }
     if(first == -1){
@@ -39,14 +41,15 @@ std::shared_ptr<Minion> MostActiveSelection::getNewMinion() {
 
     distr = std::uniform_real_distribution<float>(0.f, sum);
     roll = distr(rng.get());
-    sum = 0.f;
+    runningSum = 0.f;
     for(int i = 0; i < minions.size(); i++){
         if(i == first){
             continue;
         }
-        sum += fitness[i];
-        if(roll <= sum){
+        runningSum += fitness[i];
+        if(roll <= runningSum){
             second = i;
+            break;
         }
     }
     if(second == -1){
@@ -55,6 +58,19 @@ std::shared_ptr<Minion> MostActiveSelection::getNewMinion() {
             second--;
         }
     }
+
+    std::stringstream ss;
+    for(int i = 0; i < fitness.size(); i++){
+        if(first == i || second == i){
+            ss << "[[";
+        }
+        ss << fitness[i];
+        if(first == i || second == i){
+            ss << "]]";
+        }
+        ss << " ";
+    }
+    Log().Get(logINFO) << ss.str();
 
     return mg->generateChild(minions[first], minions[second]);
 }

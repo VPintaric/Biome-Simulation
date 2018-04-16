@@ -269,10 +269,14 @@ void State::realTimeUpdate() {
 void State::initializeNextGeneration() {
     currentGeneration++;
     Log().Get(logINFO) << "Generating " << currentGeneration << ". generation";
-    for(auto& m : minions){
-        m = selectionAlg->getNewMinion();
+
+    std::vector<std::shared_ptr<Minion> > newGeneration;
+    for(int i = 0; i < minions.size(); i++){
+        auto m = selectionAlg->getNewMinion();
         initializeMinion(*m);
+        newGeneration.push_back(m);
     }
+    minions = newGeneration;
     decayedMinions.clear();
 }
 
