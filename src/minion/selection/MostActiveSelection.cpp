@@ -59,19 +59,6 @@ std::shared_ptr<Minion> MostActiveSelection::getNewMinion() {
         }
     }
 
-    std::stringstream ss;
-    for(int i = 0; i < fitness.size(); i++){
-        if(first == i || second == i){
-            ss << "[[";
-        }
-        ss << fitness[i];
-        if(first == i || second == i){
-            ss << "]]";
-        }
-        ss << " ";
-    }
-    Log().Get(logINFO) << ss.str();
-
     return mg->generateChild(minions[first], minions[second]);
 }
 
