@@ -212,3 +212,12 @@ void SimpleMinionSenses::draw() {
 float SimpleMinionSenses::getMaxSenseDistance() {
     return maxSenseDistance;
 }
+
+std::shared_ptr<MinionSenses> SimpleMinionSenses::copy() {
+    auto newCopy = std::make_shared<SimpleMinionSenses>(minion, maxSenseDistance, nSightLines);
+    return newCopy;
+}
+
+void SimpleMinionSenses::setMinion(std::shared_ptr<Minion> m) {
+    minion = m;
+}

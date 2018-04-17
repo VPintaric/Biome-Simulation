@@ -6,7 +6,7 @@
 #include "neuralnet/NeuralNet.h"
 
 NeuralNet::NeuralNet(const std::vector<int> &layers, std::function<float(float)> activation) :
-                    activation(std::move(activation)), layers(layers){
+                    activation(std::move(activation)), layers(layers), Copyable<NeuralNet>() {
     int in = layers.front();
     for (auto iter = layers.begin() + 1; iter != layers.end() - 1; ++iter) {
         auto w = std::make_shared<Eigen::MatrixXf>();
@@ -139,4 +139,15 @@ void NeuralNet::initFromJSON(rjs::Value &root) {
 
         bias.push_back(b);
     }
+}
+
+std::shared_ptr<NeuralNet> NeuralNet::copy() {
+    auto newCopy = std::make_shared<NeuralNet>(layers, activation);
+
+    for(int i = 0; i < weights.size(); i++){
+        newCopy->weights[i] = weights[i];
+        newCopy->bias[i] = bias[i];
+    }
+
+    return newCopy;
 }

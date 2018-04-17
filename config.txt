@@ -1,37 +1,48 @@
 {
+"minion_generator" : "neural_net",
+"minion_generator_config" : {
+        "architecture_hidden" : [100, 80, 40]
+    },
 "fitness" : "activity",
 "fitness_config" : {
     "time_lived_coeff" : 1.0,
     "damage_dealt_coeff" : 1.0,
     "health_recovered_coeff" : 1.75,
     "distance_traveled_coeff" : 0.02
-},
-"minion_generator" : "neural_net",
-"minion_generator_config" : {
-        "architecture_hidden" : [100, 80, 40],
-        "mutations" : [
-            {
-            "name" : "gauss_noise",
-            "probability" : 0.5,
-            "config" : {
-                    "variance" : 10.0
-                }
-            },
-            {
-            "name" : "sparse_reset",
-            "probability" : 0.5,
-            "config" : {
-                    "reset_probability" : 0.0005,
-                    "reset_gauss_variance" : 50.0
-                }
-            }
-         ],
-         "crossovers" : [
-            {
-            "name" : "pick_random"
-            }
-         ]
     },
+"crossover_operator" : "custom",
+"crossover_operator_config" : {
+    "object_crossovers" : [{
+        "name" : "fitness_weighted_average"
+    }],
+    "senses_crossovers" : [{
+        "name" : "fitness_weighted_average"
+    }],
+    "controller_crossovers" : [{
+        "name" : "pick_better"
+    }]
+},
+"mutation_operator" : "custom",
+"mutation_operator_config" : {
+    "object_mutations" : [{
+        "name" : "gauss_noise",
+        "config" : {
+            "radius_variance" : 5.0
+        }
+    }],
+    "senses_mutations" : [{
+        "name" : "gauss_noise",
+        "config" : {
+            "variance" : 2.0
+        }
+    }],
+    "controller_mutations" : [{
+        "name" : "gauss_noise_weights",
+        "config" : {
+            "variance" : 10.0
+        }
+    }]
+},
 "boundary_radius" : 850,
 "number_of_minions" : 30,
 "print_info_every_seconds" : 60,

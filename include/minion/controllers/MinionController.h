@@ -4,7 +4,7 @@
 #include "minion/object/MinionObject.h"
 #include "minion/senses/MinionSenses.h"
 
-class MinionController : public JSONPersistable {
+class MinionController : public JSONPersistable, public Copyable<MinionController> {
 public:
     MinionController();
     virtual ~MinionController();

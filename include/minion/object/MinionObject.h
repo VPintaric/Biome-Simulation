@@ -6,8 +6,9 @@
 #include "rendering/Model.h"
 #include "objects/CircleObject.h"
 #include <persistence/JSONPersistable.h>
+#include <copyable/Copyable.h>
 
-class MinionObject : public CircleObject, JSONPersistable {
+class MinionObject : public CircleObject, public JSONPersistable, public Copyable<MinionObject> {
 public:
     MinionObject();
     virtual ~MinionObject();
@@ -35,6 +36,8 @@ public:
     float getControlRotMoment() const;
 
     void setControlRotMoment(float controlRotMoment);
+
+    std::shared_ptr<MinionObject> copy() override;
 
 private:
     std::shared_ptr<Model> bodyModel, circleModel;

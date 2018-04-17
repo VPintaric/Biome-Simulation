@@ -7,11 +7,12 @@
 #include <memory>
 #include <string>
 #include <rapidjson/rapidjson.h>
+#include <copyable/Copyable.h>
 #include "persistence/JSONPersistable.h"
 
 namespace rjs = rapidjson;
 
-class NeuralNet : public JSONPersistable {
+class NeuralNet : public JSONPersistable, public Copyable<NeuralNet> {
 public:
     std::vector<int> layers;
     std::vector<std::shared_ptr<Eigen::MatrixXf> > weights;
@@ -30,6 +31,8 @@ public:
     void persistToJSON(rjs::Value &root, rjs::Document::AllocatorType &alloc) override;
 
     void initFromJSON(rjs::Value &root) override;
+
+    std::shared_ptr<NeuralNet> copy() override;
 
 private:
     const char * JSON_LAYERS = "layers";

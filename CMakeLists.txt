@@ -71,7 +71,6 @@ add_executable(Biome_Simulation
         src/helpers/MathHelpers.cpp
         src/minion/controllers/NeuralNetController.cpp
         include/minion/controllers/NeuralNetController.h
-        src/minion/factories/MinionGenerator.cpp
         include/minion/factories/MinionGenerator.h
         src/minion/factories/neuralnet/NeuralNetMinionGenerator.cpp
         include/minion/factories/neuralnet/NeuralNetMinionGenerator.h
@@ -108,7 +107,45 @@ add_executable(Biome_Simulation
         src/minion/selection/RoulleteWheelSelection.cpp
         include/minion/selection/RoulleteWheelSelection.h
         src/helpers/RNG.cpp
-        include/helpers/RNG.h)
+        include/helpers/RNG.h include/minion/crossover_operators/MinionCrossover.h
+        include/minion/mutation_operators/MinionMutation.h
+        src/minion/crossover_operators/PickBetterMinionCrossover.cpp
+        include/minion/crossover_operators/PickBetterMinionCrossover.h
+        include/copyable/Copyable.h
+        src/minion/crossover_operators/CustomMinionCrossover.cpp
+        include/minion/crossover_operators/CustomMinionCrossover.h
+        include/minion/crossover_operators/controller/MinionControllerCrossover.h
+        include/minion/crossover_operators/object/MinionObjectCrossover.h
+        include/minion/crossover_operators/senses/MinionSensesCrossover.h
+        include/minion/mutation_operators/controller/MinionControllerMutation.h
+        include/minion/mutation_operators/object/MinionObjectMutation.h
+        include/minion/mutation_operators/senses/MinionSensesMutation.h
+        src/minion/crossover_operators/PickRandomMinionCrossover.cpp
+        include/minion/crossover_operators/PickRandomMinionCrossover.h
+        src/minion/mutation_operators/DoNothingMinionMutation.cpp
+        include/minion/mutation_operators/DoNothingMinionMutation.h
+        src/minion/mutation_operators/CustomMinionMutation.cpp
+        include/minion/mutation_operators/CustomMinionMutation.h
+        src/minion/crossover_operators/senses/PickBetterSensesCrossover.cpp
+        include/minion/crossover_operators/senses/PickBetterSensesCrossover.h
+        src/minion/crossover_operators/object/PickBetterObjectCrossover.cpp
+        include/minion/crossover_operators/object/PickBetterObjectCrossover.h
+        src/minion/crossover_operators/controller/PickBetterControllerCrossover.cpp
+        include/minion/crossover_operators/controller/PickBetterControllerCrossover.h
+        src/minion/crossover_operators/senses/FitnessWeightedAverageSensesCrossover.cpp
+        include/minion/crossover_operators/senses/FitnessWeightedAverageSensesCrossover.h
+        src/minion/crossover_operators/object/FitnessWeightedAverageObjectCrossover.cpp
+        include/minion/crossover_operators/object/FitnessWeightedAverageObjectCrossover.h
+        src/minion/crossover_operators/controller/neural_net/NeuralNetControllerCrossover.cpp
+        include/minion/crossover_operators/controller/neural_net/NeuralNetControllerCrossover.h
+        src/minion/mutation_operators/senses/GaussNoiseSensesMutation.cpp
+        include/minion/mutation_operators/senses/GaussNoiseSensesMutation.h
+        src/minion/mutation_operators/object/GaussNoiseObjectMutation.cpp
+        include/minion/mutation_operators/object/GaussNoiseObjectMutation.h
+        src/minion/mutation_operators/controller/neural_net/NeuralNetControllerMutation.cpp
+        include/minion/mutation_operators/controller/neural_net/NeuralNetControllerMutation.h
+        src/minion/mutation_operators/controller/neural_net/NeuralNetGaussNoiseWeightsMutation.cpp
+        include/minion/mutation_operators/controller/neural_net/NeuralNetGaussNoiseWeightsMutation.h)
 
 message(ERROR " ${SDL2_INCLUDE_DIRS}")
 message(ERROR " ${GLEW_INCLUDE_DIRS}")

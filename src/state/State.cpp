@@ -19,6 +19,11 @@
 #include <minion/fitness/ActivityFitness.h>
 #include <minion/selection/RoulleteWheelSelection.h>
 #include <helpers/RNG.h>
+#include <minion/crossover_operators/PickBetterMinionCrossover.h>
+#include <minion/crossover_operators/PickRandomMinionCrossover.h>
+#include <minion/crossover_operators/CustomMinionCrossover.h>
+#include <minion/mutation_operators/DoNothingMinionMutation.h>
+#include <minion/mutation_operators/CustomMinionMutation.h>
 
 namespace fs = std::experimental::filesystem;
 namespace chr = std::chrono;
@@ -138,7 +143,7 @@ void State::spawnMinions() {
         loadMinionsFromFolder(loadDirectory);
     } else {
         for(int i = 0; i < nMinions; i++){
-            auto minion = minionGenerator->generateMinion();
+            auto minion = minionGenerator->generateRandomMinion();
             minions.push_back(minion);
             initializeMinion(*minion);
         }
@@ -279,7 +284,8 @@ void State::initializeNextGeneration() {
     std::vector<std::shared_ptr<Minion> > newGeneration;
     for(int i = 0; i < minions.size(); i++){
         auto parents = selectionAlg->selectParents(minions);
-        auto m = minionGenerator->generateChild(parents.first, parents.second);
+        auto m = crossover->crossover(parents.first, parents.second);
+        mutation->mutate(m);
         initializeMinion(*m);
         newGeneration.push_back(m);
     }
@@ -328,7 +334,8 @@ void State::update(float dt) {
 
             if(!useGenerationalGA){
                 auto parents = selectionAlg->selectParents(minions);
-                *iter = minionGenerator->generateChild(parents.first, parents.second);
+                *iter = crossover->crossover(parents.first, parents.second);
+                mutation->mutate(*iter);
                 initializeMinion(**iter);
                 currentGeneration++;
             } else {
@@ -394,7 +401,7 @@ void State::loadMinionsFromFolder(std::string dirName) {
     minions.clear();
     for(auto it = fs::directory_iterator(dirName); it != fs::directory_iterator(); ++it){
         std::string fileName = (*it).path().string();
-        auto minion = minionGenerator->generateMinion();
+        auto minion = minionGenerator->generateRandomMinion();
         p.initMinionFromFile(fileName, minion);
         initializeMinion(*minion);
         minions.push_back(minion);
@@ -415,22 +422,32 @@ void State::configureFromJSON(rjs::Value &root) {
     const char * EVOLUTION_STEADY_STATE_TYPE = "steady_state";
     const char * LOAD_MINIONS_DIRECTORY = "load_directory";
     const char * SAVE_MINIONS_DIRECTORY = "save_directory";
+    const char * MUTATION_OPERATOR = "mutation_operator";
+    const char * MUTATION_OPERATOR_CONFIG = "mutation_operator_config";
+    const char * CROSSOVER_OPERATOR = "crossover_operator";
+    const char * CROSSOVER_OPERATOR_CONFIG = "crossover_operator_config";
+
+    Log().Get(logDEBUG) << "Configuring State object...";
 
     if(!root.IsObject()){
         Log().Get(logWARNING) << "Can't get configuration from non-object value in JSON";
         return;
     }
 
+    Log().Get(logDEBUG) << "Using roullete wheel selection";
     setSelectionAlg(std::make_shared<RoulleteWheelSelection>());
 
     if(root.HasMember(FITNESS_ALGORITHM) && root[FITNESS_ALGORITHM].IsString()){
         std::string fitnessAlg = root[FITNESS_ALGORITHM].GetString();
         if(fitnessAlg == "time_alive"){
+            Log().Get(logDEBUG) << "Using TimeLived function for fitness";
             setFitnessAlg(std::make_shared<TimeLivedFitness>());
         } else {
+            Log().Get(logDEBUG) << "Using Activity function for fitness";
             setFitnessAlg(std::make_shared<ActivityFitness>());
         }
     } else {
+        Log().Get(logDEBUG) << "Using Activity function for fitness";
         setFitnessAlg(std::make_shared<ActivityFitness>());
     }
 
@@ -438,6 +455,7 @@ void State::configureFromJSON(rjs::Value &root) {
         this->fitnessAlg->configureFromJSON(root[FITNESS_ALGORITHM_CONFIG]);
     }
 
+    Log().Get(logDEBUG) << "Using neuralNetMinionGenerator for generating minions";
     setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
 
     if(root.HasMember(MINION_GEN_CONFIG) && root[MINION_GEN_CONFIG].IsObject()){
@@ -449,12 +467,14 @@ void State::configureFromJSON(rjs::Value &root) {
     } else {
         initBoundary(SimConst::DEFAULT_BOUNDARY_RADIUS);
     }
+    Log().Get(logDEBUG) << "Boundary radius initialized to " << boundary->getR1();
 
     if(root.HasMember(N_MINIONS) && root[N_MINIONS].IsInt()){
         setNMinions(root[N_MINIONS].GetInt());
     } else {
         setNMinions(SimConst::DEFAULT_NUMBER_OF_MINIONS);
     }
+    Log().Get(logDEBUG) << "Number of minions initalized to " << getNMinions();
 
     if(root.HasMember(PRINT_INFO_EVERY_SECONDS) && root[PRINT_INFO_EVERY_SECONDS].IsInt()){
         printEveryRealTime = root[PRINT_INFO_EVERY_SECONDS].GetInt() * 1000;
@@ -486,6 +506,52 @@ void State::configureFromJSON(rjs::Value &root) {
         persistenceDirectory = root[SAVE_MINIONS_DIRECTORY].GetString();
     } else {
         persistenceDirectory.clear();
+    }
+
+    if(root.HasMember(CROSSOVER_OPERATOR) && root[CROSSOVER_OPERATOR].IsString()){
+        std::string name = root[CROSSOVER_OPERATOR].GetString();
+        std::stringstream ss;
+
+        ss << "For crossover operator using: ";
+        if(name == "pick_better"){
+            ss << "PickBetter";
+            crossover = std::make_shared<PickBetterMinionCrossover>();
+        } else if(name == "pick_random"){
+            ss << "PickRandom";
+            crossover = std::make_shared<PickRandomMinionCrossover>();
+        } else if(name == "custom"){
+            ss << "Custom";
+            crossover = std::make_shared<CustomMinionCrossover>();
+        } else {
+            ss << "PickBetter";
+            crossover = std::make_shared<PickBetterMinionCrossover>();
+        }
+        Log().Get(logDEBUG) << ss.str();
+    } else {
+        Log().Get(logDEBUG) << "For crossover operator using: PickBetter";
+        crossover = std::make_shared<PickBetterMinionCrossover>();
+    }
+
+    if(root.HasMember(CROSSOVER_OPERATOR_CONFIG) && root[CROSSOVER_OPERATOR_CONFIG].IsObject()){
+        crossover->configureFromJSON(root[CROSSOVER_OPERATOR_CONFIG]);
+    }
+
+    if(root.HasMember(MUTATION_OPERATOR) && root[MUTATION_OPERATOR].IsString()){
+        std::string name = root[MUTATION_OPERATOR].GetString();
+
+        if(name == "do_nothing"){
+            mutation = std::make_shared<DoNothingMinionMutation>();
+        } else if(name == "custom"){
+            mutation = std::make_shared<CustomMinionMutation>();
+        } else {
+            mutation = std::make_shared<DoNothingMinionMutation>();
+        }
+    } else {
+        mutation = std::make_shared<DoNothingMinionMutation>();
+    }
+
+    if(root.HasMember(MUTATION_OPERATOR_CONFIG) && root[MUTATION_OPERATOR_CONFIG].IsObject()){
+        mutation->configureFromJSON(root[MUTATION_OPERATOR_CONFIG]);
     }
 }
 

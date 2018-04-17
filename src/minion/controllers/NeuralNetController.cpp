@@ -4,15 +4,15 @@
 
 #include "minion/controllers/NeuralNetController.h"
 
-NeuralNetController::NeuralNetController(std::weak_ptr<Minion> minion,
+NeuralNetController::NeuralNetController() = default;
+
+NeuralNetController::NeuralNetController(int inputDataSize,
                                          const std::vector<int> &hiddenLayers = std::vector<int>(),
                                          std::function<float(float)> activation = tanhf)
-                                        :  minion(minion) {
-    auto m = minion.lock();
-
+                                        :  inputDataSize(inputDataSize) {
     std::vector<int> layers;
     layers.reserve(hiddenLayers.size() + 2);
-    layers.push_back(m->getSenses()->getDataSize());
+    layers.push_back(inputDataSize);
     layers.insert(layers.end(), hiddenLayers.begin(), hiddenLayers.end());
     layers.push_back(OUTPUT_VARS);
 
@@ -54,4 +54,13 @@ void NeuralNetController::initFromJSON(rjs::Value &root) {
     } else {
         nn->initFromJSON(neuralnet->value);
     }
+}
+
+std::shared_ptr<MinionController> NeuralNetController::copy() {
+    auto newCopy = std::shared_ptr<NeuralNetController>(new NeuralNetController);
+
+    newCopy->inputDataSize = inputDataSize;
+    newCopy->nn = nn->copy();
+
+    return newCopy;
 }

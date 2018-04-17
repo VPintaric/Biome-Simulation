@@ -121,3 +121,12 @@ void MinionObject::initFromJSON(rjs::Value &root) {
         setRadius(radius->value.GetFloat());
     }
 }
+
+std::shared_ptr<MinionObject> MinionObject::copy() {
+    auto newCopy = std::make_shared<MinionObject>();
+
+    newCopy->setRadius(getRadius());
+    newCopy->setSkinColor(getSkinColor());
+
+    return newCopy;
+}

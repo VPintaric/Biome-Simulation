@@ -9,6 +9,8 @@
 #include <config/JSONConfigurable.h>
 #include <set>
 #include <minion/fitness/Fitness.h>
+#include <minion/crossover_operators/MinionCrossover.h>
+#include <minion/mutation_operators/MinionMutation.h>
 #include "minion/object/MinionObject.h"
 #include "objects/Boundary.h"
 #include "minion/Minion.h"
@@ -74,6 +76,10 @@ private:
     std::shared_ptr<Selection> selectionAlg;
 
     std::shared_ptr<Fitness> fitnessAlg;
+
+    std::shared_ptr<MinionCrossover> crossover;
+
+    std::shared_ptr<MinionMutation> mutation;
 
     std::shared_ptr<Boundary> boundary;
 

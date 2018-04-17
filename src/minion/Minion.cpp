@@ -242,3 +242,14 @@ float Minion::getFitness() const {
 void Minion::setFitness(float fitness) {
     Minion::fitness = fitness;
 }
+
+std::shared_ptr<Minion> Minion::copy() {
+    auto newCopy = std::make_shared<Minion>();
+
+    newCopy->senses = senses->copy();
+    newCopy->senses->setMinion(newCopy);
+    newCopy->controller = controller->copy();
+    newCopy->object = object->copy();
+
+    return newCopy;
+}

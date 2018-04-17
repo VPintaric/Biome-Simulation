@@ -8,16 +8,19 @@
 #include <rapidjson/document.h>
 #include <string>
 #include <persistence/JSONPersistable.h>
+#include <copyable/Copyable.h>
 
 namespace rjs = rapidjson;
 
 class MinionSenses;
 class MinionController;
 
-class Minion : public JSONPersistable {
+class Minion : public JSONPersistable, public Copyable<Minion> {
 public:
     Minion();
     virtual ~Minion();
+
+    std::shared_ptr<Minion> copy() override;
 
     const std::shared_ptr<MinionObject> &getObject() const;
 

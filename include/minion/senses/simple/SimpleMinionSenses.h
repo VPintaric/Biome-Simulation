@@ -26,6 +26,10 @@ public:
 
     void draw() override;
 
+    std::shared_ptr<MinionSenses> copy() override;
+
+    void setMinion(std::shared_ptr<Minion> m) override;
+
 private:
     void createNewSightLinesModel();
     std::shared_ptr<Minion> lockMinion();

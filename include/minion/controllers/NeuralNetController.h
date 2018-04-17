@@ -10,7 +10,7 @@
 
 class NeuralNetController : public MinionController {
 public:
-    explicit NeuralNetController(std::weak_ptr<Minion> minion,
+    explicit NeuralNetController(int inputDataSize,
                                  const std::vector<int> &hiddenLayers,
                                  std::function<float(float)> activation);
     ~NeuralNetController() override;
@@ -23,13 +23,17 @@ public:
 
     void initFromJSON(rjs::Value &root) override;
 
+    std::shared_ptr<MinionController> copy() override;
+
 private:
+
+    NeuralNetController();
 
     const int OUTPUT_VARS = 2;
 
     std::shared_ptr<NeuralNet> nn;
 
-    std::weak_ptr<Minion> minion;
+    int inputDataSize;
 
     const char * JSON_NEURAL_NET = "neural_net";
 };

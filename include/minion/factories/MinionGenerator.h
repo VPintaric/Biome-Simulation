@@ -7,11 +7,8 @@
 
 class MinionGenerator : public JSONConfigurable {
 public:
-    MinionGenerator();
-    virtual ~MinionGenerator();
-
+    virtual std::shared_ptr<Minion> generateRandomMinion() = 0;
     virtual std::shared_ptr<Minion> generateMinion() = 0;
-    virtual std::shared_ptr<Minion> generateChild(std::shared_ptr<Minion> first, std::shared_ptr<Minion> second) = 0;
 };
 
 
