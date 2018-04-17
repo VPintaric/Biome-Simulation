@@ -1,5 +1,13 @@
-//
-// Created by wex on 4/17/18.
-//
+#include "objects/Pellet.h"
 
-#include "Pellet.h"
+void Pellet::draw() {
+
+}
+
+const glm::vec4& Pellet::getColor() const {
+    return color;
+}
+
+void Pellet::setColor(const glm::vec4 &color) {
+    Pellet::color = color;
+}

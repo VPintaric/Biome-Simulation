@@ -18,11 +18,11 @@ namespace SimConst {
     const float MINION_DEFAULT_DECAY_RATE = 1.0f;
     const float MINION_BODY_DECAY_RATE = 1.0f;
     const float MINION_DECAY_RATE_FORCE_FACTOR = 1e-4f;
-    const float MINION_DECAY_RATE_MOMENT_FACTOR = 1e-4f;
-    const float MINION_MAX_MAX_SENSE_DISTANCE = 100.f;
-    const float MINION_MIN_MAX_SENSE_DISTANCE = 40.f;
+    const float MINION_DECAY_RATE_MOMENT_FACTOR = 5e-4f;
+    const float MINION_MAX_MAX_SENSE_DISTANCE = 150.f;
+    const float MINION_MIN_MAX_SENSE_DISTANCE = 80.f;
     const float MINION_DECAY_RATE_SENSE_DISTANCE_FACTOR = 0.01f;
-    const float MINION_DEFAULT_MAX_SENSE_DISTANCE = 70.f;
+    const float MINION_DEFAULT_MAX_SENSE_DISTANCE = 100.f;
     const int MINION_DEFAULT_N_SIGHT_LINES = 15;
 
     const float DEFAULT_BOUNDARY_RADIUS = 500.f;

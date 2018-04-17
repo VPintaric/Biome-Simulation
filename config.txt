@@ -1,7 +1,7 @@
 {
 "minion_generator" : "neural_net",
 "minion_generator_config" : {
-        "architecture_hidden" : [100, 80, 40]
+        "architecture_hidden" : [130, 100, 80, 40]
     },
 "fitness" : "activity",
 "fitness_config" : {
@@ -36,14 +36,26 @@
             "variance" : 2.0
         }
     }],
-    "controller_mutations" : [{
+    "controller_mutations" : [
+        {
         "name" : "gauss_noise_weights",
+        "probability" : 0.2,
         "config" : {
             "variance" : 10.0
+            }
+        },
+        {
+        "name" : "gauss_sparse_reset",
+        "probability" : 0.8,
+        "config" : {
+            "weight_reset_probability" : 0.0001,
+            "bias_reset_probability" : 0.00001,
+            "variance" : 50.0
+            }
         }
-    }]
+    ]
 },
-"boundary_radius" : 850,
+"boundary_radius" : 900,
 "number_of_minions" : 30,
 "print_info_every_seconds" : 60,
 "persist_minions_every_seconds" : 1800,
