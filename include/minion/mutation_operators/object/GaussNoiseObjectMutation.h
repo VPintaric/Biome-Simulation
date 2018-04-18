@@ -8,7 +8,7 @@
 class GaussNoiseObjectMutation : public MinionObjectMutation {
 private:
     float radiusMean, radiusVariance, colorMean, colorVariance;
-    std::uniform_real_distribution<float> radiusDistr, colorDistr;
+    std::normal_distribution<float> radiusDistr, colorDistr;
 
 public:
     GaussNoiseObjectMutation();

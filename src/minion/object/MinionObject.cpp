@@ -86,7 +86,7 @@ float MinionObject::getControlRotMoment() const {
 }
 
 void MinionObject::setControlRotMoment(float controlRotMoment) {
-    const float MAX_CONTROL_ROT_MOMENT = 10000.f;
+    const float MAX_CONTROL_ROT_MOMENT = 2000.f;
     MinionObject::controlRotMoment = Math::clamp(controlRotMoment, -MAX_CONTROL_ROT_MOMENT, MAX_CONTROL_ROT_MOMENT);
 }
 

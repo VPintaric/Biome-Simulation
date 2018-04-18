@@ -28,8 +28,8 @@ void GaussNoiseObjectMutation::configureFromJSON(rjs::Value &root) {
         colorVariance = root[COLOR_VARIANCE].GetFloat();
     }
 
-    radiusDistr = std::uniform_real_distribution<float>(radiusMean, radiusVariance);
-    colorDistr = std::uniform_real_distribution<float>(colorMean, colorVariance);
+    radiusDistr = std::normal_distribution<float>(radiusMean, radiusVariance);
+    colorDistr = std::normal_distribution<float>(colorMean, colorVariance);
 }
 
 void GaussNoiseObjectMutation::mutate(std::shared_ptr<MinionObject> i) {

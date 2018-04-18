@@ -8,7 +8,7 @@
 class NeuralNetSparseResetWeightsMutation : public NeuralNetControllerMutation {
 private:
     float weightProbability, biasProbability, variance, mean;
-    std::uniform_real_distribution<float> distr;
+    std::normal_distribution<float> distr;
 
 public:
     NeuralNetSparseResetWeightsMutation();

@@ -8,7 +8,7 @@
 class GaussNoiseSensesMutation : public MinionSensesMutation {
 private:
     float mean, variance;
-    std::uniform_real_distribution<float> distr;
+    std::normal_distribution<float> distr;
 
 public:
     GaussNoiseSensesMutation();

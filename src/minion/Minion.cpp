@@ -91,8 +91,8 @@ void Minion::control(float deltaT) {
         object->setControlForce(controlParams[0]);
         object->setControlRotMoment(controlParams[1]);
 
-        float lifeDecay = (SimConst::MINION_DECAY_RATE_FORCE_FACTOR * std::abs(controlParams[0]) +
-                           SimConst::MINION_DECAY_RATE_MOMENT_FACTOR * std::abs(controlParams[1])) * decay;
+        float lifeDecay = (SimConst::MINION_DECAY_RATE_FORCE_FACTOR * std::abs(object->getControlForce()) +
+                           SimConst::MINION_DECAY_RATE_MOMENT_FACTOR * std::abs(object->getControlRotMoment())) * decay;
         setLife(getLife() - lifeDecay * deltaT);
     } else {
         object->setControlForce(0.f);

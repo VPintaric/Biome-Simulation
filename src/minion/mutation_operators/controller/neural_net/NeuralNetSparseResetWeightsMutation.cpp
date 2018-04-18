@@ -52,5 +52,5 @@ void NeuralNetSparseResetWeightsMutation::configureFromJSON(rjs::Value &root) {
         variance = root[VARIANCE].GetFloat();
     }
 
-    distr = std::uniform_real_distribution<float>(mean, variance);
+    distr = std::normal_distribution<float>(mean, variance);
 }

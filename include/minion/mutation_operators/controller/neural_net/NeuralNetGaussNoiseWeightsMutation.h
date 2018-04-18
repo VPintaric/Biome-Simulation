@@ -8,7 +8,7 @@
 class NeuralNetGaussNoiseWeightsMutation : public NeuralNetControllerMutation {
 private:
     float mean, variance;
-    std::uniform_real_distribution<float> distr;
+    std::normal_distribution<float> distr;
 
 public:
     NeuralNetGaussNoiseWeightsMutation();
