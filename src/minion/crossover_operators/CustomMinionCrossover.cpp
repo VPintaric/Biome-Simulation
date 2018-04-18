@@ -6,6 +6,7 @@
 #include <minion/crossover_operators/senses/PickBetterSensesCrossover.h>
 #include <minion/crossover_operators/object/PickBetterObjectCrossover.h>
 #include "minion/crossover_operators/CustomMinionCrossover.h"
+#include "controller/neural_net/NeuralNetSingleLayerCrossover.h"
 
 CustomMinionCrossover::CustomMinionCrossover() = default;
 
@@ -175,8 +176,10 @@ void CustomMinionCrossover::addControllerCrossoverOp(rjs::Value &root) {
     if(root.HasMember(NAME) && root[NAME].IsString()) {
         std::string opName = root[NAME].GetString();
 
-        if(opName == "pick_better"){
+        if(opName == "pick_better") {
             crossoverOp = std::make_shared<PickBetterControllerCrossover>();
+        } else if(opName == "neural_net_single_layer"){
+            crossoverOp = std::make_shared<NeuralNetSingleLayerCrossover>();
         } else {
             crossoverOp = std::make_shared<PickBetterControllerCrossover>();
         }

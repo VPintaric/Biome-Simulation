@@ -145,7 +145,7 @@ add_executable(Biome_Simulation
         src/minion/mutation_operators/controller/neural_net/NeuralNetControllerMutation.cpp
         include/minion/mutation_operators/controller/neural_net/NeuralNetControllerMutation.h
         src/minion/mutation_operators/controller/neural_net/NeuralNetGaussNoiseWeightsMutation.cpp
-        include/minion/mutation_operators/controller/neural_net/NeuralNetGaussNoiseWeightsMutation.h src/objects/Pellet.cpp include/objects/Pellet.h src/minion/mutation_operators/controller/neural_net/NeuralNetSparseResetWeightsMutation.cpp include/minion/mutation_operators/controller/neural_net/NeuralNetSparseResetWeightsMutation.h)
+        include/minion/mutation_operators/controller/neural_net/NeuralNetGaussNoiseWeightsMutation.h src/objects/Pellet.cpp include/objects/Pellet.h src/minion/mutation_operators/controller/neural_net/NeuralNetSparseResetWeightsMutation.cpp include/minion/mutation_operators/controller/neural_net/NeuralNetSparseResetWeightsMutation.h src/minion/crossover_operators/controller/neural_net/NeuralNetSingleLayerCrossover.cpp src/minion/crossover_operators/controller/neural_net/NeuralNetSingleLayerCrossover.h)
 
 message(ERROR " ${SDL2_INCLUDE_DIRS}")
 message(ERROR " ${GLEW_INCLUDE_DIRS}")

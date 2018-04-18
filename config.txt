@@ -18,9 +18,16 @@
     "senses_crossovers" : [{
         "name" : "fitness_weighted_average"
     }],
-    "controller_crossovers" : [{
-        "name" : "pick_better"
-    }]
+    "controller_crossovers" : [
+        {
+        "name" : "pick_better",
+        "probability" : 0.5
+        },
+        {
+        "name" : "neural_net_single_layer",
+        "probability" : 0.5
+        }
+    ]
 },
 "mutation_operator" : "custom",
 "mutation_operator_config" : {
@@ -52,10 +59,10 @@
             "bias_reset_probability" : 0.0001,
             "variance" : 10.0
             }
-
+        }
     ]
 },
-"boundary_radius" : 1000,
+"boundary_radius" : 1500,
 "number_of_minions" : 40,
 "print_info_every_seconds" : 60,
 "persist_minions_every_seconds" : 1800,
