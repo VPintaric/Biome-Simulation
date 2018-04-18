@@ -83,7 +83,7 @@ private:
 
     std::shared_ptr<Boundary> boundary;
 
-    int nMinions;
+    int nMinions, nElites;
 
     std::string persistenceDirectory;
 

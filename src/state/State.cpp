@@ -35,7 +35,7 @@ State& State::getInstance() {
 
 State::State() : nextMinionId(1), currentBestMinion(nullptr),
                 nextPersistedGeneration(1), persistenceDirectory("saved_minions"),
-                nMinions(SimConst::DEFAULT_NUMBER_OF_MINIONS), printEveryRealTime(30000),
+                nMinions(SimConst::DEFAULT_NUMBER_OF_MINIONS), nElites(1), printEveryRealTime(30000),
                 persistMinionsEveryRealTime(300000), nextPersistTimestamp(persistMinionsEveryRealTime),
                 nextPrintTimestamp(printEveryRealTime), useGenerationalGA(true){
     Log().Get(logDEBUG) << "Creating new state instance";
@@ -281,15 +281,30 @@ void State::initializeNextGeneration() {
     currentGeneration++;
     Log().Get(logINFO) << "Generating " << currentGeneration << ". generation";
 
-    std::vector<std::shared_ptr<Minion> > newGeneration;
-    for(int i = 0; i < minions.size(); i++){
-        auto parents = selectionAlg->selectParents(minions);
+    std::vector<std::shared_ptr<Minion> > newGeneration, bestInCurrentGen;
+    newGeneration.reserve(nMinions);
+    bestInCurrentGen.reserve(nElites);
+
+    std::sort(minions.begin(), minions.end(),
+        [](std::shared_ptr<Minion> m1, std::shared_ptr<Minion> m2){
+            return m1->getFitness() > m2->getFitness();
+        });
+
+    bestInCurrentGen.insert(bestInCurrentGen.begin(), minions.begin(), minions.begin() + nElites);
+    newGeneration.insert(newGeneration.begin(), bestInCurrentGen.begin(), bestInCurrentGen.end());
+
+    for(int i = 0; i < nMinions - nElites; i++){
+        auto parents = selectionAlg->selectParents(bestInCurrentGen);
         auto m = crossover->crossover(parents.first, parents.second);
         mutation->mutate(m);
-        initializeMinion(*m);
         newGeneration.push_back(m);
     }
     minions = newGeneration;
+
+    for(auto m : minions){
+        initializeMinion(*m);
+    }
+
     decayedMinions.clear();
 }
 
@@ -324,12 +339,13 @@ void State::update(float dt) {
         m->update(dt);
         if(m->isDecayed()){
             if(currentBestMinion == nullptr || currentBestMinion->getFitness() < m->getFitness()){
-                currentBestMinion = m;
-                Log().Get(logINFO) << "New best fitness minion: " << currentBestMinion->getFitness();
-                Log().Get(logINFO) << "   Time lived: " << currentBestMinion->getTimeLived();
-                Log().Get(logINFO) << "   Distance traveled: " << currentBestMinion->getDistanceTraveled();
-                Log().Get(logINFO) << "   Damage dealt: " << currentBestMinion->getDamageDealt();
-                Log().Get(logINFO) << "   Health recovered: " << currentBestMinion->getHealthRecovered();
+                currentBestMinion = m->copy();
+                currentBestMinion->setFitness(m->getFitness());
+                Log().Get(logINFO) << "New best fitness minion: " << m->getFitness();
+                Log().Get(logINFO) << "   Time lived: " << m->getTimeLived();
+                Log().Get(logINFO) << "   Distance traveled: " << m->getDistanceTraveled();
+                Log().Get(logINFO) << "   Damage dealt: " << m->getDamageDealt();
+                Log().Get(logINFO) << "   Health recovered: " << m->getHealthRecovered();
             }
 
             if(!useGenerationalGA){
@@ -419,6 +435,7 @@ void State::configureFromJSON(rjs::Value &root) {
     const char * PERSIST_MINIONS_EVERY_SECONDS = "persist_minions_every_seconds";
     const char * PERSISTENCE_DIRECTORY = "persistence_directory";
     const char * EVOLUTION_TYPE = "evolution_type";
+    const char * ELITISM = "elitism";
     const char * EVOLUTION_STEADY_STATE_TYPE = "steady_state";
     const char * LOAD_MINIONS_DIRECTORY = "load_directory";
     const char * SAVE_MINIONS_DIRECTORY = "save_directory";
@@ -494,6 +511,10 @@ void State::configureFromJSON(rjs::Value &root) {
 
     if(root.HasMember(EVOLUTION_TYPE) && root[EVOLUTION_TYPE].IsString()){
         useGenerationalGA = !(root[EVOLUTION_TYPE] == EVOLUTION_STEADY_STATE_TYPE);
+    }
+
+    if(useGenerationalGA && root.HasMember(ELITISM) && root[ELITISM].IsInt()){
+        nElites = root[ELITISM].GetInt();
     }
 
     if(root.HasMember(LOAD_MINIONS_DIRECTORY) && root[LOAD_MINIONS_DIRECTORY].IsString()){

@@ -1,14 +1,14 @@
 {
 "minion_generator" : "neural_net",
 "minion_generator_config" : {
-        "architecture_hidden" : [10, 10]
+        "architecture_hidden" : [50, 40, 30, 20]
     },
 "fitness" : "activity",
 "fitness_config" : {
     "time_lived_coeff" : 1.0,
     "damage_dealt_coeff" : 5.0,
-    "health_recovered_coeff" : 10.0,
-    "distance_traveled_coeff" : 0.0
+    "health_recovered_coeff" : 7.5,
+    "distance_traveled_coeff" : 0.001
     },
 "crossover_operator" : "custom",
 "crossover_operator_config" : {
@@ -27,13 +27,13 @@
     "object_mutations" : [{
         "name" : "gauss_noise",
         "config" : {
-            "radius_variance" : 5.0
+            "radius_variance" : 2.0
         }
     }],
     "senses_mutations" : [{
         "name" : "gauss_noise",
         "config" : {
-            "variance" : 2.0
+            "variance" : 5.0
         }
     }],
     "controller_mutations" : [
@@ -41,7 +41,7 @@
         "name" : "gauss_noise_weights",
         "probability" : 0.3,
         "config" : {
-            "variance" : 15.0
+            "variance" : 5.0
             }
         },
         {
@@ -49,16 +49,17 @@
         "probability" : 0.7,
         "config" : {
             "weight_reset_probability" : 0.001,
-            "bias_reset_probability" : 0.001,
-            "variance" : 50.0
+            "bias_reset_probability" : 0.0001,
+            "variance" : 10.0
             }
-        }
+
     ]
 },
 "boundary_radius" : 1000,
-"number_of_minions" : 30,
+"number_of_minions" : 40,
 "print_info_every_seconds" : 60,
 "persist_minions_every_seconds" : 1800,
 "evolution_type" : "generational",
+"elitism" : 10,
 "save_directory" : "saved_minions"
 }
