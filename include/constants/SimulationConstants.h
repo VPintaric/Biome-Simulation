@@ -2,6 +2,7 @@
 #define SIMULATIONCONSTANTS_H
 
 #include <string>
+#include <glm/glm.hpp>
 
 namespace SimConst {
     const std::string MINION_BODY_MODEL_NAME = "minion_body_model";
@@ -27,6 +28,11 @@ namespace SimConst {
 
     const float DEFAULT_BOUNDARY_RADIUS = 500.f;
     const int DEFAULT_NUMBER_OF_MINIONS = 30;
+
+    const float PELLET_RADIUS = 10.f;
+    const float PELLET_LIFE = 50.f;
+    const glm::vec4 FOOD_PELLET_COLOR = glm::vec4(0.f, 1.f, 0.f, 1.f);
+    const glm::vec4 POISON_PELLET_COLOR = glm::vec4(1.f, 0.f, 0.f, 1.f);
 }
 
 #endif /* SIMULATIONCONSTANTS_H */

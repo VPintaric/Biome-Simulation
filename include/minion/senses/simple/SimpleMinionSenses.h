@@ -38,9 +38,10 @@ private:
     const int N_SIGHT_LINE_CHECK_POINTS = 10;
 
     const float NOTHING_TYPE = 0.f;
-    const float DEAD_MINION_TYPE = 10.f;
-    const float ALIVE_MINION_TYPE = 20.f;
-    const float BOUNDARY_TYPE = 30.f;
+    const float DEAD_MINION_TYPE = 50.f;
+    const float ALIVE_MINION_TYPE = 100.f;
+    const float PELLET_TYPE = 150.f;
+    const float BOUNDARY_TYPE = 200.f;
 
     float maxSenseDistance;
     int nSightLines;

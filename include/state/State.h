@@ -11,6 +11,7 @@
 #include <minion/fitness/Fitness.h>
 #include <minion/crossover_operators/MinionCrossover.h>
 #include <minion/mutation_operators/MinionMutation.h>
+#include <objects/Pellet.h>
 #include "minion/object/MinionObject.h"
 #include "objects/Boundary.h"
 #include "minion/Minion.h"
@@ -46,6 +47,10 @@ public:
 
     const std::vector< std::shared_ptr<Minion> > &getMinions() const;
 
+    const std::vector< std::shared_ptr<Pellet> > &getFoodPellets() const;
+
+    const std::vector< std::shared_ptr<Pellet> > &getPoisonPellets() const;
+
     std::shared_ptr<Boundary> getBoundary() const;
 
     void setPersistenceDirectory(std::string dirName);
@@ -66,6 +71,12 @@ public:
 
     void resolveMinionBoundaryCollisionDamage(Minion& m, CollisionInfo& ci);
 
+    void resolveMinionFoodPelletDamage(Minion& m, Pellet& p, CollisionInfo& ci);
+
+    void resolveMinionPoisonPelletDamage(Minion& m, Pellet& p, CollisionInfo& ci);
+
+    void initializePellet(std::shared_ptr<Pellet> pellet);
+
 private:
     std::shared_ptr<MinionGenerator> minionGenerator;
 
@@ -83,7 +94,9 @@ private:
 
     std::shared_ptr<Boundary> boundary;
 
-    int nMinions, nElites;
+    std::vector< std::shared_ptr<Pellet> > foodPellets, poisonPellets;
+
+    int nMinions, nElites, nFoodPellets, nPoisonPellets;
 
     std::string persistenceDirectory;
 

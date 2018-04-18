@@ -95,6 +95,7 @@ std::vector<float> SimpleMinionSenses::gatherData(float deltaT) {
     CollisionDetection cd = CollisionDetection::getInstance();
 
     std::vector<std::shared_ptr<Minion>> minionsInRange;
+    std::vector<std::shared_ptr<Pellet>> pelletsInRange;
     std::vector<float> data;
     float nearestBehind = getRadius() - minion->getObject()->getRadius();
 
@@ -112,6 +113,30 @@ std::vector<float> SimpleMinionSenses::gatherData(float deltaT) {
                 nearestBehind = std::min(dist, nearestBehind);
             }
             minionsInRange.push_back(m);
+        }
+    }
+
+    for(auto p : state.getFoodPellets()){
+        auto ci = cd.checkCircleCircleCollision(*this, *p);
+        if(ci->isCollision){
+            float angle = glm::orientedAngle(-ci->normal, getFront());
+            if(angle < -glm::half_pi<float>() || angle > glm::half_pi<float>()){
+                float dist = getRadius() - p->getRadius() - glm::length(ci->mtd);
+                nearestBehind = std::min(dist, nearestBehind);
+            }
+            pelletsInRange.push_back(p);
+        }
+    }
+
+    for(auto p : state.getPoisonPellets()){
+        auto ci = cd.checkCircleCircleCollision(*this, *p);
+        if(ci->isCollision){
+            float angle = glm::orientedAngle(-ci->normal, getFront());
+            if(angle < -glm::half_pi<float>() || angle > glm::half_pi<float>()){
+                float dist = getRadius() - p->getRadius() - glm::length(ci->mtd);
+                nearestBehind = std::min(dist, nearestBehind);
+            }
+            pelletsInRange.push_back(p);
         }
     }
 
@@ -150,6 +175,26 @@ std::vector<float> SimpleMinionSenses::gatherData(float deltaT) {
                     break;
                 }
             }
+
+            if(!detectedObject){
+                for(const auto &pellet : pelletsInRange){
+                    if(cd.pointInCircle(p, *pellet)){
+                        detectedObject = true;
+
+                        data.push_back(distance);
+                        data.push_back(PELLET_TYPE);
+                        auto color = pellet->getColor();
+                        data.push_back(color.r);
+                        data.push_back(color.g);
+                        data.push_back(color.b);
+
+                        setSightLineColor(i, color);
+
+                        break;
+                    }
+                }
+            }
+
             if(!detectedObject && boundaryInRange && cd.pointInHollowCircle(p, *state.getBoundary())){
                 detectedObject = true;
 

@@ -37,7 +37,8 @@ State::State() : nextMinionId(1), currentBestMinion(nullptr),
                 nextPersistedGeneration(1), persistenceDirectory("saved_minions"),
                 nMinions(SimConst::DEFAULT_NUMBER_OF_MINIONS), nElites(1), printEveryRealTime(30000),
                 persistMinionsEveryRealTime(300000), nextPersistTimestamp(persistMinionsEveryRealTime),
-                nextPrintTimestamp(printEveryRealTime), useGenerationalGA(true){
+                nextPrintTimestamp(printEveryRealTime), useGenerationalGA(true),
+                nFoodPellets(0), nPoisonPellets(0){
     Log().Get(logDEBUG) << "Creating new state instance";
     shouldEndProgramFlag = false;
     lastCalledTimestamp = chr::duration_cast<chr::milliseconds>(chr::system_clock::now().time_since_epoch()).count();
@@ -165,7 +166,15 @@ void State::initBoundary(float r) {
 }
 
 void State::draw() {
-    for(const std::shared_ptr<Minion> &m : minions){
+    for(const auto& p : foodPellets){
+        p->draw();
+    }
+
+    for(const auto& p : poisonPellets){
+        p->draw();
+    }
+
+    for(const auto& m : minions){
         if(!m->isDecayed()){
             m->draw();
         }
@@ -336,6 +345,28 @@ void State::update(float dt) {
             cr.doCollisionResponse(*m->getObject(), *boundary, ci);
         }
 
+        for(const auto &pellet : foodPellets){
+            auto ci = cd.checkCircleCircleCollision(*m->getObject(), *pellet);
+
+            if(ci->isCollision){
+                resolveMinionFoodPelletDamage(*m, *pellet, *ci);
+                if(pellet->getLife() <= 0.f){
+                    initializePellet(pellet);
+                }
+            }
+        }
+
+        for(const auto &pellet : poisonPellets){
+            auto ci = cd.checkCircleCircleCollision(*m->getObject(), *pellet);
+
+            if(ci->isCollision){
+                resolveMinionPoisonPelletDamage(*m, *pellet, *ci);
+                if(pellet->getLife() <= 0.f){
+                    initializePellet(pellet);
+                }
+            }
+        }
+
         m->update(dt);
         if(m->isDecayed()){
             if(currentBestMinion == nullptr || currentBestMinion->getFitness() < m->getFitness()){
@@ -443,6 +474,8 @@ void State::configureFromJSON(rjs::Value &root) {
     const char * MUTATION_OPERATOR_CONFIG = "mutation_operator_config";
     const char * CROSSOVER_OPERATOR = "crossover_operator";
     const char * CROSSOVER_OPERATOR_CONFIG = "crossover_operator_config";
+    const char * FOOD_PELLETS = "food_pellets";
+    const char * POISON_PELLETS = "poison_pellets";
 
     Log().Get(logDEBUG) << "Configuring State object...";
 
@@ -574,6 +607,26 @@ void State::configureFromJSON(rjs::Value &root) {
     if(root.HasMember(MUTATION_OPERATOR_CONFIG) && root[MUTATION_OPERATOR_CONFIG].IsObject()){
         mutation->configureFromJSON(root[MUTATION_OPERATOR_CONFIG]);
     }
+
+    if(root.HasMember(FOOD_PELLETS) && root[FOOD_PELLETS].IsInt()){
+        nFoodPellets = root[FOOD_PELLETS].GetInt();
+        for(int i = 0; i < nFoodPellets; i++){
+            auto pellet = std::make_shared<Pellet>();
+            pellet->setColor(SimConst::FOOD_PELLET_COLOR);
+            initializePellet(pellet);
+            foodPellets.push_back(pellet);
+        }
+    }
+
+    if(root.HasMember(POISON_PELLETS) && root[POISON_PELLETS].IsInt()){
+        nPoisonPellets = root[POISON_PELLETS].GetInt();
+        for(int i = 0; i < nPoisonPellets; i++){
+            auto pellet = std::make_shared<Pellet>();
+            pellet->setColor(SimConst::POISON_PELLET_COLOR);
+            initializePellet(pellet);
+            poisonPellets.push_back(pellet);
+        }
+    }
 }
 
 int State::getNMinions() const {
@@ -586,4 +639,44 @@ void State::setNMinions(int nMinions) {
 
 void State::setFitnessAlg(std::shared_ptr<Fitness> fitness) {
     State::fitnessAlg = fitness;
+}
+
+void State::initializePellet(std::shared_ptr<Pellet> pellet) {
+    std::uniform_real_distribution<float> angleDistr(0.f, glm::two_pi<float>());
+    std::uniform_real_distribution<float> distanceDistr(0.f, boundary->getR1() - pellet->getRadius());
+
+    float angle = angleDistr(RNG::get());
+    float dist = distanceDistr(RNG::get());
+    pellet->setPos(glm::vec2(dist * glm::cos(angle), dist * glm::sin(angle)));
+
+    pellet->setLife(SimConst::PELLET_LIFE);
+}
+
+void State::resolveMinionFoodPelletDamage(Minion &m, Pellet &p, CollisionInfo &ci) {
+    const float LEECH_CONSTANT = 0.75f;
+
+    if(!m.isDead()){
+        m.setLife(m.getLife() + LEECH_CONSTANT);
+        m.setHealthRecovered(m.getHealthRecovered() + LEECH_CONSTANT);
+
+        p.setLife(p.getLife() - LEECH_CONSTANT);
+    }
+}
+
+void State::resolveMinionPoisonPelletDamage(Minion &m, Pellet &p, CollisionInfo &ci) {
+    const float LEECH_CONSTANT = 0.5f;
+
+    if(!m.isDead()){
+        m.setLife(m.getLife() - LEECH_CONSTANT);
+
+        p.setLife(p.getLife() - LEECH_CONSTANT);
+    }
+}
+
+const std::vector< std::shared_ptr<Pellet> >& State::getFoodPellets() const {
+    return foodPellets;
+}
+
+const std::vector< std::shared_ptr<Pellet> >& State::getPoisonPellets() const {
+    return poisonPellets;
 }
