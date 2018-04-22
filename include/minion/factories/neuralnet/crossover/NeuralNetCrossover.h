@@ -2,7 +2,7 @@
 #define BIOME_SIMULATION_NEURALNETCROSSOVER_H
 
 
-#include <neuralnet/NeuralNet.h>
+#include <minion/controllers/neural_net/NeuralNet.h>
 #include <config/JSONConfigurable.h>
 
 class NeuralNetCrossover : public JSONConfigurable {

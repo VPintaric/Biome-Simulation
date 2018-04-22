@@ -2,7 +2,7 @@
 #include <state/State.h>
 #include <state/Log.h>
 
-#include "minion/controllers/NeuralNetController.h"
+#include "minion/controllers/neural_net/NeuralNetController.h"
 
 NeuralNetController::NeuralNetController() = default;
 
@@ -63,4 +63,8 @@ std::shared_ptr<MinionController> NeuralNetController::copy() {
     newCopy->nn = nn->copy();
 
     return newCopy;
+}
+
+void NeuralNetController::setMinion(std::shared_ptr<Minion> m) {
+    // This controller doesn't need a reference to minion it's controlling
 }

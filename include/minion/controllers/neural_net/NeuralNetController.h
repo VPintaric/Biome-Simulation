@@ -2,9 +2,9 @@
 #define BIOME_SIMULATION_NEURALNETCONTROLLER_H
 
 
-#include "MinionController.h"
+#include "minion/controllers/MinionController.h"
 #include "eigen/Eigen"
-#include "neuralnet/NeuralNet.h"
+#include "NeuralNet.h"
 
 #include <vector>
 
@@ -24,6 +24,8 @@ public:
     void initFromJSON(rjs::Value &root) override;
 
     std::shared_ptr<MinionController> copy() override;
+
+    void setMinion(std::shared_ptr<Minion> m) override;
 
 private:
 

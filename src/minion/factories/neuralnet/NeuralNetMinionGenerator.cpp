@@ -1,4 +1,4 @@
-#include <minion/controllers/NeuralNetController.h>
+#include <minion/controllers/neural_net/NeuralNetController.h>
 #include <minion/senses/simple/SimpleMinionSenses.h>
 #include <state/State.h>
 #include <state/Log.h>

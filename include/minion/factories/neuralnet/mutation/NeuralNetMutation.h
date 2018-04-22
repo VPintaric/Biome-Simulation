@@ -3,7 +3,7 @@
 
 
 #include <config/JSONConfigurable.h>
-#include <neuralnet/NeuralNet.h>
+#include <minion/controllers/neural_net/NeuralNet.h>
 
 class NeuralNetMutation : public JSONConfigurable {
 public:

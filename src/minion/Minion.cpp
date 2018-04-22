@@ -248,7 +248,10 @@ std::shared_ptr<Minion> Minion::copy() {
 
     newCopy->senses = senses->copy();
     newCopy->senses->setMinion(newCopy);
+
     newCopy->controller = controller->copy();
+    newCopy->controller->setMinion(newCopy);
+
     newCopy->object = object->copy();
 
     return newCopy;

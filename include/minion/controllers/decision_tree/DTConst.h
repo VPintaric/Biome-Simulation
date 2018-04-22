@@ -1,0 +1,47 @@
+#ifndef BIOME_SIMULATION_DTCONST_H
+#define BIOME_SIMULATION_DTCONST_H
+
+#include <vector>
+#include <map>
+
+namespace DTConst {
+    enum Facts {
+        FACT_MINION_LEFT, FACT_MINION_FRONT, FACT_MINION_RIGHT, FACT_BODY_LEFT, FACT_BODY_FRONT, FACT_BODY_RIGHT,
+        FACT_BOUNDARY_LEFT, FACT_BOUNDARY_FRONT, FACT_BOUNDARY_RIGHT, FACT_PELLET_LEFT, FACT_PELLET_FRONT,
+        FACT_PELLET_RIGHT, FACT_SOMETHING_BEHIND, FACT_HEALTHY, FACT_UNHEALTHY, FACT_MOVING_FAST, FACT_MOVING_SLOW,
+        FACT_FRONT_ALIGNED, FACT_FRONT_MISALIGNED, FACT_ROTATING_CLOCKWISE, FACT_ROTATING_COUNTERCLOCKWISE,
+        __FACT_MAX__
+    };
+
+    enum AccType {
+        ACC_FAST_FORWARD, ACC_FORWARD, ACC_SLOW_FORWARD, ACC_ZERO, ACC_SLOW_BACKWARD, ACC_BACKWARD, ACC_FAST_BACKWARD,
+        __ACCTYPE_MAX__
+    };
+
+    enum RotType {
+        ROT_FAST_CLOCK, ROT_CLOCK, ROT_SLOW_CLOCK, ROT_ZERO, ROT_SLOW_CCLOCK, ROT_CCLOCK, ROT_FAST_CCLOCK,
+        __ROTTYPE_MAX__
+    };
+
+    const std::map<AccType, float> accTypeToVal {
+        {ACC_FAST_FORWARD, 400.f },
+        {ACC_FORWARD, 200.f },
+        {ACC_SLOW_FORWARD, 100.f },
+        {ACC_ZERO, 0.f },
+        {ACC_SLOW_BACKWARD, -40.f },
+        {ACC_BACKWARD, -80.f },
+        {ACC_FAST_BACKWARD, -160.f }
+    };
+
+    const std::map<RotType, float> rotTypeToVal {
+        {ROT_FAST_CLOCK, 1500.f },
+        {ROT_CLOCK, 750.f },
+        {ROT_SLOW_CLOCK, 375.f },
+        {ROT_ZERO, 0.f },
+        {ROT_SLOW_CCLOCK, -375.f },
+        {ROT_CCLOCK, -750.f },
+        {ROT_FAST_CCLOCK, -1500.f },
+    };
+}
+
+#endif //BIOME_SIMULATION_DTCONST_H

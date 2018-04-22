@@ -3,7 +3,7 @@
 
 
 #include <minion/mutation_operators/controller/MinionControllerMutation.h>
-#include <minion/controllers/NeuralNetController.h>
+#include <minion/controllers/neural_net/NeuralNetController.h>
 
 class NeuralNetControllerMutation : public MinionControllerMutation {
 public:

@@ -9,6 +9,10 @@ namespace Math{
         return x < 0.f ? -1.f : (x > 0.f ? 1.f : 0.f);
     }
 
+    bool approx(float x, float y, float eps){
+        return x - eps <= y && y <= x + eps;
+    }
+
     float cross(glm::vec2 &v1, glm::vec2 &v2) {
         return v1.x * v2.y - v2.x * v1.y;
     }

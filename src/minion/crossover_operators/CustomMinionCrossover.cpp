@@ -28,6 +28,7 @@ std::shared_ptr<Minion> CustomMinionCrossover::crossover(std::shared_ptr<Minion>
                                                             m1->getFitness(), m2->getFitness());
 
     senses->setMinion(child);
+    controller->setMinion(child);
 
     child->setObject(object);
     child->setSenses(senses);

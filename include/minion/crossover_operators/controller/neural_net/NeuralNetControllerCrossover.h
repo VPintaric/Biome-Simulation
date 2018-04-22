@@ -3,7 +3,7 @@
 
 
 #include <minion/crossover_operators/controller/MinionControllerCrossover.h>
-#include <minion/controllers/NeuralNetController.h>
+#include <minion/controllers/neural_net/NeuralNetController.h>
 
 class NeuralNetControllerCrossover : public MinionControllerCrossover {
 public:

@@ -69,13 +69,13 @@ add_executable(Biome_Simulation
         src/minion/controllers/MinionController.cpp
         include/minion/controllers/MinionController.h
         src/helpers/MathHelpers.cpp
-        src/minion/controllers/NeuralNetController.cpp
-        include/minion/controllers/NeuralNetController.h
+        src/minion/controllers/neural_net/NeuralNetController.cpp
+        include/minion/controllers/neural_net/NeuralNetController.h
         include/minion/factories/MinionGenerator.h
         src/minion/factories/neuralnet/NeuralNetMinionGenerator.cpp
         include/minion/factories/neuralnet/NeuralNetMinionGenerator.h
-        src/neuralnet/NeuralNet.cpp
-        include/neuralnet/NeuralNet.h
+        src/minion/controllers/neural_net/NeuralNet.cpp
+        include/minion/controllers/neural_net/NeuralNet.h
         src/minion/senses/simple/SimpleMinionSenses.cpp
         include/minion/senses/simple/SimpleMinionSenses.h
         include/minion/selection/Selection.h
@@ -145,7 +145,7 @@ add_executable(Biome_Simulation
         src/minion/mutation_operators/controller/neural_net/NeuralNetControllerMutation.cpp
         include/minion/mutation_operators/controller/neural_net/NeuralNetControllerMutation.h
         src/minion/mutation_operators/controller/neural_net/NeuralNetGaussNoiseWeightsMutation.cpp
-        include/minion/mutation_operators/controller/neural_net/NeuralNetGaussNoiseWeightsMutation.h src/objects/Pellet.cpp include/objects/Pellet.h src/minion/mutation_operators/controller/neural_net/NeuralNetSparseResetWeightsMutation.cpp include/minion/mutation_operators/controller/neural_net/NeuralNetSparseResetWeightsMutation.h src/minion/crossover_operators/controller/neural_net/NeuralNetSingleLayerCrossover.cpp src/minion/crossover_operators/controller/neural_net/NeuralNetSingleLayerCrossover.h)
+        include/minion/mutation_operators/controller/neural_net/NeuralNetGaussNoiseWeightsMutation.h src/objects/Pellet.cpp include/objects/Pellet.h src/minion/mutation_operators/controller/neural_net/NeuralNetSparseResetWeightsMutation.cpp include/minion/mutation_operators/controller/neural_net/NeuralNetSparseResetWeightsMutation.h src/minion/crossover_operators/controller/neural_net/NeuralNetSingleLayerCrossover.cpp src/minion/crossover_operators/controller/neural_net/NeuralNetSingleLayerCrossover.h src/minion/controllers/decision_tree/DecisionTreeController.cpp include/minion/controllers/decision_tree/DecisionTreeController.h include/minion/controllers/decision_tree/DTConst.h src/minion/controllers/decision_tree/DecisionTree.cpp include/minion/controllers/decision_tree/DecisionTree.h src/minion/controllers/decision_tree/DTNode.cpp include/minion/controllers/decision_tree/DTNode.h src/minion/controllers/decision_tree/DTTerminalNode.cpp include/minion/controllers/decision_tree/DTTerminalNode.h src/minion/controllers/decision_tree/DTBranchNode.cpp include/minion/controllers/decision_tree/DTBranchNode.h)
 
 message(ERROR " ${SDL2_INCLUDE_DIRS}")
 message(ERROR " ${GLEW_INCLUDE_DIRS}")

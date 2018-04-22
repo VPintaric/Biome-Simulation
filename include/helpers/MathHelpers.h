@@ -7,6 +7,7 @@
 namespace Math{
     float clamp(const float& x, const float& lo, const float& hi);
     float sign(const float& x);
+    bool approx(float x, float y, float eps = 1e-5);
 
     glm::vec2 perp(glm::vec2 &v);
     float cross(glm::vec2 &v1, glm::vec2 &v2);

@@ -3,7 +3,7 @@
 #include <state/Log.h>
 #include <state/State.h>
 #include <helpers/RNG.h>
-#include "neuralnet/NeuralNet.h"
+#include "minion/controllers/neural_net/NeuralNet.h"
 
 NeuralNet::NeuralNet(const std::vector<int> &layers, std::function<float(float)> activation) :
                     activation(std::move(activation)), layers(layers), Copyable<NeuralNet>() {

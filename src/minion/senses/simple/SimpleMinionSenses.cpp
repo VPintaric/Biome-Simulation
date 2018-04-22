@@ -20,9 +20,8 @@ SimpleMinionSenses::~SimpleMinionSenses() = default;
 
 std::shared_ptr<Minion> SimpleMinionSenses::lockMinion() {
     auto locked = minion.lock();
-    if(!locked){
+    if(locked == nullptr){
         Log().Get(logERROR) << "Can't get a lock on minion pointer";
-        return nullptr;
     }
     return locked;
 }
@@ -76,7 +75,7 @@ int SimpleMinionSenses::getDataSize() {
 
 /*
  * Returned vector represents info received from each of the sight lines.
- * Each sight line gives info about distance, color and type of the detected object.
+ * Each sight line gives info about distance, type and color of the detected object.
  * If no object is detected on the sight line distance is set to maximum range of senses, color is set to black and
  * type is set to 0.f.
  * First elements are data from the first sight line on the hard right side of the minion, next sight line
@@ -228,7 +227,8 @@ std::vector<float> SimpleMinionSenses::gatherData(float deltaT) {
     data.push_back(nearestBehind);
     data.push_back(minion->getLife());
     data.push_back(glm::length(minion->getObject()->getVelocity()));
-    data.push_back(glm::orientedAngle(minion->getObject()->getFront(), minion->getObject()->getVelocity()));
+    data.push_back(glm::orientedAngle(minion->getObject()->getFront(),
+                                      glm::normalize(minion->getObject()->getVelocity())));
     data.push_back(minion->getObject()->getAngleVel());
 
     return data;

@@ -12,6 +12,7 @@
 #include <minion/factories/neuralnet/NeuralNetMinionGenerator.h>
 #include <config/Config.h>
 #include <constants/WindowConstants.h>
+#include <glm/gtx/vector_angle.hpp>
 #include "state/State.h"
 
 #include "state/Log.h"
