@@ -42,9 +42,13 @@ std::shared_ptr<Minion> DecisionTreeMinionGenerator::generateMinion() {
     auto minion = std::make_shared<Minion>();
     auto object = std::make_shared<MinionObject>();
     minion->setObject(object);
+
     auto senses = std::make_shared<SimpleMinionSenses>(minion);
+    senses->setMinion(minion);
     minion->setSenses(senses);
+
     auto controller = std::make_shared<DecisionTreeController>(maxTreeDepth);
+    controller->setMinion(minion);
     minion->setController(controller);
 
     return minion;

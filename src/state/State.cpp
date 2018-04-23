@@ -449,7 +449,7 @@ void State::loadMinionsFromFolder(std::string dirName) {
     minions.clear();
     for(auto it = fs::directory_iterator(dirName); it != fs::directory_iterator(); ++it){
         std::string fileName = (*it).path().string();
-        auto minion = minionGenerator->generateRandomMinion();
+        auto minion = minionGenerator->generateMinion();
         p.initMinionFromFile(fileName, minion);
         initializeMinion(*minion);
         minions.push_back(minion);

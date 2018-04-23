@@ -9,9 +9,7 @@ DTBranchNode::DTBranchNode(int factToQuery) : factToQuery(factToQuery) {
 std::shared_ptr<DTNode> DTBranchNode::copy() {
     auto newCopy = std::make_shared<DTBranchNode>(factToQuery);
     newCopy->left = left->copy();
-    newCopy->left->parent = newCopy;
     newCopy->right = right->copy();
-    newCopy->right->parent = newCopy;
     return newCopy;
 }
 
@@ -38,14 +36,14 @@ void DTBranchNode::getFromStream(std::stringstream &ss) {
         left = std::make_shared<DTTerminalNode>(n);
     } else {
         left = std::make_shared<DTBranchNode>(n);
+        left->getFromStream(ss);
     }
-    left->parent = std::shared_ptr<DTNode>(this);
 
     ss >> nodeType >> n;
     if(nodeType == "t"){
         right = std::make_shared<DTTerminalNode>(n);
     } else {
         right = std::make_shared<DTBranchNode>(n);
+        right->getFromStream(ss);
     }
-    right->parent = std::shared_ptr<DTNode>(this);
 }

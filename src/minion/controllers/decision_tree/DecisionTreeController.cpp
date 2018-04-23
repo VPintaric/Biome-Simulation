@@ -20,7 +20,12 @@ std::shared_ptr<Minion> DecisionTreeController::lockMinion() {
 }
 
 std::shared_ptr<MinionController> DecisionTreeController::copy() {
-    return nullptr;
+    auto newCopy = std::make_shared<DecisionTreeController>(maxTreeDepth);
+
+    newCopy->accDecTree = accDecTree->copy();
+    newCopy->rotDecTree = rotDecTree->copy();
+
+    return newCopy;
 }
 
 std::vector<float> DecisionTreeController::controlMinion(std::vector<float> senseData) {
@@ -141,26 +146,25 @@ void DecisionTreeController::initRandomTree(std::shared_ptr<DTBranchNode> node,
                                             std::uniform_int_distribution<int>& factsDistr,
                                             std::uniform_int_distribution<int>& resDistr, int d) {
     static std::uniform_real_distribution<float> uniform(0.f, 1.f);
+    float pForTerminal = (float) d / maxTreeDepth;
 
     float roll = uniform(RNG::get());
-    if(roll <= ((float) d) / maxTreeDepth){
+    if(roll <= pForTerminal){
         node->left = std::make_shared<DTTerminalNode>(resDistr(RNG::get()));
     } else {
         auto newBranchNode = std::make_shared<DTBranchNode>(factsDistr(RNG::get()));
         node->left = newBranchNode;
         initRandomTree(newBranchNode, factsDistr, resDistr, d + 1);
     }
-    node->left->parent = node;
 
     roll = uniform(RNG::get());
-    if(roll <= ((float) d) / maxTreeDepth){
+    if(roll <= pForTerminal){
         node->right = std::make_shared<DTTerminalNode>(resDistr(RNG::get()));
     } else {
         auto newBranchNode = std::make_shared<DTBranchNode>(factsDistr(RNG::get()));
         node->right = newBranchNode;
         initRandomTree(newBranchNode, factsDistr, resDistr, d + 1);
     }
-    node->right->parent = node;
 }
 
 void DecisionTreeController::initRandom() {
@@ -185,7 +189,7 @@ void DecisionTreeController::persistToJSON(rjs::Value &root, rjs::Document::Allo
     root.AddMember(rjs::StringRef(ACC_TREE), accDTJSON, alloc);
 
     rjs::Value rotDTJSON(rjs::kObjectType);
-    rotDecTree->persistToJSON(accDTJSON, alloc);
+    rotDecTree->persistToJSON(rotDTJSON, alloc);
     root.AddMember(rjs::StringRef(ROT_TREE), rotDTJSON, alloc);
 }
 
