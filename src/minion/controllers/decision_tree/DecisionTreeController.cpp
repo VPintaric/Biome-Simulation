@@ -3,6 +3,13 @@
 #include <helpers/MathHelpers.h>
 #include "minion/controllers/decision_tree/DecisionTreeController.h"
 #include <glm/gtc/constants.hpp>
+#include <helpers/RNG.h>
+#include <minion/controllers/decision_tree/DTTerminalNode.h>
+
+DecisionTreeController::DecisionTreeController(int maxTreeDepth) : maxTreeDepth(maxTreeDepth) {
+    accDecTree = std::make_shared<DecisionTree>(DTConst::__FACT_MAX__, DTConst::__ACCTYPE_MAX__);
+    rotDecTree = std::make_shared<DecisionTree>(DTConst::__FACT_MAX__, DTConst::__ROTTYPE_MAX__);
+}
 
 std::shared_ptr<Minion> DecisionTreeController::lockMinion() {
     auto locked = m.lock();
@@ -129,3 +136,66 @@ std::set<int> DecisionTreeController::preprocess(std::vector<float> &senseData) 
 void DecisionTreeController::setMinion(std::shared_ptr<Minion> m) {
     this->m = m;
 }
+
+void DecisionTreeController::initRandomTree(std::shared_ptr<DTBranchNode> node,
+                                            std::uniform_int_distribution<int>& factsDistr,
+                                            std::uniform_int_distribution<int>& resDistr, int d) {
+    static std::uniform_real_distribution<float> uniform(0.f, 1.f);
+
+    float roll = uniform(RNG::get());
+    if(roll <= ((float) d) / maxTreeDepth){
+        node->left = std::make_shared<DTTerminalNode>(resDistr(RNG::get()));
+    } else {
+        auto newBranchNode = std::make_shared<DTBranchNode>(factsDistr(RNG::get()));
+        node->left = newBranchNode;
+        initRandomTree(newBranchNode, factsDistr, resDistr, d + 1);
+    }
+    node->left->parent = node;
+
+    roll = uniform(RNG::get());
+    if(roll <= ((float) d) / maxTreeDepth){
+        node->right = std::make_shared<DTTerminalNode>(resDistr(RNG::get()));
+    } else {
+        auto newBranchNode = std::make_shared<DTBranchNode>(factsDistr(RNG::get()));
+        node->right = newBranchNode;
+        initRandomTree(newBranchNode, factsDistr, resDistr, d + 1);
+    }
+    node->right->parent = node;
+}
+
+void DecisionTreeController::initRandom() {
+    std::uniform_int_distribution<int> factsDistr(0, accDecTree->nFacts - 1);
+    std::uniform_int_distribution<int> resDistr(0, accDecTree->nResults - 1);
+    auto branchNode = std::make_shared<DTBranchNode>(factsDistr(RNG::get()));
+    accDecTree->root = branchNode;
+    initRandomTree(branchNode, factsDistr, resDistr, 1);
+
+    factsDistr = std::uniform_int_distribution<int>(0, rotDecTree->nFacts - 1);
+    resDistr = std::uniform_int_distribution<int>(0, rotDecTree->nResults - 1);
+    branchNode = std::make_shared<DTBranchNode>(resDistr(RNG::get()));
+    rotDecTree->root = branchNode;
+    initRandomTree(branchNode, factsDistr, resDistr, 1);
+}
+
+void DecisionTreeController::persistToJSON(rjs::Value &root, rjs::Document::AllocatorType &alloc) {
+    root.AddMember(rjs::StringRef(MAX_DEPTH), rjs::Value(maxTreeDepth), alloc);
+
+    rjs::Value accDTJSON(rjs::kObjectType);
+    accDecTree->persistToJSON(accDTJSON, alloc);
+    root.AddMember(rjs::StringRef(ACC_TREE), accDTJSON, alloc);
+
+    rjs::Value rotDTJSON(rjs::kObjectType);
+    rotDecTree->persistToJSON(accDTJSON, alloc);
+    root.AddMember(rjs::StringRef(ROT_TREE), rotDTJSON, alloc);
+}
+
+void DecisionTreeController::initFromJSON(rjs::Value &root) {
+    maxTreeDepth = root[MAX_DEPTH].GetInt();
+
+    rjs::Value accRoot = root[ACC_TREE].GetObject();
+    accDecTree->initFromJSON(accRoot);
+
+    rjs::Value rotRoot = root[ROT_TREE].GetObject();
+    rotDecTree->initFromJSON(rotRoot);
+}
+

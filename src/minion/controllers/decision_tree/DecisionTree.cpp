@@ -1,4 +1,6 @@
-#include "minion/controllers/decision_tree/DecisionTree.h"
+#include <sstream>
+#include <minion/controllers/decision_tree/DTTerminalNode.h>
+#include <minion/controllers/decision_tree/DTBranchNode.h>
 
 DecisionTree::DecisionTree(int nUniqueFacts, int nUniqueResults) : nFacts(nUniqueFacts),
                                                                    nResults(nUniqueResults) {
@@ -14,5 +16,37 @@ std::shared_ptr<DecisionTree> DecisionTree::copy() {
     newCopy->root = root->copy();
 
     return newCopy;
+}
+
+void DecisionTree::persistToJSON(rjs::Value &root, rjs::Document::AllocatorType &alloc) {
+    root.AddMember(rjs::StringRef(N_FACTS), rjs::Value(nFacts), alloc);
+    root.AddMember(rjs::StringRef(N_RESULTS), rjs::Value(nResults), alloc);
+
+    rjs::Value nodes(rjs::kStringType);
+    std::stringstream ss;
+    this->root->appendToStream(ss);
+    std::string s = ss.str();
+    nodes.SetString(s.c_str(), static_cast<rapidjson::SizeType>(s.size()), alloc);
+    root.AddMember(rjs::StringRef(NODES), nodes, alloc);
+}
+
+void DecisionTree::initFromJSON(rjs::Value &root) {
+    nFacts = root[N_FACTS].GetInt();
+    nResults = root[N_RESULTS].GetInt();
+
+    std::string nodes = root[NODES].GetString();
+    std::stringstream ss(nodes);
+
+    std::string nodeType;
+    int n;
+    ss >> nodeType >> n;
+
+    if(nodeType == "t"){
+        this->root = std::make_shared<DTTerminalNode>(n);
+    } else {
+        this->root = std::make_shared<DTBranchNode>(n);
+    }
+
+    this->root->getFromStream(ss);
 }
 

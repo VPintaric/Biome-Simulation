@@ -13,6 +13,10 @@ public:
 
     virtual int evaluate(const std::set<int>& facts) = 0;
 
+    virtual void appendToStream(std::stringstream &ss) = 0;
+
+    virtual void getFromStream(std::stringstream &ss) = 0;
+
     std::weak_ptr<DTNode> parent;
     std::weak_ptr<DecisionTree> tree;
 };

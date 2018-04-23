@@ -24,6 +24,7 @@
 #include <minion/crossover_operators/CustomMinionCrossover.h>
 #include <minion/mutation_operators/DoNothingMinionMutation.h>
 #include <minion/mutation_operators/CustomMinionMutation.h>
+#include <minion/factories/decisiontree/DecisionTreeMinionGenerator.h>
 
 namespace fs = std::experimental::filesystem;
 namespace chr = std::chrono;
@@ -505,8 +506,16 @@ void State::configureFromJSON(rjs::Value &root) {
         this->fitnessAlg->configureFromJSON(root[FITNESS_ALGORITHM_CONFIG]);
     }
 
-    Log().Get(logDEBUG) << "Using neuralNetMinionGenerator for generating minions";
-    setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
+    if(root.HasMember(MINION_GEN) && root[MINION_GEN].IsString()){
+        std::string minionGen = root[MINION_GEN].GetString();
+        if(minionGen == "decision_tree"){
+            Log().Get(logDEBUG) << "Using decisionTreeMinionGenerator for generating minions";
+            setMinionGenerator(std::make_shared<DecisionTreeMinionGenerator>());
+        } else {
+            Log().Get(logDEBUG) << "Using neuralNetMinionGenerator for generating minions";
+            setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
+        }
+    }
 
     if(root.HasMember(MINION_GEN_CONFIG) && root[MINION_GEN_CONFIG].IsObject()){
         minionGenerator->configureFromJSON(root[MINION_GEN_CONFIG]);

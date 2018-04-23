@@ -1,7 +1,7 @@
 {
-"minion_generator" : "neural_net",
+"minion_generator" : "decision_tree",
 "minion_generator_config" : {
-        "architecture_hidden" : [100, 80, 60, 30, 10]
+        "max_tree_depth" : 100
     },
 "fitness" : "activity",
 "fitness_config" : {
@@ -10,58 +10,8 @@
     "health_recovered_coeff" : 7.5,
     "distance_traveled_coeff" : 0.001
     },
-"crossover_operator" : "custom",
-"crossover_operator_config" : {
-    "object_crossovers" : [{
-        "name" : "fitness_weighted_average"
-    }],
-    "senses_crossovers" : [{
-        "name" : "fitness_weighted_average"
-    }],
-    "controller_crossovers" : [
-        {
-        "name" : "pick_better",
-        "probability" : 0.3
-        },
-        {
-        "name" : "neural_net_single_layer",
-        "probability" : 0.7
-        }
-    ]
-},
-"mutation_operator" : "custom",
-"mutation_operator_config" : {
-    "object_mutations" : [{
-        "name" : "gauss_noise",
-        "config" : {
-            "radius_variance" : 3.0
-        }
-    }],
-    "senses_mutations" : [{
-        "name" : "gauss_noise",
-        "config" : {
-            "variance" : 6.0
-        }
-    }],
-    "controller_mutations" : [
-        {
-        "name" : "gauss_noise_weights",
-        "probability" : 0.3,
-        "config" : {
-            "variance" : 10.0
-            }
-        },
-        {
-        "name" : "gauss_sparse_reset",
-        "probability" : 0.7,
-        "config" : {
-            "weight_reset_probability" : 0.01,
-            "bias_reset_probability" : 0.0001,
-            "variance" : 20.0
-            }
-        }
-    ]
-},
+"crossover_operator" : "pick_better",
+"mutation_operator" : "do_nothing",
 "boundary_radius" : 1500,
 "number_of_minions" : 1,
 "print_info_every_seconds" : 60,
@@ -70,6 +20,5 @@
 "elitism" : 10,
 "save_directory" : "saved_minions",
 "food_pellets" : 10,
-"poison_pellets" : 5,
-"load_directory" : "saved_minions/generation_1"
+"poison_pellets" : 5
 }

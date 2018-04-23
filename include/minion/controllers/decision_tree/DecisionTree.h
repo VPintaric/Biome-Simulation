@@ -4,23 +4,32 @@
 
 #include <copyable/Copyable.h>
 #include <set>
+#include <persistence/JSONPersistable.h>
 #include "DTNode.h"
 
 class DTNode;
 
-class DecisionTree : public Copyable<DecisionTree> {
+class DecisionTree : public Copyable<DecisionTree>, public JSONPersistable {
 private:
-    std::shared_ptr<DTNode> root;
+    const char * N_FACTS = "n_facts";
+    const char * N_RESULTS = "n_results";
+    const char * NODES = "nodes";
+
+public:
 
     int nFacts, nResults;
 
-public:
+    std::shared_ptr<DTNode> root;
 
     DecisionTree(int nUniqueFacts, int nUniqueResults);
 
     std::shared_ptr<DecisionTree> copy() override;
 
     int evaluate(const std::set<int>& facts);
+
+    void persistToJSON(rjs::Value &root, rjs::Document::AllocatorType &alloc) override;
+
+    void initFromJSON(rjs::Value &root) override;
 };
 
 

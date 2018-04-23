@@ -16,6 +16,10 @@ public:
     std::shared_ptr<DTNode> copy() override;
 
     int evaluate(const std::set<int> &facts) override;
+
+    void appendToStream(std::stringstream &ss) override;
+
+    void getFromStream(std::stringstream &ss) override;
 };
 
 
