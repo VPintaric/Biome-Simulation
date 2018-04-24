@@ -74,4 +74,6 @@ void DTRandomizeSubtree::decisionTreeMutation(std::shared_ptr <DecisionTreeContr
 
     modifyTree(i->accDecTree->root, 0, factsDistr, accDistr);
     modifyTree(i->rotDecTree->root, 0, factsDistr, rotDistr);
+
+    i->pruneTrees();
 }
