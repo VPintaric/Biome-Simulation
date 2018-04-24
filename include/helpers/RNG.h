@@ -16,6 +16,7 @@ public:
 
     static void seed(unsigned long seed);
     static std::default_random_engine& get();
+    static float roll();
     ~RNG();
 };
 

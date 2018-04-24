@@ -20,3 +20,7 @@ void DTTerminalNode::appendToStream(std::stringstream &ss) {
 void DTTerminalNode::getFromStream(std::stringstream &ss) {
     // Nothing to do
 }
+
+int DTTerminalNode::randomEvaluate() {
+    return returnValue;
+}

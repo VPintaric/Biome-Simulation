@@ -5,6 +5,7 @@
 #include <minion/crossover_operators/controller/PickBetterControllerCrossover.h>
 #include <minion/crossover_operators/senses/PickBetterSensesCrossover.h>
 #include <minion/crossover_operators/object/PickBetterObjectCrossover.h>
+#include <minion/crossover_operators/controller/decision_tree/DTSubstSubTree.h>
 #include "minion/crossover_operators/CustomMinionCrossover.h"
 #include "minion/crossover_operators/controller/neural_net/NeuralNetSingleLayerCrossover.h"
 
@@ -181,6 +182,8 @@ void CustomMinionCrossover::addControllerCrossoverOp(rjs::Value &root) {
             crossoverOp = std::make_shared<PickBetterControllerCrossover>();
         } else if(opName == "neural_net_single_layer"){
             crossoverOp = std::make_shared<NeuralNetSingleLayerCrossover>();
+        } else if(opName == "decision_tree_subst_subtree"){
+            crossoverOp = std::make_shared<DTSubstSubTree>();
         } else {
             crossoverOp = std::make_shared<PickBetterControllerCrossover>();
         }

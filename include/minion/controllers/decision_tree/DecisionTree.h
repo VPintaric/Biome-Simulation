@@ -15,6 +15,8 @@ private:
     const char * N_RESULTS = "n_results";
     const char * NODES = "nodes";
 
+    void randomPruningRec(std::shared_ptr<DTNode> node, int d, int maxBranchDepth);
+
 public:
 
     int nFacts, nResults;
@@ -30,6 +32,8 @@ public:
     void persistToJSON(rjs::Value &root, rjs::Document::AllocatorType &alloc) override;
 
     void initFromJSON(rjs::Value &root) override;
+
+    void randomTreePruning(int maxDepth);
 };
 
 

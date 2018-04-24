@@ -4,6 +4,7 @@
 #include <minion/mutation_operators/senses/GaussNoiseSensesMutation.h>
 #include <minion/mutation_operators/controller/neural_net/NeuralNetGaussNoiseWeightsMutation.h>
 #include <minion/mutation_operators/controller/neural_net/NeuralNetSparseResetWeightsMutation.h>
+#include <minion/mutation_operators/controller/decision_tree/DTRandomizeSubtree.h>
 #include "minion/mutation_operators/CustomMinionMutation.h"
 
 void CustomMinionMutation::mutate(std::shared_ptr<Minion> m) {
@@ -153,10 +154,12 @@ void CustomMinionMutation::addControllerMutationOp(rjs::Value &root) {
     if(root.HasMember(NAME) && root[NAME].IsString()) {
         std::string opName = root[NAME].GetString();
 
-        if(opName == "gauss_noise_weights") {
+        if(opName == "neural_net_gauss_noise_weights") {
             mutationOp = std::make_shared<NeuralNetGaussNoiseWeightsMutation>();
-        } else if(opName == "gauss_sparse_reset"){
+        } else if(opName == "neural_net_gauss_sparse_reset"){
             mutationOp = std::make_shared<NeuralNetSparseResetWeightsMutation>();
+        } else if(opName == "decision_tree_rand_subtree"){
+            mutationOp = std::make_shared<DTRandomizeSubtree>();
         } else {
             mutationOp = std::make_shared<NeuralNetGaussNoiseWeightsMutation>();
         }

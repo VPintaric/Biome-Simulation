@@ -24,3 +24,8 @@ void RNG::seed(unsigned long seed) {
     }
     instance->_seed(seed);
 }
+
+float RNG::roll() {
+    static std::uniform_real_distribution<float> distr(0.f, 1.f);
+    return distr(get());
+}

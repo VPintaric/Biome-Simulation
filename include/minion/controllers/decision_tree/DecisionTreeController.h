@@ -20,17 +20,17 @@ private:
 
     std::shared_ptr<Minion> lockMinion();
 
-    std::weak_ptr<Minion> m;
-
-    std::shared_ptr<DecisionTree> accDecTree, rotDecTree;
-
-    int maxTreeDepth;
-
     void initRandomTree(std::shared_ptr<DTBranchNode> node,
                         std::uniform_int_distribution<int>& factsDistr,
                         std::uniform_int_distribution<int>& resDistr, int d);
 
+    std::weak_ptr<Minion> m;
+
+    int maxTreeDepth;
+
 public:
+    std::shared_ptr<DecisionTree> accDecTree, rotDecTree;
+
     explicit DecisionTreeController(int maxTreeDepth);
 
     void initRandom();
@@ -44,6 +44,8 @@ public:
     void persistToJSON(rjs::Value &root, rjs::Document::AllocatorType &alloc) override;
 
     void initFromJSON(rjs::Value &root) override;
+
+    void pruneTrees();
 };
 
 

@@ -1,6 +1,8 @@
 #include <minion/controllers/decision_tree/DTTerminalNode.h>
 #include "minion/controllers/decision_tree/DTBranchNode.h"
 #include <sstream>
+#include <random>
+#include <helpers/RNG.h>
 
 DTBranchNode::DTBranchNode(int factToQuery) : factToQuery(factToQuery) {
 
@@ -45,5 +47,13 @@ void DTBranchNode::getFromStream(std::stringstream &ss) {
     } else {
         right = std::make_shared<DTBranchNode>(n);
         right->getFromStream(ss);
+    }
+}
+
+int DTBranchNode::randomEvaluate() {
+    if(RNG::get()() % 2 == 0){
+        return left->randomEvaluate();
+    } else {
+        return right->randomEvaluate();
     }
 }

@@ -50,3 +50,19 @@ void DecisionTree::initFromJSON(rjs::Value &root) {
     this->root->getFromStream(ss);
 }
 
+void DecisionTree::randomPruningRec(std::shared_ptr<DTNode> node, int d, int maxBranchDepth) {
+    auto branchNode = std::dynamic_pointer_cast<DTBranchNode>(node);
+    if(branchNode != nullptr){
+        if(d == maxBranchDepth){
+            branchNode->left = std::make_shared<DTTerminalNode>(branchNode->left->randomEvaluate());
+            branchNode->right = std::make_shared<DTTerminalNode>(branchNode->right->randomEvaluate());
+        } else {
+            randomPruningRec(branchNode->left, d + 1, maxBranchDepth);
+            randomPruningRec(branchNode->right, d + 1, maxBranchDepth);
+        }
+    }
+}
+
+void DecisionTree::randomTreePruning(int maxDepth) {
+    randomPruningRec(root, 0, maxDepth - 1);
+}

@@ -203,3 +203,7 @@ void DecisionTreeController::initFromJSON(rjs::Value &root) {
     rotDecTree->initFromJSON(rotRoot);
 }
 
+void DecisionTreeController::pruneTrees() {
+    accDecTree->randomTreePruning(maxTreeDepth);
+    rotDecTree->randomTreePruning(maxTreeDepth);
+}
