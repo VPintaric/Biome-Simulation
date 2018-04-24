@@ -1,10 +1,6 @@
 #include <state/Log.h>
 #include "minion/crossover_operators/controller/neural_net/NeuralNetControllerCrossover.h"
 
-void NeuralNetControllerCrossover::configureFromJSON(rjs::Value &root) {
-    // Nothing to configure
-}
-
 std::shared_ptr<MinionController>
 NeuralNetControllerCrossover::crossover(std::shared_ptr<MinionController> p1, std::shared_ptr<MinionController> p2,
                                         float f1, float f2) {

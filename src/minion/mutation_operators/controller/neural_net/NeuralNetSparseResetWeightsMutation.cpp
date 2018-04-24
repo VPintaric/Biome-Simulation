@@ -34,8 +34,6 @@ void NeuralNetSparseResetWeightsMutation::configureFromJSON(rjs::Value &root) {
     const char * MEAN = "mean";
     const char * VARIANCE = "variance";
 
-    NeuralNetControllerMutation::configureFromJSON(root);
-
     if(root.HasMember(WEIGHT_RESET_PROBABILITY) && root[WEIGHT_RESET_PROBABILITY].IsFloat()){
         weightProbability = root[WEIGHT_RESET_PROBABILITY].GetFloat();
     }

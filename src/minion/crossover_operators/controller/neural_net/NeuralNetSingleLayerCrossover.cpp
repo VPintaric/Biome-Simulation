@@ -27,3 +27,7 @@ NeuralNetSingleLayerCrossover::neuralNetCrossover(std::shared_ptr<NeuralNetContr
 
     return child;
 }
+
+void NeuralNetSingleLayerCrossover::configureFromJSON(rjs::Value &root) {
+    // Nothing to do
+}
