@@ -85,20 +85,6 @@ add_executable(Biome_Simulation
         src/config/Config.cpp
         include/config/Config.h
         include/config/JSONConfigurable.h
-        src/minion/factories/neuralnet/crossover/NeuralNetCrossover.cpp
-        include/minion/factories/neuralnet/crossover/NeuralNetCrossover.h
-        src/minion/factories/neuralnet/mutation/NeuralNetMutation.cpp
-        include/minion/factories/neuralnet/mutation/NeuralNetMutation.h
-        src/minion/factories/neuralnet/crossover/ArithmeticAverageCrossover.cpp
-        include/minion/factories/neuralnet/crossover/ArithmeticAverageCrossover.h
-        src/minion/factories/neuralnet/mutation/GaussNoiseMutation.cpp
-        include/minion/factories/neuralnet/mutation/GaussNoiseMutation.h
-        src/minion/factories/neuralnet/mutation/SparseResetMutation.cpp
-        include/minion/factories/neuralnet/mutation/SparseResetMutation.h
-        src/minion/factories/neuralnet/crossover/InterleaveLayersCrossover.cpp
-        include/minion/factories/neuralnet/crossover/InterleaveLayersCrossover.h
-        src/minion/factories/neuralnet/crossover/PickRandomCrossover.cpp
-        include/minion/factories/neuralnet/crossover/PickRandomCrossover.h
         include/minion/fitness/Fitness.h
         src/minion/fitness/TimeLivedFitness.cpp
         include/minion/fitness/TimeLivedFitness.h
@@ -145,7 +131,27 @@ add_executable(Biome_Simulation
         src/minion/mutation_operators/controller/neural_net/NeuralNetControllerMutation.cpp
         include/minion/mutation_operators/controller/neural_net/NeuralNetControllerMutation.h
         src/minion/mutation_operators/controller/neural_net/NeuralNetGaussNoiseWeightsMutation.cpp
-        include/minion/mutation_operators/controller/neural_net/NeuralNetGaussNoiseWeightsMutation.h src/objects/Pellet.cpp include/objects/Pellet.h src/minion/mutation_operators/controller/neural_net/NeuralNetSparseResetWeightsMutation.cpp include/minion/mutation_operators/controller/neural_net/NeuralNetSparseResetWeightsMutation.h src/minion/crossover_operators/controller/neural_net/NeuralNetSingleLayerCrossover.cpp include/minion/crossover_operators/controller/neural_net/NeuralNetSingleLayerCrossover.h src/minion/controllers/decision_tree/DecisionTreeController.cpp include/minion/controllers/decision_tree/DecisionTreeController.h include/minion/controllers/decision_tree/DTConst.h src/minion/controllers/decision_tree/DecisionTree.cpp include/minion/controllers/decision_tree/DecisionTree.h include/minion/controllers/decision_tree/DTNode.h src/minion/controllers/decision_tree/DTTerminalNode.cpp include/minion/controllers/decision_tree/DTTerminalNode.h src/minion/controllers/decision_tree/DTBranchNode.cpp include/minion/controllers/decision_tree/DTBranchNode.h src/minion/factories/decisiontree/DecisionTreeMinionGenerator.cpp include/minion/factories/decisiontree/DecisionTreeMinionGenerator.h)
+        include/minion/mutation_operators/controller/neural_net/NeuralNetGaussNoiseWeightsMutation.h
+        src/objects/Pellet.cpp
+        include/objects/Pellet.h
+        src/minion/mutation_operators/controller/neural_net/NeuralNetSparseResetWeightsMutation.cpp
+        include/minion/mutation_operators/controller/neural_net/NeuralNetSparseResetWeightsMutation.h
+        src/minion/crossover_operators/controller/neural_net/NeuralNetSingleLayerCrossover.cpp
+        include/minion/crossover_operators/controller/neural_net/NeuralNetSingleLayerCrossover.h
+        src/minion/controllers/decision_tree/DecisionTreeController.cpp
+        include/minion/controllers/decision_tree/DecisionTreeController.h
+        include/minion/controllers/decision_tree/DTConst.h
+        src/minion/controllers/decision_tree/DecisionTree.cpp
+        include/minion/controllers/decision_tree/DecisionTree.h
+        include/minion/controllers/decision_tree/DTNode.h
+        src/minion/controllers/decision_tree/DTTerminalNode.cpp
+        include/minion/controllers/decision_tree/DTTerminalNode.h
+        src/minion/controllers/decision_tree/DTBranchNode.cpp
+        include/minion/controllers/decision_tree/DTBranchNode.h
+        src/minion/factories/decisiontree/DecisionTreeMinionGenerator.cpp
+        include/minion/factories/decisiontree/DecisionTreeMinionGenerator.h
+        src/minion/crossover_operators/controller/decision_tree/DecisionTreeControllerCrossover.cpp
+        src/minion/crossover_operators/controller/decision_tree/DecisionTreeControllerCrossover.h)
 
 message(ERROR " ${SDL2_INCLUDE_DIRS}")
 message(ERROR " ${GLEW_INCLUDE_DIRS}")
