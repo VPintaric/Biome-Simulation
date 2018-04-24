@@ -6,7 +6,7 @@
 #include <minion/crossover_operators/senses/PickBetterSensesCrossover.h>
 #include <minion/crossover_operators/object/PickBetterObjectCrossover.h>
 #include "minion/crossover_operators/CustomMinionCrossover.h"
-#include "controller/neural_net/NeuralNetSingleLayerCrossover.h"
+#include "minion/crossover_operators/controller/neural_net/NeuralNetSingleLayerCrossover.h"
 
 CustomMinionCrossover::CustomMinionCrossover() = default;
 

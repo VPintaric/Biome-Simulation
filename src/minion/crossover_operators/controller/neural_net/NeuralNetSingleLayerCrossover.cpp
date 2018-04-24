@@ -1,5 +1,5 @@
 #include <helpers/RNG.h>
-#include "NeuralNetSingleLayerCrossover.h"
+#include "minion/crossover_operators/controller/neural_net/NeuralNetSingleLayerCrossover.h"
 
 std::shared_ptr<NeuralNetController>
 NeuralNetSingleLayerCrossover::neuralNetCrossover(std::shared_ptr<NeuralNetController> p1,
