@@ -151,7 +151,7 @@ add_executable(Biome_Simulation
         src/minion/factories/decisiontree/DecisionTreeMinionGenerator.cpp
         include/minion/factories/decisiontree/DecisionTreeMinionGenerator.h
         src/minion/crossover_operators/controller/decision_tree/DecisionTreeControllerCrossover.cpp
-        src/minion/crossover_operators/controller/decision_tree/DecisionTreeControllerCrossover.h)
+        include/minion/crossover_operators/controller/decision_tree/DecisionTreeControllerCrossover.h src/minion/mutation_operators/controller/decision_tree/DecisionTreeControllerMutation.cpp include/minion/mutation_operators/controller/decision_tree/DecisionTreeControllerMutation.h)
 
 message(ERROR " ${SDL2_INCLUDE_DIRS}")
 message(ERROR " ${GLEW_INCLUDE_DIRS}")
