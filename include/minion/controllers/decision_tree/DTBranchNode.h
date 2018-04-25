@@ -5,10 +5,9 @@
 #include "DTNode.h"
 
 class DTBranchNode : public DTNode {
-private:
+public:
     int factToQuery;
 
-public:
     std::shared_ptr<DTNode> left, right;
 
     explicit DTBranchNode(int factToQuery);

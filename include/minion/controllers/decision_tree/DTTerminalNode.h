@@ -5,10 +5,9 @@
 #include "DTNode.h"
 
 class DTTerminalNode : public DTNode {
-private:
+public:
     int returnValue;
 
-public:
     explicit DTTerminalNode(int returnValue);
 
     std::shared_ptr<DTNode> copy() override;

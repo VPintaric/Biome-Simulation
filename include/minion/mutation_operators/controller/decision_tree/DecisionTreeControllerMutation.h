@@ -4,6 +4,8 @@
 
 #include <minion/mutation_operators/controller/MinionControllerMutation.h>
 
+class DecisionTreeController;
+
 class DecisionTreeControllerMutation : public MinionControllerMutation {
 public:
     void mutate(std::shared_ptr<MinionController> i) override;

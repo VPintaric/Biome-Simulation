@@ -1,7 +1,7 @@
 {
 "minion_generator" : "decision_tree",
 "minion_generator_config" : {
-        "max_tree_depth" : 40
+        "max_tree_depth" : 20
     },
 "fitness" : "activity",
 "fitness_config" : {
@@ -22,9 +22,9 @@
         {
         "name" : "decision_tree_subst_subtree",
         "config" : {
-            "p_modify_better_parent" : 0.75,
+            "p_modify_better_parent" : 0.5,
             "min_depth_cross_point" : 1,
-            "max_depth_cross_point" : 20
+            "max_depth_cross_point" : 10
             }
         }
     ]
@@ -46,10 +46,19 @@
     "controller_mutations" : [
         {
         "name" : "decision_tree_rand_subtree",
+        "probability" : 0.25,
         "config" : {
             "min_depth" : 1,
-            "max_depth" : 10,
-            "subtree_max_depth" : 10
+            "max_depth" : 15,
+            "subtree_max_depth" : 5
+            }
+        },
+        {
+        "name" : "decision_tree_mutate_nodes",
+        "probability" : 0.75,
+        "config" : {
+            "min_depth" : 2,
+            "probability_mutate_node" : 0.0001
             }
         }
     ]
@@ -62,6 +71,5 @@
 "elitism" : 10,
 "save_directory" : "saved_minions",
 "food_pellets" : 10,
-"poison_pellets" : 5,
-"load_directory" : "saved_minions/generation_2"
+"poison_pellets" : 5
 }
