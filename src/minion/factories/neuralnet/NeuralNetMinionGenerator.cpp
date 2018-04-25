@@ -2,13 +2,8 @@
 #include <minion/senses/simple/SimpleMinionSenses.h>
 #include <state/State.h>
 #include <state/Log.h>
-#include <minion/factories/neuralnet/crossover/ArithmeticAverageCrossover.h>
-#include <minion/factories/neuralnet/crossover/InterleaveLayersCrossover.h>
-#include <minion/factories/neuralnet/crossover/PickRandomCrossover.h>
 #include <helpers/RNG.h>
-#include "minion/factories/neuralnet/NeuralNetMinionGenerator.h"
-#include "minion/factories/neuralnet/mutation/GaussNoiseMutation.h"
-#include "minion/factories/neuralnet/mutation/SparseResetMutation.h"
+#include <minion/factories/neuralnet/NeuralNetMinionGenerator.h>
 
 NeuralNetMinionGenerator::NeuralNetMinionGenerator(std::vector<int> nnHiddenLayers)
                                                 : nnHiddenLayers(nnHiddenLayers){

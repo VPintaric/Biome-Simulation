@@ -3,6 +3,7 @@
 #include <random>
 #include <chrono>
 #include <constants/SimulationConstants.h>
+#include <algorithm>
 #include <helpers/MathHelpers.h>
 #include "glm/gtc/constants.hpp"
 #include "glm/gtx/vector_angle.hpp"

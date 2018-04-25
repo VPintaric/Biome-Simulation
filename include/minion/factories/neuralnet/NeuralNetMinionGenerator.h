@@ -4,8 +4,6 @@
 
 #include "minion/factories/MinionGenerator.h"
 #include <random>
-#include <minion/factories/neuralnet/mutation/NeuralNetMutation.h>
-#include <minion/factories/neuralnet/crossover/NeuralNetCrossover.h>
 
 class NeuralNetMinionGenerator : public MinionGenerator {
 public:
