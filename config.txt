@@ -1,7 +1,7 @@
 {
-"minion_generator" : "decision_tree",
+"minion_generator" : "neural_net",
 "minion_generator_config" : {
-        "max_tree_depth" : 15
+        "architecture_hidden" : [80]
     },
 "fitness" : "activity",
 "fitness_config" : {
@@ -20,12 +20,12 @@
     }],
     "controller_crossovers" : [
         {
-        "name" : "decision_tree_subst_subtree",
-        "config" : {
-            "p_modify_better_parent" : 0.5,
-            "min_depth_cross_point" : 1,
-            "max_depth_cross_point" : 10
-            }
+        "name" : "pick_better",
+        "probability" : 0.3
+        },
+        {
+        "name" : "neural_net_single_layer",
+        "probability" : 0.7
         }
     ]
 },
@@ -45,20 +45,19 @@
     }],
     "controller_mutations" : [
         {
-        "name" : "decision_tree_rand_subtree",
-        "probability" : 0.25,
+        "name" : "gauss_noise_weights",
+        "probability" : 0.9,
         "config" : {
-            "min_depth" : 1,
-            "max_depth" : 10,
-            "subtree_max_depth" : 5
+            "variance" : 20.0
             }
         },
         {
-        "name" : "decision_tree_mutate_nodes",
-        "probability" : 0.75,
+        "name" : "gauss_sparse_reset",
+        "probability" : 0.1,
         "config" : {
-            "min_depth" : 2,
-            "probability_mutate_node" : 0.0001
+            "weight_reset_probability" : 0.05,
+            "bias_reset_probability" : 0.05,
+            "variance" : 30.0
             }
         }
     ]
@@ -66,7 +65,7 @@
 "boundary_radius" : 1500,
 "number_of_minions" : 30,
 "print_info_every_seconds" : 60,
-"persist_minions_every_seconds" : 300,
+"persist_minions_every_seconds" : 1800,
 "evolution_type" : "generational",
 "elitism" : 10,
 "save_directory" : "saved_minions",

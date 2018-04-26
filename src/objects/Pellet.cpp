@@ -6,7 +6,7 @@
 
 Pellet::Pellet() {
     setRadius(SimConst::PELLET_RADIUS);
-    model = Renderer::getInstance().getModel(SimConst::HOLLOW_CIRCLE_MODEL_NAME);
+    model = Renderer::getInstance().getModel(SimConst::FULL_CIRCLE_MODEL_NAME);
 }
 
 void Pellet::draw() {

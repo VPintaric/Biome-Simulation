@@ -22,6 +22,12 @@ namespace ModelCreator {
     };
 
     const std::vector<GLfloat> HOLLOW_CIRCLE_COLORS(HOLLOW_CIRCLE_VERTICES.size(), 1.f);
+
+    const std::vector<GLfloat> FULL_CIRCLE_VERTICES = {
+#include "constants/full_circle_vertices.txt"
+    };
+
+    const std::vector<GLfloat> FULL_CIRCLE_COLORS(FULL_CIRCLE_VERTICES.size(), 1.f);
 };
 
 

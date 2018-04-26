@@ -21,4 +21,7 @@ void ModelCreator::createModels() {
 
     m = std::make_shared<ColorModel>(HOLLOW_CIRCLE_VERTICES, HOLLOW_CIRCLE_COLORS);
     r.addNewModel(SimConst::HOLLOW_CIRCLE_MODEL_NAME, m);
+
+    m = std::make_shared<ColorModel>(FULL_CIRCLE_VERTICES, FULL_CIRCLE_COLORS, GL_POLYGON);
+    r.addNewModel(SimConst::FULL_CIRCLE_MODEL_NAME, m);
 }
