@@ -1,7 +1,7 @@
 {
 "minion_generator" : "decision_tree",
 "minion_generator_config" : {
-        "max_tree_depth" : 20
+        "max_tree_depth" : 15
     },
 "fitness" : "activity",
 "fitness_config" : {
@@ -49,7 +49,7 @@
         "probability" : 0.25,
         "config" : {
             "min_depth" : 1,
-            "max_depth" : 15,
+            "max_depth" : 10,
             "subtree_max_depth" : 5
             }
         },
@@ -71,6 +71,5 @@
 "elitism" : 10,
 "save_directory" : "saved_minions",
 "food_pellets" : 10,
-"poison_pellets" : 5,
-"load_directory" : "saved_minions/generation_6"
+"poison_pellets" : 5
 }
