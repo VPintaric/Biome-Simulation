@@ -17,6 +17,8 @@ private:
 
     void randomPruningRec(std::shared_ptr<DTNode> node, int d, int maxBranchDepth);
 
+    int getDepthRec(std::shared_ptr<DTNode> node, int d);
+
 public:
 
     int nFacts, nResults;
@@ -34,6 +36,8 @@ public:
     void initFromJSON(rjs::Value &root) override;
 
     void randomTreePruning(int maxDepth);
+
+    int getDepth();
 };
 
 

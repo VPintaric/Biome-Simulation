@@ -66,3 +66,17 @@ void DecisionTree::randomPruningRec(std::shared_ptr<DTNode> node, int d, int max
 void DecisionTree::randomTreePruning(int maxDepth) {
     randomPruningRec(root, 0, maxDepth - 1);
 }
+
+int DecisionTree::getDepth() {
+    return getDepthRec(root, 0);
+}
+
+int DecisionTree::getDepthRec(std::shared_ptr<DTNode> node, int d) {
+    auto branchNode = std::dynamic_pointer_cast<DTBranchNode>(node);
+
+    if(branchNode != nullptr){
+        return std::max(getDepthRec(branchNode->left, d + 1), getDepthRec(branchNode->right, d + 1));
+    } else {
+        return d;
+    }
+}

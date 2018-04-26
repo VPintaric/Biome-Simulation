@@ -207,3 +207,8 @@ void DecisionTreeController::pruneTrees() {
     accDecTree->randomTreePruning(maxTreeDepth);
     rotDecTree->randomTreePruning(maxTreeDepth);
 }
+
+void DecisionTreeController::printDepth() {
+    Log().Get(logINFO) << "Acceleration control tree depth: " << accDecTree->getDepth();
+    Log().Get(logINFO) << "Rotation control tree depth: " << rotDecTree->getDepth();
+}

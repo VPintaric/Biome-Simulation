@@ -46,6 +46,8 @@ public:
     void initFromJSON(rjs::Value &root) override;
 
     void pruneTrees();
+
+    void printDepth();
 };
 
 
