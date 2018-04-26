@@ -42,7 +42,7 @@ public:
 
     void control(float deltaT);
 
-    void draw();
+    void draw(bool drawSenses = true);
 
     float getMaxLife() const;
 
@@ -88,24 +88,21 @@ public:
 
     void setHealthRecovered(float healthRecovered);
 
-private:
-
-    std::shared_ptr<MinionObject> object;
-    std::shared_ptr<MinionSenses> senses;
-    std::shared_ptr<MinionController> controller;
-
-    int id;
-    float maxLife, minLife, life, decay;
-    bool dead, decayed;
-
-    float timeLived, distanceTraveled, damageDealt, healthRecovered;
-    float fitness;
-public:
     float getFitness() const;
 
     void setFitness(float fitness);
 
 private:
+    std::shared_ptr<MinionObject> object;
+    std::shared_ptr<MinionSenses> senses;
+
+    std::shared_ptr<MinionController> controller;
+    int id;
+    float maxLife, minLife, life, decay;
+
+    bool dead, decayed;
+    float timeLived, distanceTraveled, damageDealt, healthRecovered;
+    float fitness;
 
     const char * JSON_OBJECT = "object";
     const char * JSON_SENSES = "senses";

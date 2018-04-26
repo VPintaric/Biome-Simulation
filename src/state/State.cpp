@@ -40,7 +40,7 @@ State::State() : nextMinionId(1), currentBestMinion(nullptr),
                 nMinions(SimConst::DEFAULT_NUMBER_OF_MINIONS), nElites(1), printEveryRealTime(30000),
                 persistMinionsEveryRealTime(300000), nextPersistTimestamp(persistMinionsEveryRealTime),
                 nextPrintTimestamp(printEveryRealTime), useGenerationalGA(true),
-                nFoodPellets(0), nPoisonPellets(0){
+                nFoodPellets(0), nPoisonPellets(0), drawSenses(true){
     Log().Get(logDEBUG) << "Creating new state instance";
     shouldEndProgramFlag = false;
     lastCalledTimestamp = chr::duration_cast<chr::milliseconds>(chr::system_clock::now().time_since_epoch()).count();
@@ -178,7 +178,7 @@ void State::draw() {
 
     for(const auto& m : minions){
         if(!m->isDecayed()){
-            m->draw();
+            m->draw(drawSenses);
         }
     }
     boundary->draw();
@@ -689,4 +689,12 @@ const std::vector< std::shared_ptr<Pellet> >& State::getFoodPellets() const {
 
 const std::vector< std::shared_ptr<Pellet> >& State::getPoisonPellets() const {
     return poisonPellets;
+}
+
+bool State::isDrawSenses() const {
+    return drawSenses;
+}
+
+void State::setDrawSenses(bool drawSenses) {
+    State::drawSenses = drawSenses;
 }

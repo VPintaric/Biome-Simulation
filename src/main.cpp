@@ -108,6 +108,8 @@ void processInput(State &state) {
     SDL_Event event{};
 
     Camera &c = Camera::getInstance();
+    State& s = State::getInstance();
+
     while(SDL_PollEvent(&event)){
         if(event.type == SDL_WINDOWEVENT) {
             if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
@@ -173,6 +175,9 @@ void processInput(State &state) {
                         Log().Get(logINFO) << "Enabling frame rendering (slows down the simulation)";
                     }
                     renderFrames = !renderFrames;
+                    break;
+                case SDLK_y:
+                    s.setDrawSenses(!s.isDrawSenses());
                     break;
                 default:
                     break;

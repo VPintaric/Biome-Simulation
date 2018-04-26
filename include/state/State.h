@@ -77,6 +77,10 @@ public:
 
     void initializePellet(std::shared_ptr<Pellet> pellet);
 
+    bool isDrawSenses() const;
+
+    void setDrawSenses(bool drawSenses);
+
 private:
     std::shared_ptr<MinionGenerator> minionGenerator;
 
@@ -104,7 +108,7 @@ private:
 
     int nextPersistedGeneration;
 
-    bool shouldEndProgramFlag;
+    bool shouldEndProgramFlag, drawSenses;
 
     int nextMinionId;
 

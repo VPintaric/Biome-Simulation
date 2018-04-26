@@ -100,9 +100,9 @@ void Minion::control(float deltaT) {
     }
 }
 
-void Minion::draw() {
+void Minion::draw(bool drawSenses) {
     object->draw();
-    if(!isDead()){
+    if(drawSenses && !isDead()){
         senses->draw();
     }
 }

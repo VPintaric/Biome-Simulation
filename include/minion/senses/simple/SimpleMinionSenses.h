@@ -35,7 +35,7 @@ private:
     std::shared_ptr<Minion> lockMinion();
 
     const float COLOR_ALPHA = 0.04f;
-    const int N_SIGHT_LINE_CHECK_POINTS = 10;
+    const int N_SIGHT_LINE_CHECK_POINTS = 50;
 
     const float NOTHING_TYPE = 0.f;
     const float DEAD_MINION_TYPE = 50.f;
