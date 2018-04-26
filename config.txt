@@ -20,12 +20,12 @@
     }],
     "controller_crossovers" : [
         {
-        "name" : "pick_better",
-        "probability" : 0.3
+        "name" : "neural_net_layer_weights",
+        "probability" : 0.7
         },
         {
         "name" : "neural_net_single_layer",
-        "probability" : 0.7
+        "probability" : 0.3
         }
     ]
 },
