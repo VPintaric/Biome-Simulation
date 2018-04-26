@@ -305,7 +305,7 @@ void State::initializeNextGeneration() {
     newGeneration.insert(newGeneration.begin(), bestInCurrentGen.begin(), bestInCurrentGen.end());
 
     for(int i = 0; i < nMinions - nElites; i++){
-        auto parents = selectionAlg->selectParents(bestInCurrentGen);
+        auto parents = selectionAlg->selectParents(minions);
         auto m = crossover->crossover(parents.first, parents.second);
         mutation->mutate(m);
         newGeneration.push_back(m);
