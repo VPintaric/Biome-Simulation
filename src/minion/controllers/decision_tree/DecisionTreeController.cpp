@@ -62,13 +62,13 @@ std::set<int> DecisionTreeController::preprocess(std::vector<float> &senseData) 
     int sightLine = 0;
     while(sightLine < leftSightLines){
         auto detectedType = senseData[sightLine * 5 + 1];
-        if(Math::approx(detectedType, 50.f)){
+        if(Math::approx(detectedType, 2.5f)){
             facts.insert(DTConst::FACT_BODY_LEFT);
-        } else if(Math::approx(detectedType, 100.f)) {
+        } else if(Math::approx(detectedType, 5.f)) {
             facts.insert(DTConst::FACT_MINION_LEFT);
-        } else if(Math::approx(detectedType, 150.f)) {
+        } else if(Math::approx(detectedType, 7.5f)) {
             facts.insert(DTConst::FACT_PELLET_LEFT);
-        } else if(Math::approx(detectedType, 200.f)) {
+        } else if(Math::approx(detectedType, 10.f)) {
             facts.insert(DTConst::FACT_BOUNDARY_LEFT);
         }
         ++sightLine;
@@ -76,13 +76,13 @@ std::set<int> DecisionTreeController::preprocess(std::vector<float> &senseData) 
 
     while(sightLine < leftSightLines + frontSightLines){
         auto detectedType = senseData[sightLine * 5 + 1];
-        if(Math::approx(detectedType, 50.f)){
+        if(Math::approx(detectedType, 2.5f)){
             facts.insert(DTConst::FACT_BODY_FRONT);
-        } else if(Math::approx(detectedType, 100.f)) {
+        } else if(Math::approx(detectedType, 5.f)) {
             facts.insert(DTConst::FACT_MINION_FRONT);
-        } else if(Math::approx(detectedType, 150.f)) {
+        } else if(Math::approx(detectedType, 7.5f)) {
             facts.insert(DTConst::FACT_PELLET_FRONT);
-        } else if(Math::approx(detectedType, 200.f)) {
+        } else if(Math::approx(detectedType, 10.f)) {
             facts.insert(DTConst::FACT_BOUNDARY_FRONT);
         }
         ++sightLine;
@@ -90,13 +90,13 @@ std::set<int> DecisionTreeController::preprocess(std::vector<float> &senseData) 
 
     while(sightLine < nSightLines){
         auto detectedType = senseData[sightLine * 5 + 1];
-        if(Math::approx(detectedType, 50.f)){
+        if(Math::approx(detectedType, 2.5f)){
             facts.insert(DTConst::FACT_BODY_RIGHT);
-        } else if(Math::approx(detectedType, 100.f)) {
+        } else if(Math::approx(detectedType, 5.f)) {
             facts.insert(DTConst::FACT_MINION_RIGHT);
-        } else if(Math::approx(detectedType, 150.f)) {
+        } else if(Math::approx(detectedType, 7.5f)) {
             facts.insert(DTConst::FACT_PELLET_RIGHT);
-        } else if(Math::approx(detectedType, 200.f)) {
+        } else if(Math::approx(detectedType, 10.f)) {
             facts.insert(DTConst::FACT_BOUNDARY_RIGHT);
         }
         ++sightLine;

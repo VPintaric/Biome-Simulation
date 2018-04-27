@@ -27,11 +27,9 @@ std::shared_ptr<NeuralNet> NeuralNetController::getNeuralNet() {
 
 std::vector<float> NeuralNetController::controlMinion(std::vector<float> senseData) {
     Eigen::MatrixXf x(1, senseData.size());
-
     for(int i = 0; i < senseData.size(); i++){
         x(0, i) = senseData[i];
     }
-
     x = nn->forward(x);
 
     return std::vector<float>({x(0, 0), x(0, 1)});

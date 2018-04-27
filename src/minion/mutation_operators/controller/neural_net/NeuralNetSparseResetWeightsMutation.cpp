@@ -26,6 +26,8 @@ void NeuralNetSparseResetWeightsMutation::neuralNetMutation(std::shared_ptr<Neur
             }
         }
     }
+
+    nn->clampWeights();
 }
 
 void NeuralNetSparseResetWeightsMutation::configureFromJSON(rjs::Value &root) {

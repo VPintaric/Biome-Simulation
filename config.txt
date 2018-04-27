@@ -1,7 +1,7 @@
 {
 "minion_generator" : "neural_net",
 "minion_generator_config" : {
-        "architecture_hidden" : [80]
+        "architecture_hidden" : [200]
     },
 "fitness" : "activity",
 "fitness_config" : {
@@ -48,7 +48,7 @@
         "name" : "gauss_noise_weights",
         "probability" : 0.9,
         "config" : {
-            "variance" : 20.0
+            "variance" : 5.0
             }
         },
         {
@@ -57,7 +57,7 @@
         "config" : {
             "weight_reset_probability" : 0.05,
             "bias_reset_probability" : 0.05,
-            "variance" : 30.0
+            "variance" : 10.0
             }
         }
     ]

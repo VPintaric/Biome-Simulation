@@ -3,6 +3,7 @@
 #include <state/Log.h>
 #include <state/State.h>
 #include <helpers/RNG.h>
+#include <helpers/MathHelpers.h>
 #include "minion/controllers/neural_net/NeuralNet.h"
 
 NeuralNet::NeuralNet(const std::vector<int> &layers, std::function<float(float)> activation) :
@@ -45,7 +46,7 @@ Eigen::MatrixXf NeuralNet::forward(Eigen::MatrixXf input) {
 }
 
 void NeuralNet::initRandom() {
-    std::uniform_real_distribution<float> distr(-100.f, 100.f);
+    std::uniform_real_distribution<float> distr(-WEIGHT_LIMIT, WEIGHT_LIMIT);
 
     for(int layer = 0; layer < weights.size(); layer++){
         for(int i = 0; i < weights[layer]->rows(); i++){
@@ -150,4 +151,15 @@ std::shared_ptr<NeuralNet> NeuralNet::copy() {
     }
 
     return newCopy;
+}
+
+void NeuralNet::clampWeights() {
+    for(int layer = 0; layer < weights.size(); layer++){
+        for(int i = 0; i < weights[layer]->rows(); i++){
+            for(int j = 0; j < weights[layer]->cols(); j++){
+                weights[layer]->operator()(i, j) = Math::clamp(weights[layer]->operator()(i, j), -WEIGHT_LIMIT, WEIGHT_LIMIT);
+                bias[layer]->operator()(0, j) = Math::clamp(bias[layer]->operator()(0, j), -BIAS_LIMIT, BIAS_LIMIT);
+            }
+        }
+    }
 }

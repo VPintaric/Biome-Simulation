@@ -18,6 +18,9 @@ public:
     std::vector<std::shared_ptr<Eigen::MatrixXf> > weights;
     std::vector<std::shared_ptr<Eigen::MatrixXf> > bias;
 
+    const float WEIGHT_LIMIT = 20.f;
+    const float BIAS_LIMIT = 100.f;
+
     std::function<float(float)> activation;
 
     NeuralNet(const std::vector<int> &layers, std::function<float(float)> activation);
@@ -34,9 +37,12 @@ public:
 
     std::shared_ptr<NeuralNet> copy() override;
 
+    void clampWeights();
+
 private:
     const char * JSON_LAYERS = "layers";
     const char * JSON_WEIGHTS = "weights";
+
     const char * JSON_BIAS = "bias";
 };
 

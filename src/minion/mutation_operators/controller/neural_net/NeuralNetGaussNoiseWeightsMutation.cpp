@@ -33,4 +33,6 @@ void NeuralNetGaussNoiseWeightsMutation::neuralNetMutation(std::shared_ptr<Neura
             }
         }
     }
+
+    nn->clampWeights();
 }
