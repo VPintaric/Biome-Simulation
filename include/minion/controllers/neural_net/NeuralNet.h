@@ -19,7 +19,7 @@ public:
     std::vector<std::shared_ptr<Eigen::MatrixXf> > bias;
 
     const float WEIGHT_LIMIT = 20.f;
-    const float BIAS_LIMIT = 100.f;
+    const float BIAS_LIMIT = 50.f;
 
     std::function<float(float)> activation;
 

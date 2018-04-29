@@ -76,9 +76,9 @@ public:
 
     void setId(int id);
 
-    float getDistanceTraveled() const;
+    float getDistanceTraveledPoints() const;
 
-    void setDistanceTraveled(float distanceTraveled);
+    void setDistanceTraveledPoints(float distanceTraveledPoints);
 
     float getDamageDealt() const;
 
@@ -101,8 +101,11 @@ private:
     float maxLife, minLife, life, decay;
 
     bool dead, decayed;
-    float timeLived, distanceTraveled, damageDealt, healthRecovered;
+    float timeLived, distanceTraveledPoints, damageDealt, healthRecovered;
     float fitness;
+
+    glm::vec2 lastSavedPosition;
+    float lastSavedPositionAge;
 
     const char * JSON_OBJECT = "object";
     const char * JSON_SENSES = "senses";

@@ -1,8 +1,10 @@
 #include <constants/SimulationConstants.h>
 #include <state/Log.h>
+#include <helpers/MathHelpers.h>
 #include "minion/Minion.h"
 
-Minion::Minion() : dead(false), decayed(false), id(0), timeLived(0.f){
+Minion::Minion() : dead(false), decayed(false), id(0), timeLived(0.f), lastSavedPosition(-10000.f, -10000.f),
+                    lastSavedPositionAge(0.f){
 
 };
 
@@ -48,6 +50,9 @@ void Minion::initFromJSON(rjs::Value &root) {
 }
 
 void Minion::update(float deltaT) {
+    const float MAX_LAST_SAVED_POSITION_AGE = 1.f;
+    const float MAX_DISTANCE_TRAVELED_POINTS_ADDED = 150.f;
+
     if(!isDead()){
         setLife(life - deltaT * decay);
     } else {
@@ -66,12 +71,18 @@ void Minion::update(float deltaT) {
         setDecayed(true);
     }
 
-    auto posBefore = object->getPos();
     object->update(deltaT);
-    auto posAfter = object->getPos();
 
     if(!isDead()){
-        setDistanceTraveled(getDistanceTraveled() + glm::length(posAfter - posBefore));
+        lastSavedPositionAge += deltaT;
+        if(lastSavedPositionAge >= MAX_LAST_SAVED_POSITION_AGE){
+            float distance = glm::length(lastSavedPosition - object->getPos());
+            distance = Math::clamp(distance, 0.f, MAX_DISTANCE_TRAVELED_POINTS_ADDED);
+            Log().Get(logDEBUG) << distance;
+            setDistanceTraveledPoints(getDistanceTraveledPoints() + distance);
+            lastSavedPosition = object->getPos();
+            lastSavedPositionAge = 0.f;
+        }
     }
 }
 
@@ -211,12 +222,12 @@ void Minion::setId(int id){
     this->id = id;
 }
 
-float Minion::getDistanceTraveled() const {
-    return distanceTraveled;
+float Minion::getDistanceTraveledPoints() const {
+    return distanceTraveledPoints;
 }
 
-void Minion::setDistanceTraveled(float distanceTraveled) {
-    Minion::distanceTraveled = distanceTraveled;
+void Minion::setDistanceTraveledPoints(float distanceTraveledPoints) {
+    Minion::distanceTraveledPoints = distanceTraveledPoints;
 }
 
 float Minion::getDamageDealt() const {

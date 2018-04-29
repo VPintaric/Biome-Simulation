@@ -44,5 +44,6 @@ void ActivityFitness::configureFromJSON(rjs::Value &root) {
 
 void ActivityFitness::calculateFitness(std::shared_ptr<Minion> m) {
     m->setFitness(timeLivedCoeff * m->getTimeLived() + damageDealtCoeff * m->getDamageDealt() +
-                    healthRecoveredCoeff * m->getHealthRecovered() + distanceTraveledCoeff * m->getDistanceTraveled());
+                    healthRecoveredCoeff * m->getHealthRecovered() + distanceTraveledCoeff *
+                                                                             m->getDistanceTraveledPoints());
 }

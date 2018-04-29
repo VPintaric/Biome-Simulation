@@ -81,7 +81,7 @@ void State::initializeMinion(Minion &minion) {
 
     minion.setTimeLived(0.f);
     minion.setDamageDealt(0.f);
-    minion.setDistanceTraveled(0.f);
+    minion.setDistanceTraveledPoints(0.f);
     minion.setHealthRecovered(0.f);
     minion.setLife(minion.getMaxLife());
     minion.setId(nextMinionId++);
@@ -376,7 +376,7 @@ void State::update(float dt) {
                 currentBestMinion->setFitness(m->getFitness());
                 Log().Get(logINFO) << "New best fitness minion: " << m->getFitness();
                 Log().Get(logINFO) << "   Time lived: " << m->getTimeLived();
-                Log().Get(logINFO) << "   Distance traveled: " << m->getDistanceTraveled();
+                Log().Get(logINFO) << "   Distance traveled: " << m->getDistanceTraveledPoints();
                 Log().Get(logINFO) << "   Damage dealt: " << m->getDamageDealt();
                 Log().Get(logINFO) << "   Health recovered: " << m->getHealthRecovered();
             }
