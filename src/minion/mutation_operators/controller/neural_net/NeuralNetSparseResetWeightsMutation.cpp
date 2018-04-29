@@ -7,20 +7,16 @@ NeuralNetSparseResetWeightsMutation::NeuralNetSparseResetWeightsMutation() : wei
 
 }
 
-void NeuralNetSparseResetWeightsMutation::neuralNetMutation(std::shared_ptr<NeuralNetController> i) {
-    auto nn = i->getNeuralNet();
-
-    std::uniform_real_distribution<float> coinFlip(0.f, 1.f);
-
+void NeuralNetSparseResetWeightsMutation::nnMut(std::shared_ptr<NeuralNet> nn) {
     for(int layer = 0; layer < nn->weights.size(); layer++){
         auto w = nn->weights[layer];
         auto b = nn->bias[layer];
         for(int c = 0; c < w->cols(); c++){
-            if(coinFlip(RNG::get()) < biasProbability){
+            if(RNG::roll() < biasProbability){
                 b->operator()(0, c) = distr(RNG::get());
             }
             for(int r = 0; r < w->rows(); r++){
-                if(coinFlip(RNG::get()) < weightProbability){
+                if(RNG::roll() < weightProbability){
                     w->operator()(r, c) = distr(RNG::get());
                 }
             }
@@ -28,6 +24,11 @@ void NeuralNetSparseResetWeightsMutation::neuralNetMutation(std::shared_ptr<Neur
     }
 
     nn->clampWeights();
+}
+
+void NeuralNetSparseResetWeightsMutation::neuralNetMutation(std::shared_ptr<NeuralNetController> i) {
+    nnMut(i->getAccNeuralNet());
+    nnMut(i->getRotNeuralNet());
 }
 
 void NeuralNetSparseResetWeightsMutation::configureFromJSON(rjs::Value &root) {

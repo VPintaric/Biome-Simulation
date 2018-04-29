@@ -26,7 +26,8 @@ std::shared_ptr<Minion> NeuralNetMinionGenerator::generateRandomMinion() {
     object->setSkinColor(glm::vec4(colorDistr(RNG::get()), colorDistr(RNG::get()), colorDistr(RNG::get()), 1.f));
     object->setRadius(radiusDistr(RNG::get()));
 
-    controller->getNeuralNet()->initRandom();
+    controller->getAccNeuralNet()->initRandom();
+    controller->getRotNeuralNet()->initRandom();
 
     senses->setMaxSenseDistance(senseDistDistr(RNG::get()));
 

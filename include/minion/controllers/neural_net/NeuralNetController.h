@@ -17,7 +17,9 @@ public:
 
     std::vector<float> controlMinion(std::vector<float> senseData) override;
 
-    std::shared_ptr<NeuralNet> getNeuralNet();
+    std::shared_ptr<NeuralNet> getAccNeuralNet();
+
+    std::shared_ptr<NeuralNet> getRotNeuralNet();
 
     void persistToJSON(rjs::Value &root, rjs::Document::AllocatorType &alloc) override;
 
@@ -31,13 +33,14 @@ private:
 
     NeuralNetController();
 
-    const int OUTPUT_VARS = 2;
-
-    std::shared_ptr<NeuralNet> nn;
+    std::shared_ptr<NeuralNet> accNN, rotNN;
 
     int inputDataSize;
 
-    const char * JSON_NEURAL_NET = "neural_net";
+    const char * JSON_ACC_NEURAL_NET = "acceleration_neural_net";
+    const char * JSON_ROT_NEURAL_NET = "rotation_neural_net";
+
+    std::shared_ptr<Minion> minion;
 };
 
 

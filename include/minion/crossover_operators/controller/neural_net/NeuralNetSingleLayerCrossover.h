@@ -11,6 +11,9 @@ public:
                        float f2) override;
 
     void configureFromJSON(rjs::Value &root) override;
+
+private:
+    void nnCross(std::shared_ptr<NeuralNet> child, std::shared_ptr<NeuralNet> worse);
 };
 
 

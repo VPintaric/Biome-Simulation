@@ -78,7 +78,6 @@ void Minion::update(float deltaT) {
         if(lastSavedPositionAge >= MAX_LAST_SAVED_POSITION_AGE){
             float distance = glm::length(lastSavedPosition - object->getPos());
             distance = Math::clamp(distance, 0.f, MAX_DISTANCE_TRAVELED_POINTS_ADDED);
-            Log().Get(logDEBUG) << distance;
             setDistanceTraveledPoints(getDistanceTraveledPoints() + distance);
             lastSavedPosition = object->getPos();
             lastSavedPositionAge = 0.f;

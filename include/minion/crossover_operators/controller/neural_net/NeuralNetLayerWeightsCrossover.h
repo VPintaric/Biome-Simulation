@@ -12,6 +12,8 @@ public:
     neuralNetCrossover(std::shared_ptr<NeuralNetController> p1, std::shared_ptr<NeuralNetController> p2, float f1,
                        float f2) override;
 
+private:
+    void nnCross(std::shared_ptr<NeuralNet> child, std::shared_ptr<NeuralNet> worse);
 };
 
 

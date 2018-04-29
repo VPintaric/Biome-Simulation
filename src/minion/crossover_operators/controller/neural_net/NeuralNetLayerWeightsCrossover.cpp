@@ -5,22 +5,12 @@ void NeuralNetLayerWeightsCrossover::configureFromJSON(rjs::Value &root) {
     // Nothing to configure
 }
 
-std::shared_ptr<NeuralNetController>
-NeuralNetLayerWeightsCrossover::neuralNetCrossover(std::shared_ptr<NeuralNetController> p1,
-                                                   std::shared_ptr<NeuralNetController> p2, float f1, float f2) {
-    auto better = f1 >= f2 ? p1 : p2;
-    auto worse = f1 >= f2 ? p2 : p1;
-
-    auto child = std::static_pointer_cast<NeuralNetController>(better->copy());
-
-    auto cNN = child->getNeuralNet();
-    auto wNN = worse->getNeuralNet();
-
-    for(int layer = 0; layer < cNN->weights.size(); layer++){
-        auto cw = cNN->weights[layer];
-        auto cb = cNN->bias[layer];
-        auto ww = wNN->weights[layer];
-        auto wb = wNN->bias[layer];
+void NeuralNetLayerWeightsCrossover::nnCross(std::shared_ptr<NeuralNet> child, std::shared_ptr<NeuralNet> worse) {
+    for(int layer = 0; layer < child->weights.size(); layer++){
+        auto cw = child->weights[layer];
+        auto cb = child->bias[layer];
+        auto ww = worse->weights[layer];
+        auto wb = worse->bias[layer];
 
         std::uniform_int_distribution<int> distr(0, static_cast<int>(cw->cols()));
         int crossPoint = distr(RNG::get());
@@ -35,6 +25,23 @@ NeuralNetLayerWeightsCrossover::neuralNetCrossover(std::shared_ptr<NeuralNetCont
             }
         }
     }
+}
+
+std::shared_ptr<NeuralNetController>
+NeuralNetLayerWeightsCrossover::neuralNetCrossover(std::shared_ptr<NeuralNetController> p1,
+                                                   std::shared_ptr<NeuralNetController> p2, float f1, float f2) {
+    auto better = f1 >= f2 ? p1 : p2;
+    auto worse = f1 >= f2 ? p2 : p1;
+
+    auto child = std::static_pointer_cast<NeuralNetController>(better->copy());
+
+    auto caNN = child->getAccNeuralNet();
+    auto waNN = worse->getAccNeuralNet();
+    auto crNN = child->getRotNeuralNet();
+    auto wrNN = worse->getRotNeuralNet();
+
+    nnCross(caNN, waNN);
+    nnCross(crNN, wrNN);
 
     return child;
 }

@@ -10,6 +10,8 @@ private:
     float mean, variance;
     std::normal_distribution<float> distr;
 
+    void nnMut(std::shared_ptr<NeuralNet> nn);
+
 public:
     NeuralNetGaussNoiseWeightsMutation();
 

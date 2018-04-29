@@ -20,9 +20,7 @@ void NeuralNetGaussNoiseWeightsMutation::configureFromJSON(rjs::Value &root) {
     distr = std::normal_distribution<float>(mean, variance);
 }
 
-void NeuralNetGaussNoiseWeightsMutation::neuralNetMutation(std::shared_ptr<NeuralNetController> i) {
-    auto nn = i->getNeuralNet();
-
+void NeuralNetGaussNoiseWeightsMutation::nnMut(std::shared_ptr<NeuralNet> nn) {
     for(int layer = 0; layer < nn->weights.size(); layer++){
         auto w = nn->weights[layer];
         auto b = nn->bias[layer];
@@ -35,4 +33,9 @@ void NeuralNetGaussNoiseWeightsMutation::neuralNetMutation(std::shared_ptr<Neura
     }
 
     nn->clampWeights();
+}
+
+void NeuralNetGaussNoiseWeightsMutation::neuralNetMutation(std::shared_ptr<NeuralNetController> i) {
+    nnMut(i->getAccNeuralNet());
+    nnMut(i->getRotNeuralNet());
 }

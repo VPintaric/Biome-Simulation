@@ -14,15 +14,20 @@ NeuralNetController::NeuralNetController(int inputDataSize,
     layers.reserve(hiddenLayers.size() + 2);
     layers.push_back(inputDataSize);
     layers.insert(layers.end(), hiddenLayers.begin(), hiddenLayers.end());
-    layers.push_back(OUTPUT_VARS);
+    layers.push_back(1);
 
-    nn = std::make_shared<NeuralNet>(layers, activation);
+    accNN = std::make_shared<NeuralNet>(layers, activation);
+    rotNN = std::make_shared<NeuralNet>(layers, activation);
 };
 
 NeuralNetController::~NeuralNetController() = default;
 
-std::shared_ptr<NeuralNet> NeuralNetController::getNeuralNet() {
-    return nn;
+std::shared_ptr<NeuralNet> NeuralNetController::getAccNeuralNet() {
+    return accNN;
+}
+
+std::shared_ptr<NeuralNet> NeuralNetController::getRotNeuralNet() {
+    return rotNN;
 }
 
 std::vector<float> NeuralNetController::controlMinion(std::vector<float> senseData) {
@@ -30,27 +35,37 @@ std::vector<float> NeuralNetController::controlMinion(std::vector<float> senseDa
     for(int i = 0; i < senseData.size(); i++){
         x(0, i) = senseData[i];
     }
-    x = nn->forward(x);
+    auto acc = accNN->forward(x);
+    auto rot = rotNN->forward(x);
 
-    return std::vector<float>({x(0, 0), x(0, 1)});
+    return std::vector<float>({acc(0, 0), rot(0, 0)});
 }
 
 void NeuralNetController::persistToJSON(rjs::Value &root, rjs::Document::AllocatorType &alloc) {
     root.SetObject();
 
-    rjs::Value nnJSON(rjs::kObjectType);
+    rjs::Value accNNJSON(rjs::kObjectType);
+    accNN->persistToJSON(accNNJSON, alloc);
+    root.AddMember(rjs::StringRef(JSON_ACC_NEURAL_NET), accNNJSON, alloc);
 
-    nn->persistToJSON(nnJSON, alloc);
-
-    root.AddMember(rjs::StringRef(JSON_NEURAL_NET), nnJSON, alloc);
+    rjs::Value rotNNJSON(rjs::kObjectType);
+    rotNN->persistToJSON(rotNNJSON, alloc);
+    root.AddMember(rjs::StringRef(JSON_ROT_NEURAL_NET), rotNNJSON, alloc);
 }
 
 void NeuralNetController::initFromJSON(rjs::Value &root) {
-    auto neuralnet = root.FindMember(rjs::StringRef(JSON_NEURAL_NET));
-    if(neuralnet == root.MemberEnd() || !neuralnet->value.IsObject()){
-        Log().Get(logWARNING) << "\"" << JSON_NEURAL_NET << "\" not found or invalid in JSON, can't initalize";
+    auto accNNJSON = root.FindMember(JSON_ACC_NEURAL_NET);
+    if(accNNJSON == root.MemberEnd() || !accNNJSON->value.IsObject()){
+        Log().Get(logWARNING) << "\"" << JSON_ACC_NEURAL_NET << "\" not found or invalid in JSON, can't initalize";
     } else {
-        nn->initFromJSON(neuralnet->value);
+        accNN->initFromJSON(accNNJSON->value);
+    }
+
+    auto rotNNJSON = root.FindMember(JSON_ROT_NEURAL_NET);
+    if(rotNNJSON == root.MemberEnd() || !rotNNJSON->value.IsObject()){
+        Log().Get(logWARNING) << "\"" << JSON_ROT_NEURAL_NET << "\" not found or invalid in JSON, can't initalize";
+    } else {
+        rotNN->initFromJSON(rotNNJSON->value);
     }
 }
 
@@ -58,11 +73,12 @@ std::shared_ptr<MinionController> NeuralNetController::copy() {
     auto newCopy = std::shared_ptr<NeuralNetController>(new NeuralNetController);
 
     newCopy->inputDataSize = inputDataSize;
-    newCopy->nn = nn->copy();
+    newCopy->accNN = accNN->copy();
+    newCopy->rotNN = rotNN->copy();
 
     return newCopy;
 }
 
 void NeuralNetController::setMinion(std::shared_ptr<Minion> m) {
-    // This controller doesn't need a reference to minion it's controlling
+    minion = m;
 }

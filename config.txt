@@ -6,9 +6,9 @@
 "fitness" : "activity",
 "fitness_config" : {
     "time_lived_coeff" : 1.0,
-    "damage_dealt_coeff" : 5.0,
-    "health_recovered_coeff" : 7.5,
-    "distance_traveled_coeff" : 0.1
+    "damage_dealt_coeff" : 10.0,
+    "health_recovered_coeff" : 10.0,
+    "distance_traveled_coeff" : 0.05
     },
 "crossover_operator" : "custom",
 "crossover_operator_config" : {
@@ -34,13 +34,13 @@
     "object_mutations" : [{
         "name" : "gauss_noise",
         "config" : {
-            "radius_variance" : 3.0
+            "radius_variance" : 5.0
         }
     }],
     "senses_mutations" : [{
         "name" : "gauss_noise",
         "config" : {
-            "variance" : 6.0
+            "variance" : 10.0
         }
     }],
     "controller_mutations" : [
@@ -63,11 +63,11 @@
     ]
 },
 "boundary_radius" : 1500,
-"number_of_minions" : 2,
+"number_of_minions" : 30,
 "print_info_every_seconds" : 60,
 "persist_minions_every_seconds" : 1800,
 "evolution_type" : "generational",
-"elitism" : 0,
+"elitism" : 5,
 "save_directory" : "saved_minions",
 "food_pellets" : 10,
 "poison_pellets" : 5
