@@ -103,8 +103,13 @@ std::set<int> DecisionTreeController::preprocess(std::vector<float> &senseData) 
     }
 
     int attrIdx = sightLine * 5;
-    if(senseData[attrIdx] < minion->getSenses()->getRadius() - minion->getObject()->getRadius()){
-        facts.insert(DTConst::FACT_SOMETHING_BEHIND);
+    float maxBehindDetectable = minion->getSenses()->getRadius() - minion->getObject()->getRadius();
+    if(senseData[attrIdx] < maxBehindDetectable){
+        if(senseData[attrIdx] < maxBehindDetectable / 2.f){
+            facts.insert(DTConst::FACT_SOMETHING_CLOSE_BEHIND);
+        } else {
+            facts.insert(DTConst::FACT_SOMETHING_FAR_BEHIND);
+        }
     }
     ++attrIdx;
 
