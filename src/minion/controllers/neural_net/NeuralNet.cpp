@@ -39,6 +39,8 @@ Eigen::MatrixXf NeuralNet::forward(Eigen::MatrixXf input) {
 
         if(i < weights.size() - 1){
             input = input.unaryExpr(activation);
+        } else {
+            input = input.unaryExpr([this](float x){ return Math::clamp(x, -OUTPUT_LIMIT, OUTPUT_LIMIT); });
         }
     }
 

@@ -21,6 +21,8 @@ public:
 
     virtual std::vector<float> gatherData(float deltaT) = 0;
 
+    virtual void standardizeData(std::vector<float> &data) = 0;
+
     virtual void draw() = 0;
 
     void persistToJSON(rjs::Value &root, rjs::Document::AllocatorType &alloc) override;

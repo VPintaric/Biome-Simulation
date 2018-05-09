@@ -25,6 +25,8 @@ public:
 
     std::vector<float> gatherData(float deltaT) override;
 
+    void standardizeData(std::vector<float> &data) override;
+
     void draw() override;
 
     std::shared_ptr<MinionSenses> copy() override;

@@ -73,5 +73,8 @@ std::shared_ptr<Minion> NeuralNetMinionGenerator::generateMinion() {
     auto controller = std::shared_ptr<NeuralNetController>(new NeuralNetController(senses->getDataSize(), nnHiddenLayers, tanhf));
     minion->setController(controller);
 
+    senses->setMinion(minion);
+    controller->setMinion(minion);
+
     return minion;
 }

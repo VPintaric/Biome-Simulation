@@ -1,14 +1,14 @@
 {
-"minion_generator" : "decision_tree",
+"minion_generator" : "neural_net",
 "minion_generator_config" : {
-        "max_tree_depth" : 8
+        "architecture_hidden" : [80, 30]
     },
 "fitness" : "activity",
 "fitness_config" : {
     "time_lived_coeff" : 1.0,
-    "damage_dealt_coeff" : 5.0,
-    "health_recovered_coeff" : 7.5,
-    "distance_traveled_coeff" : 0.001
+    "damage_dealt_coeff" : 10.0,
+    "health_recovered_coeff" : 10.0,
+    "distance_traveled_coeff" : 0.05
     },
 "crossover_operator" : "custom",
 "crossover_operator_config" : {
@@ -20,11 +20,12 @@
     }],
     "controller_crossovers" : [
         {
-        "name" : "decision_tree_subst_subtree",
-        "config" : {
-            "min_depth_cross_point" : 1,
-            "max_depth_cross_point" : 7
-            }
+        "name" : "neural_net_layer_weights",
+        "probability" : 0.9
+        },
+        {
+        "name" : "neural_net_single_layer",
+        "probability" : 0.1
         }
     ]
 },
@@ -33,31 +34,30 @@
     "object_mutations" : [{
         "name" : "gauss_noise",
         "config" : {
-            "radius_variance" : 3.0
+            "radius_variance" : 5.0
         }
     }],
     "senses_mutations" : [{
         "name" : "gauss_noise",
         "config" : {
-            "variance" : 6.0
+            "variance" : 10.0
         }
     }],
     "controller_mutations" : [
         {
-        "name" : "decision_tree_rand_subtree",
-        "probability" : 0.25,
+        "name" : "gauss_noise_weights",
+        "probability" : 0.75,
         "config" : {
-            "min_depth" : 1,
-            "max_depth" : 7,
-            "subtree_max_depth" : 3
+            "variance" : 5.0
             }
         },
         {
-        "name" : "decision_tree_mutate_nodes",
-        "probability" : 0.75,
+        "name" : "gauss_sparse_reset",
+        "probability" : 0.25,
         "config" : {
-            "min_depth" : 1,
-            "probability_mutate_node" : 0.001
+            "weight_reset_probability" : 0.05,
+            "bias_reset_probability" : 0.05,
+            "variance" : 10.0
             }
         }
     ]

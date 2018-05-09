@@ -75,7 +75,7 @@ int SimpleMinionSenses::getDataSize() {
 
 /*
  * Returned vector represents info received from each of the sight lines.
- * Each sight line gives info about distance, type and color of the detected object.
+ * Each sight line gives info about distance and type of the detected object.
  * If no object is detected on the sight line distance is set to maximum range of senses, color is set to black and
  * type is set to 0.f.
  * First elements are data from the first sight line on the hard right side of the minion, next sight line
@@ -252,4 +252,24 @@ std::shared_ptr<MinionSenses> SimpleMinionSenses::copy() {
 
 void SimpleMinionSenses::setMinion(std::shared_ptr<Minion> m) {
     minion = m;
+}
+
+void SimpleMinionSenses::standardizeData(std::vector<float> &data) {
+    if(data.size() != getDataSize()){
+        Log().Get(logWARNING) << "Wrong data vector size, cannot standardize";
+        return;
+    }
+    auto m = lockMinion();
+
+    int i;
+    for(i = 0; i < data.size() - 5; i += 2){
+        data[i] /= getMaxSenseDistance();
+        data[i + 1] /= (float) BOUNDARY_TYPE;
+    }
+
+    data[i++] /= getMaxSenseDistance();
+    data[i++] /= m->getMaxLife();
+    data[i++] /= 400.f; // TODO: is this value okay?
+    data[i++] /= glm::pi<float>();
+    data[i++] /= 1500.f; // TODO: is this value okay?
 }

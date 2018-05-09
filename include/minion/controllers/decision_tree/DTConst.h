@@ -31,7 +31,7 @@ namespace DTConst {
         {ACC_ZERO, 0.f },
         {ACC_SLOW_BACKWARD, -40.f },
         {ACC_BACKWARD, -80.f },
-        {ACC_FAST_BACKWARD, -160.f }
+        {ACC_FAST_BACKWARD, -160.f },
     };
 
     const std::map<RotType, float> rotTypeToVal {

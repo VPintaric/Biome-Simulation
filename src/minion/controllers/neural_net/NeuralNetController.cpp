@@ -31,6 +31,8 @@ std::shared_ptr<NeuralNet> NeuralNetController::getRotNeuralNet() {
 }
 
 std::vector<float> NeuralNetController::controlMinion(std::vector<float> senseData) {
+    minion->getSenses()->standardizeData(senseData);
+
     Eigen::MatrixXf x(1, senseData.size());
     for(int i = 0; i < senseData.size(); i++){
         x(0, i) = senseData[i];
@@ -38,7 +40,9 @@ std::vector<float> NeuralNetController::controlMinion(std::vector<float> senseDa
     auto acc = accNN->forward(x);
     auto rot = rotNN->forward(x);
 
-    return std::vector<float>({acc(0, 0), rot(0, 0)});
+    Log().Get(logINFO) << acc(0, 0) << " " << rot(0, 0);
+
+    return std::vector<float>({400.f * acc(0, 0), 1500.f * rot(0, 0)}); // TODO: are these values good as scaling coeffs?
 }
 
 void NeuralNetController::persistToJSON(rjs::Value &root, rjs::Document::AllocatorType &alloc) {
