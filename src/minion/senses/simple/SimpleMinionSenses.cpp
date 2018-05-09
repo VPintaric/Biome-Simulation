@@ -70,7 +70,7 @@ void SimpleMinionSenses::setSightLineColor(int idx, glm::vec3 color) {
 }
 
 int SimpleMinionSenses::getDataSize() {
-    return 5 * nSightLines + 5;
+    return 2 * nSightLines + 5;
 }
 
 /*
@@ -163,13 +163,10 @@ std::vector<float> SimpleMinionSenses::gatherData(float deltaT) {
                     detectedObject = true;
 
                     data.push_back(distance);
-                    data.push_back(m->isDead() ? DEAD_MINION_TYPE : ALIVE_MINION_TYPE);
-                    auto color = m->getObject()->getSkinColor();
-                    data.push_back(color.r);
-                    data.push_back(color.g);
-                    data.push_back(color.b);
+                    int type = m->isDead() ? DEAD_MINION_TYPE : ALIVE_MINION_TYPE;
+                    data.push_back(type);
 
-                    setSightLineColor(i, color);
+                    setSightLineColor(i, OBJECT_TYPE_TO_COLOR[type]);
 
                     break;
                 }
@@ -181,13 +178,10 @@ std::vector<float> SimpleMinionSenses::gatherData(float deltaT) {
                         detectedObject = true;
 
                         data.push_back(distance);
-                        data.push_back(PELLET_TYPE);
-                        auto color = pellet->getColor();
-                        data.push_back(color.r);
-                        data.push_back(color.g);
-                        data.push_back(color.b);
+                        int type = pellet->isFood() ? FOOD_PELLET_TYPE : POISON_PELLET_TYPE;
+                        data.push_back(type);
 
-                        setSightLineColor(i, color);
+                        setSightLineColor(i, OBJECT_TYPE_TO_COLOR[type]);
 
                         break;
                     }
@@ -199,12 +193,8 @@ std::vector<float> SimpleMinionSenses::gatherData(float deltaT) {
 
                 data.push_back(distance);
                 data.push_back(BOUNDARY_TYPE);
-                auto color = state.getBoundary()->getColor();
-                data.push_back(color.r);
-                data.push_back(color.g);
-                data.push_back(color.b);
 
-                setSightLineColor(i, color);
+                setSightLineColor(i, OBJECT_TYPE_TO_COLOR[BOUNDARY_TYPE]);
             }
 
             p += step * s;
@@ -213,11 +203,8 @@ std::vector<float> SimpleMinionSenses::gatherData(float deltaT) {
         if(!detectedObject){
             data.push_back(distance);
             data.push_back(NOTHING_TYPE);
-            data.push_back(0.f);
-            data.push_back(0.f);
-            data.push_back(0.f);
 
-            setSightLineColor(i, glm::vec3(1.f, 1.f, 1.f));
+            setSightLineColor(i, OBJECT_TYPE_TO_COLOR[NOTHING_TYPE]);
         }
         s = glm::rotate(s, -angleResolution);
         p = getPos() + minion->getObject()->getRadius() * s;

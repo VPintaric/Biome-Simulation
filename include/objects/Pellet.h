@@ -11,9 +11,10 @@ private:
     glm::vec4 color;
     std::shared_ptr<Model> model;
     float life;
+    bool isFoodAttr;
 
 public:
-    Pellet();
+    Pellet(bool isFood);
 
     void draw();
 
@@ -24,6 +25,8 @@ public:
     const glm::vec4 &getColor() const;
 
     void setColor(const glm::vec4 &color);
+
+    bool isFood() const;
 };
 
 

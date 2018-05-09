@@ -4,6 +4,7 @@
 #include <minion/senses/MinionSenses.h>
 #include <rendering/ColorModel.h>
 #include <constants/SimulationConstants.h>
+#include <map>
 
 class SimpleMinionSenses : public MinionSenses {
 public:
@@ -37,11 +38,23 @@ private:
     const float COLOR_ALPHA = 0.04f;
     const int N_SIGHT_LINE_CHECK_POINTS = 50;
 
-    const float NOTHING_TYPE = 0.f;
-    const float DEAD_MINION_TYPE = 2.5f;
-    const float ALIVE_MINION_TYPE = 5.f;
-    const float PELLET_TYPE = 7.5f;
-    const float BOUNDARY_TYPE = 10.f;
+    enum OBJECT_TYPE {
+        NOTHING_TYPE = 0,
+        DEAD_MINION_TYPE = 10,
+        ALIVE_MINION_TYPE = 20,
+        FOOD_PELLET_TYPE = 30,
+        POISON_PELLET_TYPE = 40,
+        BOUNDARY_TYPE = 50
+    };
+
+    std::map<int, glm::vec3> OBJECT_TYPE_TO_COLOR = {
+            {NOTHING_TYPE, glm::vec3(1.f, 1.f, 1.f)},
+            {DEAD_MINION_TYPE, glm::vec3(0.f, 1.f, 0.5f)},
+            {ALIVE_MINION_TYPE, glm::vec3(1.f, 1.f, 0.f)},
+            {FOOD_PELLET_TYPE, glm::vec3(0.f, 1.f, 0.f)},
+            {POISON_PELLET_TYPE, glm::vec3(0.73f, 0.33f, 0.83f)},
+            {BOUNDARY_TYPE, glm::vec3(1.f, 0.f, 0.f)},
+    };
 
     float maxSenseDistance;
     int nSightLines;

@@ -621,7 +621,7 @@ void State::configureFromJSON(rjs::Value &root) {
     if(root.HasMember(FOOD_PELLETS) && root[FOOD_PELLETS].IsInt()){
         nFoodPellets = root[FOOD_PELLETS].GetInt();
         for(int i = 0; i < nFoodPellets; i++){
-            auto pellet = std::make_shared<Pellet>();
+            auto pellet = std::make_shared<Pellet>(true);
             pellet->setColor(SimConst::FOOD_PELLET_COLOR);
             initializePellet(pellet);
             foodPellets.push_back(pellet);
@@ -631,7 +631,7 @@ void State::configureFromJSON(rjs::Value &root) {
     if(root.HasMember(POISON_PELLETS) && root[POISON_PELLETS].IsInt()){
         nPoisonPellets = root[POISON_PELLETS].GetInt();
         for(int i = 0; i < nPoisonPellets; i++){
-            auto pellet = std::make_shared<Pellet>();
+            auto pellet = std::make_shared<Pellet>(false);
             pellet->setColor(SimConst::POISON_PELLET_COLOR);
             initializePellet(pellet);
             poisonPellets.push_back(pellet);

@@ -4,7 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "objects/Pellet.h"
 
-Pellet::Pellet() {
+Pellet::Pellet(bool isFood) : isFoodAttr(isFood) {
     setRadius(SimConst::PELLET_RADIUS);
     model = Renderer::getInstance().getModel(SimConst::FULL_CIRCLE_MODEL_NAME);
 }
@@ -42,4 +42,8 @@ float Pellet::getLife() const {
 
 void Pellet::setLife(float life) {
     Pellet::life = life;
+}
+
+bool Pellet::isFood() const {
+    return isFoodAttr;
 }
