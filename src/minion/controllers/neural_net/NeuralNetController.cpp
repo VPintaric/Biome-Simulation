@@ -40,8 +40,6 @@ std::vector<float> NeuralNetController::controlMinion(std::vector<float> senseDa
     auto acc = accNN->forward(x);
     auto rot = rotNN->forward(x);
 
-    Log().Get(logINFO) << acc(0, 0) << " " << rot(0, 0);
-
     return std::vector<float>({400.f * acc(0, 0), 1500.f * rot(0, 0)}); // TODO: are these values good as scaling coeffs?
 }
 
