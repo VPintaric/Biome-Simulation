@@ -41,9 +41,8 @@ State::State() : nextMinionId(1), currentBestMinion(nullptr),
                 nextPersistedGeneration(1), persistenceDirectory("saved_minions"),
                 nEvolvableMinions(SimConst::DEFAULT_NUMBER_OF_MINIONS), nElites(1), printEveryRealTime(30000),
                 persistMinionsEveryRealTime(300000), nextPersistTimestamp(persistMinionsEveryRealTime),
-                nextPrintTimestamp(printEveryRealTime), useGenerationalGA(true),
-                nFoodPellets(0), nPoisonPellets(0), drawSenses(true), nDefaultMinions(0),
-                hcGen(std::make_shared<HardcodedMinionGenerator>()), nGenerationPartitions(1){
+                nextPrintTimestamp(printEveryRealTime), nFoodPellets(0), nPoisonPellets(0), drawSenses(true),
+                nDefaultMinions(0), hcGen(std::make_shared<HardcodedMinionGenerator>()), nGenerationPartitions(1){
     Log().Get(logDEBUG) << "Creating new state instance";
     shouldEndProgramFlag = false;
     lastCalledTimestamp = chr::duration_cast<chr::milliseconds>(chr::system_clock::now().time_since_epoch()).count();
@@ -426,17 +425,8 @@ void State::update(float dt) {
                 Log().Get(logINFO) << "   Health recovered: " << m->getHealthRecovered();
             }
 
-            if(!useGenerationalGA){
-                throw std::string("Tournament evolution is probably broken and probably does not work correctly anyway...");
-//                auto parents = selectionAlg->selectParents(evolvableMinions);
-//                *iter = crossover->crossover(parents.first, parents.second);
-//                mutation->mutate(*iter);
-//                initializeMinion(**iter);
-//                currentGeneration++;
-            } else {
-                if(curPartitionDeadEvolvables.size() >= nMinionPerPartition){
-                    initalizeNextPartition();
-                }
+            if(curPartitionDeadEvolvables.size() >= nMinionPerPartition){
+                initalizeNextPartition();
             }
         }
     }
@@ -598,11 +588,7 @@ void State::configureFromJSON(rjs::Value &root) {
         setPersistenceDirectory(root[PERSISTENCE_DIRECTORY].GetString());
     }
 
-    if(root.HasMember(EVOLUTION_TYPE) && root[EVOLUTION_TYPE].IsString()){
-        useGenerationalGA = !(root[EVOLUTION_TYPE] == EVOLUTION_STEADY_STATE_TYPE);
-    }
-
-    if(useGenerationalGA && root.HasMember(ELITISM) && root[ELITISM].IsInt()){
+    if(root.HasMember(ELITISM) && root[ELITISM].IsInt()){
         nElites = root[ELITISM].GetInt();
     }
 

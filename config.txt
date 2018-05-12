@@ -67,7 +67,7 @@
 "print_info_every_seconds" : 60,
 "persist_minions_every_seconds" : 1800,
 "evolution_type" : "generational",
-"elitism" : 1,
+"elitism" : 20,
 "save_directory" : "saved_minions",
 "food_pellets" : 10,
 "poison_pellets" : 5,

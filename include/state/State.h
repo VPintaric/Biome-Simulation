@@ -125,8 +125,6 @@ private:
 
     long lastCalledTimestamp;
 
-    bool useGenerationalGA;
-
     int currentGeneration;
 
     void initializeMinion(Minion &minion);
