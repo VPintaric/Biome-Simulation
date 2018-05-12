@@ -10,7 +10,7 @@ void RoulleteWheelSelection::configureFromJSON(rjs::Value &root) {
 std::pair<std::shared_ptr<Minion>, std::shared_ptr<Minion>>
 RoulleteWheelSelection::selectParents(std::vector<std::shared_ptr<Minion>> &minions) {
     if(minions.size() < 2){
-        Log().Get(logWARNING) << "Can't select 2 different parents from minions vector, vector size is " << minions.size();
+        Log().Get(logWARNING) << "Can't select 2 different parents from customMinions vector, vector size is " << minions.size();
         return std::make_pair(nullptr, nullptr);
     }
 

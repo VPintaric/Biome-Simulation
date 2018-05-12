@@ -82,9 +82,9 @@ public:
     void setDrawSenses(bool drawSenses);
 
 private:
-    std::shared_ptr<MinionGenerator> minionGenerator;
+    std::shared_ptr<MinionGenerator> minionGenerator, hcGen;
 
-    std::vector< std::shared_ptr<Minion> > minions;
+    std::vector< std::shared_ptr<Minion> > customMinions, hcMinions, allMinions;
 
     std::set< std::shared_ptr<Minion> > decayedMinions;
 
@@ -100,7 +100,7 @@ private:
 
     std::vector< std::shared_ptr<Pellet> > foodPellets, poisonPellets;
 
-    int nMinions, nElites, nFoodPellets, nPoisonPellets;
+    int nMinions, nElites, nFoodPellets, nPoisonPellets, nDefaultMinions;
 
     std::string persistenceDirectory;
 

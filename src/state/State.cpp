@@ -26,6 +26,8 @@
 #include <minion/mutation_operators/DoNothingMinionMutation.h>
 #include <minion/mutation_operators/CustomMinionMutation.h>
 #include <minion/factories/decisiontree/DecisionTreeMinionGenerator.h>
+#include <minion/factories/hardcoded/HardcodedMinionGenerator.h>
+#include <minion/controllers/hardcoded/HardcodedController.h>
 
 namespace fs = std::experimental::filesystem;
 namespace chr = std::chrono;
@@ -40,7 +42,8 @@ State::State() : nextMinionId(1), currentBestMinion(nullptr),
                 nMinions(SimConst::DEFAULT_NUMBER_OF_MINIONS), nElites(1), printEveryRealTime(30000),
                 persistMinionsEveryRealTime(300000), nextPersistTimestamp(persistMinionsEveryRealTime),
                 nextPrintTimestamp(printEveryRealTime), useGenerationalGA(true),
-                nFoodPellets(0), nPoisonPellets(0), drawSenses(true){
+                nFoodPellets(0), nPoisonPellets(0), drawSenses(true), nDefaultMinions(0),
+                hcGen(std::make_shared<HardcodedMinionGenerator>()){
     Log().Get(logDEBUG) << "Creating new state instance";
     shouldEndProgramFlag = false;
     lastCalledTimestamp = chr::duration_cast<chr::milliseconds>(chr::system_clock::now().time_since_epoch()).count();
@@ -113,7 +116,7 @@ void State::initializeMinion(Minion &minion) {
         object->setAngle(angleDistr(RNG::get()));
 
         validPosition = true;
-        for (auto &minion : minions) {
+        for (auto &minion : allMinions) {
             // hacky...
             if(minion->isDead() || minion->getObject() == object){
                 continue;
@@ -138,7 +141,7 @@ bool State::getShouldEndProgram() const {
 
 void State::spawnMinions() {
     if(minionGenerator == nullptr){
-        Log().Get(logWARNING) << "State has no reference to a minion generator object, unable to spawn minions";
+        Log().Get(logWARNING) << "State has no reference to a minion generator object, unable to spawn customMinions";
         return;
     }
 
@@ -147,9 +150,17 @@ void State::spawnMinions() {
     } else {
         for(int i = 0; i < nMinions; i++){
             auto minion = minionGenerator->generateRandomMinion();
-            minions.push_back(minion);
+            customMinions.push_back(minion);
+            allMinions.push_back(minion);
             initializeMinion(*minion);
         }
+    }
+
+    for(int i = 0; i < nDefaultMinions; i++){
+        auto minion = hcGen->generateMinion();
+        hcMinions.push_back(minion);
+        allMinions.push_back(minion);
+        initializeMinion(*minion);
     }
 
     decayedMinions.clear();
@@ -176,7 +187,7 @@ void State::draw() {
         p->draw();
     }
 
-    for(const auto& m : minions){
+    for(const auto& m : allMinions){
         if(!m->isDecayed()){
             m->draw(drawSenses);
         }
@@ -185,7 +196,7 @@ void State::draw() {
 }
 
 const std::vector< std::shared_ptr<Minion> > &State::getMinions() const{
-    return minions;
+    return customMinions;
 }
 
 std::shared_ptr<Boundary> State::getBoundary() const {
@@ -193,7 +204,7 @@ std::shared_ptr<Boundary> State::getBoundary() const {
 }
 
 void State::controlMinions(float dt) {
-    for(const auto &minion : minions){
+    for(const auto &minion : allMinions){
         minion->control(dt);
     }
 }
@@ -280,11 +291,11 @@ void State::realTimeUpdate() {
 
 void State::updateMinionFitness() {
     currentFitnessAverage = 0.f;
-    for(auto m : minions){
+    for(auto m : customMinions){
         fitnessAlg->calculateFitness(m);
         currentFitnessAverage += m->getFitness();
     }
-    currentFitnessAverage /= minions.size();
+    currentFitnessAverage /= customMinions.size();
 }
 
 void State::initializeNextGeneration() {
@@ -292,27 +303,38 @@ void State::initializeNextGeneration() {
     currentGeneration++;
     Log().Get(logINFO) << "Generating " << currentGeneration << ". generation";
 
-    std::vector<std::shared_ptr<Minion> > newGeneration, bestInCurrentGen;
-    newGeneration.reserve(nMinions);
-    bestInCurrentGen.reserve(nElites);
+    allMinions.clear();
+    allMinions.reserve(nMinions + nDefaultMinions);
 
-    std::sort(minions.begin(), minions.end(),
-        [](std::shared_ptr<Minion> m1, std::shared_ptr<Minion> m2){
-            return m1->getFitness() > m2->getFitness();
-        });
+    if(!customMinions.empty()){
+        std::vector<std::shared_ptr<Minion> > newGeneration, bestInCurrentGen;
+        newGeneration.reserve(nMinions);
+        bestInCurrentGen.reserve(nElites);
 
-    bestInCurrentGen.insert(bestInCurrentGen.begin(), minions.begin(), minions.begin() + nElites);
-    newGeneration.insert(newGeneration.begin(), bestInCurrentGen.begin(), bestInCurrentGen.end());
+        std::sort(customMinions.begin(), customMinions.end(),
+                  [](std::shared_ptr<Minion> m1, std::shared_ptr<Minion> m2){
+                      return m1->getFitness() > m2->getFitness();
+                  });
 
-    for(int i = 0; i < nMinions - nElites; i++){
-        auto parents = selectionAlg->selectParents(minions);
-        auto m = crossover->crossover(parents.first, parents.second);
-        mutation->mutate(m);
-        newGeneration.push_back(m);
+        bestInCurrentGen.insert(bestInCurrentGen.begin(), customMinions.begin(), customMinions.begin() + nElites);
+        newGeneration.insert(newGeneration.begin(), bestInCurrentGen.begin(), bestInCurrentGen.end());
+
+        for(int i = 0; i < nMinions - nElites; i++){
+            auto parents = selectionAlg->selectParents(customMinions);
+            auto m = crossover->crossover(parents.first, parents.second);
+            mutation->mutate(m);
+            newGeneration.push_back(m);
+        }
+        customMinions = newGeneration;
+
+        allMinions.insert(allMinions.end(), customMinions.begin(), customMinions.end());
     }
-    minions = newGeneration;
 
-    for(auto m : minions){
+    if(!hcMinions.empty()){
+        allMinions.insert(allMinions.end(), hcMinions.begin(), hcMinions.end());
+    }
+
+    for(auto m : allMinions){
         initializeMinion(*m);
     }
 
@@ -326,10 +348,10 @@ void State::update(float dt) {
     CollisionResponse cr = CollisionResponse::getInstance();
 
     updateMinionFitness();
-    for (auto iter = minions.begin(); iter != minions.end(); iter++) {
+    for (auto iter = allMinions.begin(); iter != allMinions.end(); iter++) {
         auto m = *iter;
 
-        for(auto iter2 = iter + 1; iter2 != minions.end(); iter2++){
+        for(auto iter2 = iter + 1; iter2 != allMinions.end(); iter2++){
             auto m2 = *iter2;
             auto ci = cd.checkCircleCircleCollision(*m->getObject(), *m2->getObject());
 
@@ -371,7 +393,9 @@ void State::update(float dt) {
 
         m->update(dt);
         if(m->isDecayed()){
-            if(currentBestMinion == nullptr || currentBestMinion->getFitness() < m->getFitness()){
+            // TODO: Hacky and expensive way of checking if it's a hardcoded controller minion...
+            if(std::dynamic_pointer_cast<HardcodedController>(m->getController()) == nullptr &&
+                    (currentBestMinion == nullptr || currentBestMinion->getFitness() < m->getFitness())){
                 currentBestMinion = m->copy();
                 currentBestMinion->setFitness(m->getFitness());
                 Log().Get(logINFO) << "New best fitness minion: " << m->getFitness();
@@ -382,15 +406,16 @@ void State::update(float dt) {
             }
 
             if(!useGenerationalGA){
-                auto parents = selectionAlg->selectParents(minions);
-                *iter = crossover->crossover(parents.first, parents.second);
-                mutation->mutate(*iter);
-                initializeMinion(**iter);
-                currentGeneration++;
+                throw std::string("Tournament evolution is probably broken and probably does not work corectly anyway...");
+//                auto parents = selectionAlg->selectParents(customMinions);
+//                *iter = crossover->crossover(parents.first, parents.second);
+//                mutation->mutate(*iter);
+//                initializeMinion(**iter);
+//                currentGeneration++;
             } else {
                 decayedMinions.insert(*iter);
 
-                if(decayedMinions.size() == minions.size()){
+                if(decayedMinions.size() == allMinions.size()){
                     initializeNextGeneration();
                 }
             }
@@ -413,7 +438,7 @@ std::string State::getPersistenceDirectory() {
 
 void State::persistCurrentGeneration() {
     if(persistenceDirectory.empty()){
-        Log().Get(logINFO) << "No save directory given, not persisting minions";
+        Log().Get(logINFO) << "No save directory given, not persisting customMinions";
         return;
     }
 
@@ -432,7 +457,7 @@ void State::persistCurrentGeneration() {
     fs::create_directory(genDir);
 
     Log().Get(logINFO) << "Persisting current generation to folder: " << genDir;
-    for(const auto &minion : minions){
+    for(const auto &minion : customMinions){
         p.saveMinionToFile(genDir + "/minion_" + std::to_string(minion->getId()), minion);
     }
 
@@ -447,13 +472,13 @@ void State::loadMinionsFromFolder(std::string dirName) {
         return;
     }
 
-    minions.clear();
+    customMinions.clear();
     for(auto it = fs::directory_iterator(dirName); it != fs::directory_iterator(); ++it){
         std::string fileName = (*it).path().string();
         auto minion = minionGenerator->generateMinion();
         p.initMinionFromFile(fileName, minion);
         initializeMinion(*minion);
-        minions.push_back(minion);
+        customMinions.push_back(minion);
     }
 }
 
@@ -478,6 +503,7 @@ void State::configureFromJSON(rjs::Value &root) {
     const char * CROSSOVER_OPERATOR_CONFIG = "crossover_operator_config";
     const char * FOOD_PELLETS = "food_pellets";
     const char * POISON_PELLETS = "poison_pellets";
+    const char * NUM_DEFAULT_MINIONS = "number_of_default_minions";
 
     Log().Get(logDEBUG) << "Configuring State object...";
 
@@ -510,10 +536,10 @@ void State::configureFromJSON(rjs::Value &root) {
     if(root.HasMember(MINION_GEN) && root[MINION_GEN].IsString()){
         std::string minionGen = root[MINION_GEN].GetString();
         if(minionGen == "decision_tree"){
-            Log().Get(logDEBUG) << "Using decisionTreeMinionGenerator for generating minions";
+            Log().Get(logDEBUG) << "Using decisionTreeMinionGenerator for generating customMinions";
             setMinionGenerator(std::make_shared<DecisionTreeMinionGenerator>());
         } else {
-            Log().Get(logDEBUG) << "Using neuralNetMinionGenerator for generating minions";
+            Log().Get(logDEBUG) << "Using neuralNetMinionGenerator for generating customMinions";
             setMinionGenerator(std::make_shared<NeuralNetMinionGenerator>());
         }
     }
@@ -534,7 +560,7 @@ void State::configureFromJSON(rjs::Value &root) {
     } else {
         setNMinions(SimConst::DEFAULT_NUMBER_OF_MINIONS);
     }
-    Log().Get(logDEBUG) << "Number of minions initalized to " << getNMinions();
+    Log().Get(logDEBUG) << "Number of customMinions initalized to " << getNMinions();
 
     if(root.HasMember(PRINT_INFO_EVERY_SECONDS) && root[PRINT_INFO_EVERY_SECONDS].IsInt()){
         printEveryRealTime = root[PRINT_INFO_EVERY_SECONDS].GetInt() * 1000;
@@ -636,6 +662,10 @@ void State::configureFromJSON(rjs::Value &root) {
             initializePellet(pellet);
             poisonPellets.push_back(pellet);
         }
+    }
+
+    if(root.HasMember(NUM_DEFAULT_MINIONS) && root[NUM_DEFAULT_MINIONS].IsInt()){
+        nDefaultMinions = root[NUM_DEFAULT_MINIONS].GetInt();
     }
 }
 
