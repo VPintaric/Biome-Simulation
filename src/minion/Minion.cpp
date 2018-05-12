@@ -4,7 +4,7 @@
 #include "minion/Minion.h"
 
 Minion::Minion() : dead(false), decayed(false), id(0), timeLived(0.f), lastSavedPosition(-10000.f, -10000.f),
-                    lastSavedPositionAge(0.f){
+                    lastSavedPositionAge(0.f), evolvable(true) {
 
 };
 
@@ -265,4 +265,12 @@ std::shared_ptr<Minion> Minion::copy() {
     newCopy->object = object->copy();
 
     return newCopy;
+}
+
+bool Minion::isEvolvable() const {
+    return evolvable;
+}
+
+void Minion::setEvolvable(bool evolvable) {
+    Minion::evolvable = evolvable;
 }

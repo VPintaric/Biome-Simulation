@@ -98,7 +98,7 @@ std::vector<float> SimpleMinionSenses::gatherData(float deltaT) {
     std::vector<float> data;
     float nearestBehind = getRadius() - minion->getObject()->getRadius();
 
-    for(auto m : state.getMinions()){
+    for(auto m : state.getCurrentMinions()){
         // don't check collision of this minion's senses with itself
         if(m == minion || m->isDecayed()){
             continue;

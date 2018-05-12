@@ -92,6 +92,10 @@ public:
 
     void setFitness(float fitness);
 
+    bool isEvolvable() const;
+
+    void setEvolvable(bool evolvable);
+
 private:
     std::shared_ptr<MinionObject> object;
     std::shared_ptr<MinionSenses> senses;
@@ -100,7 +104,7 @@ private:
     int id;
     float maxLife, minLife, life, decay;
 
-    bool dead, decayed;
+    bool dead, decayed, evolvable;
     float timeLived, distanceTraveledPoints, damageDealt, healthRecovered;
     float fitness;
 

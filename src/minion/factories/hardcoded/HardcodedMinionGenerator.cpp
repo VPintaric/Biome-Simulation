@@ -20,6 +20,7 @@ std::shared_ptr<Minion> HardcodedMinionGenerator::generateMinion() {
     m->setObject(object);
     m->setSenses(senses);
     m->setController(controller);
+    m->setEvolvable(false);
 
     object->setRadius(20.f);
     object->setSkinColor(glm::vec4(1.f, 1.f, 0.f, 1.f));

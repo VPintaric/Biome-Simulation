@@ -45,7 +45,7 @@ public:
 
     void setFitnessAlg(std::shared_ptr<Fitness> fitness);
 
-    const std::vector< std::shared_ptr<Minion> > &getMinions() const;
+    const std::vector< std::shared_ptr<Minion> > &getCurrentMinions() const;
 
     const std::vector< std::shared_ptr<Pellet> > &getFoodPellets() const;
 
@@ -81,12 +81,14 @@ public:
 
     void setDrawSenses(bool drawSenses);
 
+    void initalizeNextPartition();
+
 private:
     std::shared_ptr<MinionGenerator> minionGenerator, hcGen;
 
-    std::vector< std::shared_ptr<Minion> > customMinions, hcMinions, allMinions;
+    std::vector< std::shared_ptr<Minion> > curGenerationMinions, curPartitionMinions, hcMinions;
 
-    std::set< std::shared_ptr<Minion> > decayedMinions;
+    std::set< std::shared_ptr<Minion> > curPartitionDeadEvolvables;
 
     std::shared_ptr<Selection> selectionAlg;
 
@@ -100,7 +102,8 @@ private:
 
     std::vector< std::shared_ptr<Pellet> > foodPellets, poisonPellets;
 
-    int nMinions, nElites, nFoodPellets, nPoisonPellets, nDefaultMinions;
+    int nEvolvableMinions, nMinionPerPartition, nElites, nFoodPellets, nPoisonPellets,
+            nDefaultMinions, nGenerationPartitions, nextEvolvableIdx;
 
     std::string persistenceDirectory;
 
@@ -126,15 +129,13 @@ private:
 
     int currentGeneration;
 
-    float currentFitnessAverage;
-
     void initializeMinion(Minion &minion);
 
     void initializeNextGeneration();
 
     void realTimeUpdate();
 
-    void updateMinionFitness();
+    float calculateGenerationFitness();
 
     State();
 };
