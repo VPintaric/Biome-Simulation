@@ -48,7 +48,7 @@
         "name" : "gauss_noise_weights",
         "probability" : 0.75,
         "config" : {
-            "variance" : 5.0
+            "variance" : 0.1
             }
         },
         {
@@ -57,7 +57,7 @@
         "config" : {
             "weight_reset_probability" : 0.05,
             "bias_reset_probability" : 0.05,
-            "variance" : 10.0
+            "variance" : 0.2
             }
         }
     ]

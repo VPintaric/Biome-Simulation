@@ -466,8 +466,9 @@ void State::persistCurrentGeneration() {
     fs::create_directory(genDir);
 
     Log().Get(logINFO) << "Persisting current generation to folder: " << genDir;
+    int num = 0;
     for(const auto &minion : curGenerationMinions){
-        p.saveMinionToFile(genDir + "/minion_" + std::to_string(minion->getId()), minion);
+        p.saveMinionToFile(genDir + "/minion_" + std::to_string(num++), minion);
     }
 
     nextPersistedGeneration++;
