@@ -42,7 +42,8 @@ State::State() : nextMinionId(1), currentBestMinion(nullptr),
                 nEvolvableMinions(SimConst::DEFAULT_NUMBER_OF_MINIONS), nElites(1), printEveryRealTime(30000),
                 persistMinionsEveryRealTime(300000), nextPersistTimestamp(persistMinionsEveryRealTime),
                 nextPrintTimestamp(printEveryRealTime), nFoodPellets(0), nPoisonPellets(0), drawSenses(true),
-                nDefaultMinions(0), hcGen(std::make_shared<HardcodedMinionGenerator>()), nGenerationPartitions(1){
+                nDefaultMinions(0), hcGen(std::make_shared<HardcodedMinionGenerator>()), nGenerationPartitions(1),
+                isCurrentGenPersisted(false), nMaxGenerations(0){
     Log().Get(logDEBUG) << "Creating new state instance";
     shouldEndProgramFlag = false;
     lastCalledTimestamp = chr::duration_cast<chr::milliseconds>(chr::system_clock::now().time_since_epoch()).count();
@@ -314,6 +315,15 @@ void State::initializeNextGeneration() {
     float fitnessAvg = calculateGenerationFitness();
     Log().Get(logINFO) << "Final average fitness of " << currentGeneration << ". generation is " << fitnessAvg;
     currentGeneration++;
+    isCurrentGenPersisted = false;
+
+    if(currentGeneration >= nMaxGenerations){
+        Log().Get(logINFO) << "Max generations reached, ending simulation";
+        shouldEndProgramFlag = true;
+        persistCurrentGeneration();
+        return;
+    }
+
     Log().Get(logINFO) << "Generating " << currentGeneration << ". generation";
 
     std::vector<std::shared_ptr<Minion> > newGeneration;
@@ -343,6 +353,9 @@ void State::initalizeNextPartition() {
     curPartitionMinions.clear();
     if(nextEvolvableIdx >= nEvolvableMinions){
         initializeNextGeneration();
+        if(shouldEndProgramFlag){
+            return;
+        }
     }
 
     Log().Get(logINFO) << "Initializing next generation partition...";
@@ -427,6 +440,9 @@ void State::update(float dt) {
 
             if(curPartitionDeadEvolvables.size() >= nMinionPerPartition){
                 initalizeNextPartition();
+                if(shouldEndProgramFlag){
+                    return;
+                }
             }
         }
     }
@@ -446,6 +462,11 @@ std::string State::getPersistenceDirectory() {
 }
 
 void State::persistCurrentGeneration() {
+    if(isCurrentGenPersisted){
+        Log().Get(logINFO) << "Current generation already persisted";
+        return;
+    }
+
     if(persistenceDirectory.empty()){
         Log().Get(logINFO) << "No save directory given, not persisting evolvableMinions";
         return;
@@ -457,11 +478,11 @@ void State::persistCurrentGeneration() {
         fs::create_directory(persistenceDirectory);
     }
 
-    std::string genDir = persistenceDirectory + "/generation_" + std::to_string(nextPersistedGeneration);
+    std::string genDir = persistenceDirectory + "/generation_" + std::to_string(currentGeneration);
 
-    while(fs::exists(genDir) && fs::is_directory(genDir)){
-        nextPersistedGeneration++;
-        genDir = persistenceDirectory + "/generation_" + std::to_string(nextPersistedGeneration);
+    if(fs::exists(genDir) && fs::is_directory(genDir)){
+        Log().Get(logERROR) << "Generation " << currentGeneration << " persistence directory already exists!";
+        return;
     }
     fs::create_directory(genDir);
 
@@ -471,7 +492,7 @@ void State::persistCurrentGeneration() {
         p.saveMinionToFile(genDir + "/minion_" + std::to_string(num++), minion);
     }
 
-    nextPersistedGeneration++;
+    isCurrentGenPersisted = true;
 }
 
 void State::loadMinionsFromFolder(std::string dirName) {
@@ -515,6 +536,7 @@ void State::configureFromJSON(rjs::Value &root) {
     const char * POISON_PELLETS = "poison_pellets";
     const char * NUM_DEFAULT_MINIONS = "number_default_minions";
     const char * NUM_GENERATION_PARTITIONS = "number_generation_partitions";
+    const char * MAX_N_GENERATIONS = "number_max_generations";
 
     Log().Get(logDEBUG) << "Configuring State object...";
 
@@ -680,6 +702,11 @@ void State::configureFromJSON(rjs::Value &root) {
     }
     setNMinions(nMinionPerPartition * nGenerationPartitions);
 
+    if(root.HasMember(MAX_N_GENERATIONS) && root[MAX_N_GENERATIONS].IsInt()){
+        nMaxGenerations = root[MAX_N_GENERATIONS].GetInt();
+    } else {
+        nMaxGenerations = 500;
+    }
 }
 
 int State::getNMinions() const {

@@ -206,6 +206,9 @@ int main(int argc, char** argv) {
         t1 = high_resolution_clock::now();
         for(int i = 0;  i < SimConst::UPDATE_ITERATIONS_EACH_FRAME; i++){
             state.update(SimConst::UPDATE_DELTA);
+            if(state.getShouldEndProgram()){
+                return 0;
+            }
         }
         processInput(state);
         state.controlMinions(SimConst::UPDATE_ITERATIONS_EACH_FRAME * SimConst::UPDATE_DELTA);
@@ -218,7 +221,7 @@ int main(int argc, char** argv) {
         }
 
         if(state.getShouldEndProgram()){
-            break;
+            return 0;
         }
     }
 

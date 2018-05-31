@@ -103,7 +103,9 @@ private:
     std::vector< std::shared_ptr<Pellet> > foodPellets, poisonPellets;
 
     int nEvolvableMinions, nMinionPerPartition, nElites, nFoodPellets, nPoisonPellets,
-            nDefaultMinions, nGenerationPartitions, nextEvolvableIdx;
+            nDefaultMinions, nGenerationPartitions, nextEvolvableIdx, nMaxGenerations;
+
+    bool isCurrentGenPersisted;
 
     std::string persistenceDirectory;
 
